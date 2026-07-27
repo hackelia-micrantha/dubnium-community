@@ -48,12 +48,12 @@ Anthesis policy decision
 
 - **Dubnium** owns agent runtime composition, planning intake, routing, bounded execution, and host-level operational controls.
 - **Anthesis** owns deterministic governance decisions, policy attribution, approval requirements, provenance, and governance contracts.
-- **Anthesis Governance Lab** supplies public contracts and canonical scenarios for independently testing that governance boundary.
-- The **Dubnium Governed Agent Demo** exercises the complete vertical slice without treating the agent or model as its own authorization authority.
+- **Anthesis Governance Lab** independently tests the public governance contract, canonical scenarios, and evaluator compatibility.
+- The **Dubnium Governed Agent Demo** exercises that public contract and evaluator boundary through the bounded execution path without treating the agent or model as its own authorization authority.
 
 ## Public testbed
 
-The current public integration uses [Anthesis Governance Lab](https://github.com/ryjen/anthesis-governance-lab) and immutable evaluator releases from [anthesis-community](https://github.com/hackelia-micrantha/anthesis-community).
+The current integration consumes the public Governance Lab contract and immutable evaluator releases from [anthesis-community](https://github.com/hackelia-micrantha/anthesis-community). The independent [Anthesis Governance Lab](https://github.com/ryjen/anthesis-governance-lab) repository validates the same boundary through canonical and adversarial scenarios; Dubnium does not require direct access to its fixture tree.
 
 The testbed demonstrates:
 
