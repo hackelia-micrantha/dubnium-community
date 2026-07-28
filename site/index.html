@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="description" content="Dubnium is Micrantha's reproducible, local-first distribution for agentic software development and operations." />
+  <title>Dubnium</title>
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <style>
+    :root {
+      --bg: #fff;
+      --text: #0b1220;
+      --text-secondary: #4b5563;
+      --text-tertiary: #6b7280;
+      --border: #e5e7eb;
+      --card-bg: #fff;
+      --accent: #0f4f8f;
+      --feature-bg: linear-gradient(135deg, #eff6ff, #ecfeff);
+      --feature-border: #bfdbfe;
+      --btn-bg: #0f172a;
+      --btn-text: #fff;
+      --btn-hover: #1e293b;
+      --m-bg: #f3f4f6;
+    }
+    html.dark {
+      --bg: #0f172a;
+      --text: #e2e8f0;
+      --text-secondary: #94a3b8;
+      --text-tertiary: #64748b;
+      --border: #334155;
+      --card-bg: #1e293b;
+      --accent: #60a5fa;
+      --feature-bg: linear-gradient(135deg, #1e293b, #0f172a);
+      --feature-border: #334155;
+      --btn-bg: #e2e8f0;
+      --btn-text: #0f172a;
+      --btn-hover: #cbd5e1;
+      --m-bg: #1e293b;
+    }
+    body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;max-width:980px;margin:48px auto;padding:0 20px;color:var(--text);background:var(--bg)}
+    h1{margin-bottom:6px}
+    header p{color:var(--text-secondary);margin-top:0}
+    section{margin:28px 0}
+    ul{line-height:1.5}
+    a{color:var(--accent)}
+    footer{color:var(--text-tertiary);margin-top:36px;font-size:.95em}
+    .m{background:var(--m-bg);padding:14px;border-radius:8px}
+    .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px}
+    .card{background:var(--card-bg);border:1px solid var(--border);border-radius:8px;padding:14px;transition:border-color .15s,box-shadow .15s}
+    .card:hover{border-color:var(--accent);box-shadow:0 1px 4px rgba(0,0,0,.08)}
+    .card h3{margin:0 0 8px 0;font-size:1rem}
+    .card p{margin:0;color:var(--text-secondary)}
+    .feature{margin-top:24px;padding:18px 20px;border-radius:14px;background:var(--feature-bg);border:1px solid var(--feature-border)}
+    .feature h2{margin:0 0 8px 0;font-size:1.1rem}
+    .feature p{margin:0 0 14px 0;color:var(--text-secondary)}
+    .feature a{display:inline-block;padding:10px 14px;border-radius:999px;background:var(--btn-bg);color:var(--btn-text);text-decoration:none;font-weight:600;transition:background .15s}
+    .feature a:hover{background:var(--btn-hover)}
+    .theme-toggle{background:none;border:1px solid var(--border);border-radius:6px;padding:4px 10px;cursor:pointer;color:var(--text-secondary);font-size:.85rem;margin-left:auto}
+    .theme-toggle:hover{border-color:var(--accent);color:var(--accent)}
+    .badge{display:inline-block;font-size:.8rem;color:var(--text-tertiary);margin-top:4px}
+    @media(max-width:600px){.grid{grid-template-columns:1fr}}
+  </style>
+  <script>!function(){try{var t=localStorage.getItem('dubnium-theme');if(t==='dark'||(!t&&window.matchMedia('(prefers-color-scheme:dark)').matches))document.documentElement.classList.add('dark')}catch(e){}}()</script>
+</head>
+<body>
+  <header>
+    <div style="display:flex;align-items:center;gap:12px">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="48" height="48" role="img" aria-label="Dubnium">
+        <rect x="1.4" y="1.4" width="21.2" height="21.2" rx="4" fill="none" stroke="currentColor" stroke-width="1.5"/>
+        <rect x="4.2" y="4.2" width="15.6" height="15.6" rx="2.3" fill="none" stroke="currentColor" stroke-width="1" opacity=".45"/>
+        <text x="12" y="14.7" text-anchor="middle" font-family="ui-sans-serif, system-ui, sans-serif" font-size="6.8" font-weight="700" fill="currentColor">Db</text>
+        <path d="M6.4 6.5h2.1M15.5 6.5h2.1M6.4 17.5h2.1M15.5 17.5h2.1" stroke="currentColor" stroke-width=".8" stroke-linecap="round" opacity=".45"/>
+        <path d="M12 3.2c2.7 2 4.7 4.9 5.6 8.2M12 20.8c-2.7-2-4.7-4.9-5.6-8.2" stroke="currentColor" stroke-width=".75" stroke-linecap="round" fill="none" opacity=".45"/>
+        <circle cx="18.2" cy="5.8" r="1" fill="currentColor"/>
+        <circle cx="5.8" cy="18.2" r="1" fill="currentColor"/>
+      </svg>
+      <div>
+        <h1 style="margin:0">Dubnium</h1>
+        <p style="margin:0;color:var(--text-secondary)">A reproducible, local-first distribution for agentic development and operations</p>
+      </div>
+      <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle dark mode">◐</button>
+    </div>
+    <div class="feature">
+      <h2>Local-first infrastructure for AI-assisted work</h2>
+      <p>Dubnium combines reproducible workstation configuration, explicit operating modes, model routing, bounded execution, reusable context, and governed automation.</p>
+      <p><a href="https://github.com/hackelia-micrantha/dubnium-community#readme">Open Public Documentation</a></p>
+      <p class="badge">Micrantha Solution · Incubating</p>
+    </div>
+  </header>
+
+  <section>
+    <h2>Overview</h2>
+    <div class="m">
+      <p>Dubnium asks how a developer workstation should behave when it is also an AI runtime, automation host, build environment, and governed operations surface.</p>
+      <p>This repository is the public community and distribution boundary. Trusted-operator configuration, machine-specific topology, secrets, and recovery procedures remain outside the public surface.</p>
+    </div>
+  </section>
+
+  <section>
+    <h2>System themes</h2>
+    <div class="grid">
+      <div class="card"><h3>Rebuildability</h3><p>Declared workstation, compute, automation, and development profiles built on NixOS.</p></div>
+      <div class="card"><h3>AI control plane</h3><p>Local-first model routing with intentional provider fallback and observable workload boundaries.</p></div>
+      <div class="card"><h3>Bounded execution</h3><p>Repository-scoped workflows, explicit capabilities, protected paths, and sanitized evidence.</p></div>
+      <div class="card"><h3>Governance</h3><p>Anthesis-backed policy decisions, approval gates, provenance, and reviewable outcomes.</p></div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Public integration testbed</h2>
+    <p>The governed-agent demo exercises structured plans, deterministic allow/approval/deny decisions, exact approval binding, a capability-bounded executor, and fail-closed evaluator identity checks.</p>
+  </section>
+
+  <section>
+    <h2>Project status</h2>
+    <p>Dubnium is incubating. The workstation, AI runtime, automation, and governed-agent capabilities are being integrated behind explicit support tiers and trust boundaries.</p>
+  </section>
+
+  <footer><p>Dubnium public site · hackelia-micrantha/dubnium-community</p></footer>
+  <script>function toggleTheme(){try{var e=document.documentElement,t=e.classList.toggle('dark');localStorage.setItem('dubnium-theme',t?'dark':'light')}catch(e){}}</script>
+</body>
+</html>
