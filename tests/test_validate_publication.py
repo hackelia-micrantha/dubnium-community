@@ -71,6 +71,13 @@ class PublicationValidationTests(unittest.TestCase):
             errors = MODULE.validate(root)
             self.assertTrue(any("full lowercase SHA-1" in error for error in errors))
 
+    def test_accepts_publication_only_changed_paths(self) -> None:
+        self.assertEqual([], MODULE.validate_changed_paths(["site/docs/index.html", "site/docs/publication.json"]))
+
+    def test_rejects_mixed_publication_changes(self) -> None:
+        errors = MODULE.validate_changed_paths(["site/docs/index.html", ".github/workflows/pages.yml"])
+        self.assertTrue(any("confined to site/docs" in error for error in errors))
+
 
 if __name__ == "__main__":
     unittest.main()

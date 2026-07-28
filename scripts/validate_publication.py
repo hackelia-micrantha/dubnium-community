@@ -33,16 +33,28 @@ def fail(errors: list[str], message: str) -> None:
     errors.append(message)
 
 
+def validate_changed_paths(paths: list[str]) -> list[str]:
+    normalized = [path.strip().lstrip("./") for path in paths if path.strip()]
+    if not any(path == "site/docs" or path.startswith("site/docs/") for path in normalized):
+        return []
+    unexpected = sorted(
+        path for path in normalized
+        if path != "site/docs" and not path.startswith("site/docs/")
+    )
+    if not unexpected:
+        return []
+    return ["publication changes must be confined to site/docs/: " + ", ".join(unexpected)]
+
+
 def validate(root: Path) -> list[str]:
     errors: list[str] = []
     docs = root / "site" / "docs"
     if not docs.exists():
-        return errors  # Transitional state before the first publication.
+        return errors
     if docs.is_symlink():
         return ["site/docs must not be a symlink"]
 
-    required = [docs / "index.html", docs / "publication.json"]
-    for path in required:
+    for path in (docs / "index.html", docs / "publication.json"):
         if not path.is_file():
             fail(errors, f"missing required file: {path.relative_to(root)}")
 
@@ -93,8 +105,11 @@ def validate(root: Path) -> list[str]:
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("root", nargs="?", default=".")
+    parser.add_argument("--changed-paths-stdin", action="store_true")
     args = parser.parse_args()
     errors = validate(Path(args.root).resolve())
+    if args.changed_paths_stdin:
+        errors.extend(validate_changed_paths(sys.stdin.read().splitlines()))
     if errors:
         print("Public book publication validation failed:", file=sys.stderr)
         for error in errors:
