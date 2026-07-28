@@ -5,6 +5,8 @@ on:
     branches: [main]
     paths:
       - "site/**"
+      - "scripts/validate_publication.py"
+      - "tests/test_validate_publication.py"
       - ".github/workflows/pages.yml"
   workflow_dispatch:
 
@@ -18,7 +20,20 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Run validator tests
+        run: python -m unittest discover -s tests -v
+
+      - name: Validate publication boundary
+        run: python scripts/validate_publication.py
+
   deploy:
+    needs: validate
     runs-on: ubuntu-latest
     environment:
       name: github-pages
