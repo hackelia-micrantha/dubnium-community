@@ -1,0 +1,965 @@
+<!DOCTYPE HTML>
+<html lang="en" class="light sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Dubnium</title>
+        <meta name="robots" content="noindex">
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="Public Dubnium overview documentation">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="favicon-de23e50b.svg">
+        <link rel="shortcut icon" href="favicon-8114d1fc.png">
+        <link rel="stylesheet" href="css/variables-8adf115d.css">
+        <link rel="stylesheet" href="css/general-2459343d.css">
+        <link rel="stylesheet" href="css/chrome-ae938929.css">
+        <link rel="stylesheet" href="css/print-9e4910d8.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="fonts/fonts-9644e21d.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="mdbook-highlight-css" href="highlight-493f70e1.css">
+        <link rel="stylesheet" id="mdbook-tomorrow-night-css" href="tomorrow-night-4c0ae647.css">
+        <link rel="stylesheet" id="mdbook-ayu-highlight-css" href="ayu-highlight-3fdfc3ac.css">
+
+        <!-- Custom theme stylesheets -->
+
+
+        <!-- Provide site root and default themes to javascript -->
+        <script>
+            const path_to_root = "";
+            const default_light_theme = "light";
+            const default_dark_theme = "navy";
+            window.path_to_searchindex_js = "searchindex-d035b8e1.js";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="toc-99e585f3.js"></script>
+    </head>
+    <body>
+    <div id="mdbook-help-container">
+        <div id="mdbook-help-popup">
+            <h2 class="mdbook-help-title">Keyboard shortcuts</h2>
+            <div>
+                <p>Press <kbd>←</kbd> or <kbd>→</kbd> to navigate between chapters</p>
+                <p>Press <kbd>S</kbd> or <kbd>/</kbd> to search in the book</p>
+                <p>Press <kbd>?</kbd> to show this help</p>
+                <p>Press <kbd>Esc</kbd> to hide this help</p>
+            </div>
+        </div>
+    </div>
+    <div id="mdbook-body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="mdbook-sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            let sidebar = null;
+            const sidebar_toggle = document.getElementById("mdbook-sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+                sidebar_toggle.checked = false;
+            }
+            if (sidebar === 'visible') {
+                sidebar_toggle.checked = true;
+            } else {
+                html.classList.remove('sidebar-visible');
+            }
+        </script>
+
+        <nav id="mdbook-sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="toc.html"></iframe>
+            </noscript>
+            <div id="mdbook-sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="mdbook-page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="mdbook-menu-bar-hover-placeholder"></div>
+                <div id="mdbook-menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="mdbook-sidebar-toggle" class="icon-button" for="mdbook-sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="mdbook-sidebar">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M0 96C0 78.3 14.3 64 32 64H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32C14.3 128 0 113.7 0 96zM0 256c0-17.7 14.3-32 32-32H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32c-17.7 0-32-14.3-32-32zM448 416c0 17.7-14.3 32-32 32H32c-17.7 0-32-14.3-32-32s14.3-32 32-32H416c17.7 0 32 14.3 32 32z"/></svg></span>
+                        </label>
+                        <button id="mdbook-theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="mdbook-theme-list">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M371.3 367.1c27.3-3.9 51.9-19.4 67.2-42.9L600.2 74.1c12.6-19.5 9.4-45.3-7.6-61.2S549.7-4.4 531.1 9.6L294.4 187.2c-24 18-38.2 46.1-38.4 76.1L371.3 367.1zm-19.6 25.4l-116-104.4C175.9 290.3 128 339.6 128 400c0 3.9 .2 7.8 .6 11.6c1.8 17.5-10.2 36.4-27.8 36.4H96c-17.7 0-32 14.3-32 32s14.3 32 32 32H240c61.9 0 112-50.1 112-112c0-2.5-.1-5-.2-7.5z"/></svg></span>
+                        </button>
+                        <ul id="mdbook-theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-default_theme">Auto</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-ayu">Ayu</button></li>
+                        </ul>
+                        <button id="mdbook-search-toggle" class="icon-button" type="button" title="Search (`/`)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="/ s" aria-controls="mdbook-searchbar">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M416 208c0 45.9-14.9 88.3-40 122.7L502.6 457.4c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L330.7 376c-34.4 25.2-76.8 40-122.7 40C93.1 416 0 322.9 0 208S93.1 0 208 0S416 93.1 416 208zM208 352c79.5 0 144-64.5 144-144s-64.5-144-144-144S64 128.5 64 208s64.5 144 144 144z"/></svg></span>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">Dubnium</h1>
+
+                    <div class="right-buttons">
+                        <a href="print.html" title="Print this book" aria-label="Print this book">
+                            <span class=fa-svg id="print-button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M128 0C92.7 0 64 28.7 64 64v96h64V64H354.7L384 93.3V160h64V93.3c0-17-6.7-33.3-18.7-45.3L400 18.7C388 6.7 371.7 0 354.7 0H128zM384 352v32 64H128V384 368 352H384zm64 32h32c17.7 0 32-14.3 32-32V256c0-35.3-28.7-64-64-64H64c-35.3 0-64 28.7-64 64v96c0 17.7 14.3 32 32 32H64v64c0 35.3 28.7 64 64 64H384c35.3 0 64-28.7 64-64V384zm-16-88c-13.3 0-24-10.7-24-24s10.7-24 24-24s24 10.7 24 24s-10.7 24-24 24z"/></svg></span>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="mdbook-search-wrapper" class="hidden">
+                    <form id="mdbook-searchbar-outer" class="searchbar-outer">
+                        <div class="search-wrapper">
+                            <input type="search" id="mdbook-searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="mdbook-searchresults-outer" aria-describedby="searchresults-header">
+                            <div class="spinner-wrapper">
+                                <span class=fa-svg id="fa-spin"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M304 48c0-26.5-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48s48-21.5 48-48zm0 416c0-26.5-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48s48-21.5 48-48zM48 304c26.5 0 48-21.5 48-48s-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48zm464-48c0-26.5-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48s48-21.5 48-48zM142.9 437c18.7-18.7 18.7-49.1 0-67.9s-49.1-18.7-67.9 0s-18.7 49.1 0 67.9s49.1 18.7 67.9 0zm0-294.2c18.7-18.7 18.7-49.1 0-67.9S93.7 56.2 75 75s-18.7 49.1 0 67.9s49.1 18.7 67.9 0zM369.1 437c18.7 18.7 49.1 18.7 67.9 0s18.7-49.1 0-67.9s-49.1-18.7-67.9 0s-18.7 49.1 0 67.9z"/></svg></span>
+                            </div>
+                        </div>
+                    </form>
+                    <div id="mdbook-searchresults-outer" class="searchresults-outer hidden">
+                        <div id="mdbook-searchresults-header" class="searchresults-header"></div>
+                        <ul id="mdbook-searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('mdbook-sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('mdbook-sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#mdbook-sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="mdbook-content" class="content">
+                    <main>
+                        <h1 id="dubnium-documentation"><a class="header" href="#dubnium-documentation">Dubnium Documentation</a></h1>
+<p>Operator entrypoint for installing, bringing up, and understanding the Dubnium workstation and AI control plane.</p>
+<p>Dubnium is a rebuildable workstation and AI control-plane experiment for local-first developer workflows, model routing, memory-assisted tooling, and governed automation. It explores how a personal machine can be treated as a coherent operating environment instead of a loose collection of tools: reproducible configuration, explicit modes, local-first AI, reusable context, and policy-aware automation.</p>
+<blockquote>
+<p><strong>Note:</strong> Internal documentation provides substantially greater depth on all topics. This external guide covers concepts at a summary level.</p>
+</blockquote>
+<h2 id="choose-your-path"><a class="header" href="#choose-your-path">Choose Your Path</a></h2>
+<ul>
+<li><strong>Installing</strong> — fresh install and custom installer USB</li>
+<li><strong>Bring-up</strong> — first bring-up and transition testing</li>
+<li><strong>Local inference</strong> — model seeding and LLM server setup</li>
+<li><strong>Memory system</strong> — persistent context and memory service</li>
+<li><strong>Headless VM</strong> — headless documentation boundary and bring-up</li>
+<li><strong>WSL</strong> — WSL documentation and bring-up</li>
+<li><strong>CI</strong> — GitHub Actions runner</li>
+<li><strong>Flake management</strong> — dubctl for flake input and operator state</li>
+</ul>
+<h2 id="current-defaults"><a class="header" href="#current-defaults">Current Defaults</a></h2>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Option</th><th>Default</th><th>Note</th></tr>
+</thead>
+<tbody>
+<tr><td><code>dubnium.boot.defaultMode</code></td><td><code>"desktop"</code></td><td>Boots into interactive desktop mode</td></tr>
+<tr><td><code>dubnium.profiles</code></td><td><code>[ "base" ]</code></td><td>Only base profile active by default</td></tr>
+<tr><td><code>dubnium.targets.*.enable</code></td><td><code>false</code></td><td>All targets opt-in (graphical, studio, AI, compute)</td></tr>
+<tr><td><code>dubnium.llm.enable</code></td><td><code>false</code></td><td>LLM server opt-in</td></tr>
+<tr><td><code>dubnium.memory.enable</code></td><td><code>false</code></td><td>Memory service opt-in</td></tr>
+<tr><td><code>dubnium.k3s.enable</code></td><td><code>false</code></td><td>k3s cluster opt-in</td></tr>
+<tr><td><code>dubnium.plano.enable</code></td><td><code>false</code></td><td>Plano routing opt-in</td></tr>
+<tr><td><code>dubnium.githubRunner.enable</code></td><td><code>false</code></td><td>GitHub Actions runner opt-in</td></tr>
+<tr><td><code>dubnium.laboratory.enable</code></td><td><code>false</code></td><td>Laboratory cluster bootstrap opt-in</td></tr>
+<tr><td><code>dubnium.integrations.dotfiles.enable</code></td><td><code>true</code></td><td>Dotfiles integration on by default</td></tr>
+<tr><td><code>dubnium.graphicalCredentialStore.enable</code></td><td><code>true</code></td><td>Graphical credential store on by default</td></tr>
+<tr><td>—</td><td>Secrets outside Nix source</td><td>Runtime secrets stay in SOPS/age or host-local files</td></tr>
+<tr><td>—</td><td>Flake input ops via <code>dubctl</code></td><td>Installed by default on workstation</td></tr>
+</tbody>
+</table>
+</div>
+<h2 id="public-guide"><a class="header" href="#public-guide">Public Guide</a></h2>
+<p>This public guide covers the project at a conceptual level:</p>
+<ul>
+<li><a href="#architecture-1">Architecture</a> explains the broad system model.</li>
+<li><a href="#ai-control-plane">AI Control Plane</a> describes model routing and governed AI usage.</li>
+<li><a href="#memory">Memory</a> explains the public memory model.</li>
+<li><a href="governance.html">Governance</a> describes the automation control posture.</li>
+</ul>
+<p>Public docs are curated overviews. They explain what Dubnium explores and why the design choices matter. Trusted-operator details, including exact commands, topology, service wiring, recovery procedures, and security-sensitive implementation details, live in the internal documentation set.</p>
+<h2 id="install-source-contract"><a class="header" href="#install-source-contract">Install Source Contract</a></h2>
+<ul>
+<li>Installer media labels: <code>DUB-ISO</code> and <code>DUB-SEED</code></li>
+<li>Bootstrap from local source, no install-time GitHub token</li>
+<li>Post-install source reconciliation is explicit</li>
+</ul>
+<h2 id="ownership-boundaries"><a class="header" href="#ownership-boundaries">Ownership Boundaries</a></h2>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Owner</th><th>Responsibility</th></tr>
+</thead>
+<tbody>
+<tr><td>Dubnium</td><td>NixOS system config, workstation services, install media, runtime units</td></tr>
+<tr><td>Dotfiles</td><td>Home Manager user config, user shell, user-level tool configuration</td></tr>
+<tr><td>Runtime secret provider</td><td>Host and user secrets outside Git-tracked Nix source</td></tr>
+<tr><td>Model/router repos</td><td>Client policy, routing schemas, and model-router behavior</td></tr>
+</tbody>
+</table>
+</div>
+<h2 id="sanity-checks"><a class="header" href="#sanity-checks">Sanity Checks</a></h2>
+<pre><code class="language-bash">nix flake check
+sudo nixos-rebuild build --flake .#workstation
+mdbook build
+</code></pre>
+<p>When building docs from Windows, run <code>mdbook build</code> inside the NixOS WSL distro with <code>mdbook</code> and <code>mdbook-mermaid</code> in the shell.</p>
+<h2 id="known-warnings"><a class="header" href="#known-warnings">Known Warnings</a></h2>
+<ul>
+<li><code>mdbook-mermaid</code> may warn about a minor mdBook version mismatch; that warning is non-fatal when the HTML backend finishes successfully.</li>
+<li>vLLM runtime setup should avoid broad PyTorch, audio, JAX, or TPU extras unless explicitly required.</li>
+</ul>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="ai-control-plane"><a class="header" href="#ai-control-plane">AI Control Plane</a></h1>
+<p>The AI control plane makes model usage intentional by routing every inference request through policy, not through hard-wired client configuration. Dubnium explores an AI control plane for routing local and remote model use through explicit policy instead of wiring every client directly to every provider.</p>
+<h2 id="design-goals"><a class="header" href="#design-goals">Design goals</a></h2>
+<ul>
+<li><strong>Intentional model selection</strong> — workloads declare capability requirements; the control plane resolves them to a provider and model instead of each client choosing its own endpoint.</li>
+<li><strong>Workload separation</strong> — interactive chat sessions and batch background jobs use separate queues and resource pools so neither starves the other.</li>
+<li><strong>Local-first by default</strong> — when a local model can serve the request, it should. Remote providers are fallbacks for capability gaps, not the primary path.</li>
+<li><strong>Governed tool access</strong> — tool calls pass through an authorization gate that checks policy before execution.</li>
+<li><strong>Reviewable evidence</strong> — every request, routing decision, and tool invocation leaves traceable records for audit and debugging.</li>
+</ul>
+<h2 id="routing-model"><a class="header" href="#routing-model">Routing model</a></h2>
+<p>The control plane does not ship baked-in provider wiring. It uses a routing layer that maps capability requirements to available providers (local LLM servers, remote APIs, or specialized backends) based on runtime policy. This makes the routing surface declarative and auditable rather than scattered across client code.</p>
+<h2 id="service-stack"><a class="header" href="#service-stack">Service stack</a></h2>
+<p>The control plane includes:</p>
+<ul>
+<li>An LLM server runtime for hosting local models (backends like vLLM)</li>
+<li>A model seed system for populating the local model cache</li>
+<li>A scheduling and automation layer for batch inference and recurring tasks</li>
+<li>A memory service for persistent context (see <a href="#memory">Memory</a>)</li>
+</ul>
+<h2 id="why-it-matters"><a class="header" href="#why-it-matters">Why it matters</a></h2>
+<p>AI tooling tends to sprawl across editors, terminals, agents, scripts, and services. Dubnium treats that sprawl as an operating-surface problem: clients should have clear routes, workloads should have clear posture, and automation should be observable enough to understand later.</p>
+<h2 id="public-boundary"><a class="header" href="#public-boundary">Public boundary</a></h2>
+<p>This page describes the control-plane concept. Provider wiring, endpoint details, local service names, storage paths, and operator commands belong in trusted-operator documentation.</p>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="ai-stack-architecture"><a class="header" href="#ai-stack-architecture">AI Stack Architecture</a></h1>
+<p>Dubnium’s AI stack separates the control plane, gateway layer, and model runtimes so the workstation stays stable while AI capabilities evolve.</p>
+<h2 id="layer-model"><a class="header" href="#layer-model">Layer model</a></h2>
+<pre><code>Clients and automation
+    -&gt; AI control plane
+        -&gt; optional routing layer
+            -&gt; model providers
+</code></pre>
+<p>Clients request AI work through the control plane. An optional routing layer can normalize or redirect requests before they reach model providers.</p>
+<h2 id="preferred-stack"><a class="header" href="#preferred-stack">Preferred stack</a></h2>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Layer</th><th>Component</th><th>Role</th></tr>
+</thead>
+<tbody>
+<tr><td>Control plane (default)</td><td>opencode</td><td>Default AI surface, configured against local LLM server and cloud providers</td></tr>
+<tr><td>Control plane (escalation)</td><td>Hermes</td><td>Governed, likely cloud-backed control plane for routing, credentials, and memory</td></tr>
+<tr><td>Companion tools</td><td>codex, Claude</td><td>Optional project-specific clients alongside opencode</td></tr>
+<tr><td>Gateway</td><td>Plano (optional)</td><td>Provider routing, request normalization, backend fallback</td></tr>
+<tr><td>Automation client</td><td>n8n (optional)</td><td>Workflow automation that calls the control plane</td></tr>
+<tr><td>Local model runtime</td><td><code>dubnium.llmServer</code></td><td>Default local OpenAI-compatible endpoint</td></tr>
+<tr><td>Cloud fallback</td><td>Provider-specific APIs</td><td>Used when local capacity is unavailable</td></tr>
+</tbody>
+</table>
+</div>
+<h2 id="runtime-selection"><a class="header" href="#runtime-selection">Runtime selection</a></h2>
+<p>Default preference order: control plane → local model → Plano (if enabled) → cloud provider. This preserves local-first behavior while allowing cloud escalation when configured.</p>
+<h2 id="model-storage"><a class="header" href="#model-storage">Model storage</a></h2>
+<p>Model weights stay out of Git, the Nix store, and default ISO closures. The preferred runtime location is <code>/var/lib/dubnium/models</code>, populated from seed media or post-install download.</p>
+<h2 id="network-exposure"><a class="header" href="#network-exposure">Network exposure</a></h2>
+<p>AI services are high-value targets. Default posture binds local runtimes and gateways to localhost. Tailscale or LAN exposure requires explicit per-service flags. Raw Ollama, LLM server, or Plano endpoints should not be exposed when the AI control plane can enforce a policy boundary.</p>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="llm-routing-gateway"><a class="header" href="#llm-routing-gateway">LLM Routing Gateway</a></h1>
+<p>Dubnium supports optional LLM routing between local and cloud providers. The routing layer sits beneath the AI control plane and handles provider selection, request normalization, and fallback behavior.</p>
+<h2 id="architecture"><a class="header" href="#architecture">Architecture</a></h2>
+<pre><code>AI control plane / clients
+  -&gt; routing layer (optional)
+    -&gt; local LLM server
+    -&gt; cloud provider: OpenAI, Anthropic, etc.
+</code></pre>
+<p>The routing layer is optional — the control plane can call providers directly. Enable routing when you need provider fallback, request normalization across providers, centralized route policy, or model quality tiers.</p>
+<h2 id="implementations"><a class="header" href="#implementations">Implementations</a></h2>
+<p><strong>Plano</strong> is the primary Dubnium-packaged routing gateway. Dubnium owns the systemd service lifecycle, compute target integration, and local model endpoint wiring. User-level client configuration lives in dotfiles.</p>
+<p><strong>model-router</strong> (separate repository) provides route-decision semantics, policy schemas, and governance-oriented routing design. Plano consumes these policies at runtime.</p>
+<h2 id="defaults"><a class="header" href="#defaults">Defaults</a></h2>
+<p>Plano binds to <code>127.0.0.1:12000</code> by default and assumes the local LLM server is on port <code>8000</code>. Tailscale exposure is opt-in and disabled by default. The service fails closed if the configured executable is missing.</p>
+<h2 id="security"><a class="header" href="#security">Security</a></h2>
+<p>Keep <code>exposeOnTailscale</code> disabled until the gateway behavior is validated. Do not store cloud provider secrets in generated config. Prefer environment files managed by sops-nix. Fallback between models must not bypass privacy, budget, safety, or approval failures — those are policy failures, not retry events.</p>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="memory"><a class="header" href="#memory">Memory</a></h1>
+<p>Dubnium treats memory as reusable project context for AI-assisted workflows — information that can be classified, governed, retrieved, and reviewed instead of repeatedly rediscovered.</p>
+<h2 id="why-memory-matters"><a class="header" href="#why-memory-matters">Why memory matters</a></h2>
+<p>Without structured memory, every AI interaction starts from zero. Context from previous sessions — project decisions, architectural constraints, operational patterns — is lost or must be re-injected manually. Dubnium’s memory system captures that context, classifies it, and makes it available to future interactions under explicit policy control.</p>
+<h2 id="key-ideas"><a class="header" href="#key-ideas">Key ideas</a></h2>
+<ul>
+<li><strong>Classification before reuse</strong> — not all context is equal. Memory items are classified by type (decision, constraint, observation, procedure) so retrieval can match the right context to the right request.</li>
+<li><strong>Explicit lifecycle</strong> — memory moves through stages: ephemeral observation, working context, archived reference, and eventual eviction. Promotion between stages is governed, not automatic.</li>
+<li><strong>Governed retrieval</strong> — the system checks policy before returning stored context. Sensitive context requires stronger authorization.</li>
+<li><strong>Evidence for review</strong> — every memory write, promotion, and retrieval leaves an audit trace.</li>
+</ul>
+<h2 id="architecture-sketch"><a class="header" href="#architecture-sketch">Architecture sketch</a></h2>
+<p>The memory system consists of:</p>
+<ul>
+<li>A <strong>memory service</strong> that stores and retrieves context items with typed schemas</li>
+<li>A <strong>classification layer</strong> that assigns category and sensitivity labels on ingestion</li>
+<li>A <strong>promotion lifecycle</strong> that moves context through stages based on usage patterns and policy rules</li>
+<li>A <strong>governance layer</strong> that checks authorization before retrieval or promotion</li>
+</ul>
+<h2 id="why-it-matters-1"><a class="header" href="#why-it-matters-1">Why it matters</a></h2>
+<p>Agentic workflows depend on context. Without a memory model, that context becomes ad-hoc state spread across prompts, notes, databases, generated files, and tool outputs. Dubnium uses memory as an explicit design surface so context can be useful without becoming invisible operational risk.</p>
+<h2 id="public-boundary-1"><a class="header" href="#public-boundary-1">Public boundary</a></h2>
+<p>This page describes the conceptual memory model. Storage layout, schemas, retrieval behavior, promotion rules, and operational procedures belong in trusted-operator documentation.</p>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="memory-principles"><a class="header" href="#memory-principles">Memory Principles</a></h1>
+<p>Dubnium memory is a classified lifecycle system for operational and knowledge context. It is not primarily a vector store, RAG pipeline, database table, or runtime cache.</p>
+<h2 id="1-memory-is-classified-not-accumulated"><a class="header" href="#1-memory-is-classified-not-accumulated">1. Memory is classified, not accumulated</a></h2>
+<p>Every durable memory candidate should be classified before persistence — by layer, type, sensitivity, scope, authority, confidence, retention policy, and validation status. Unclassified memory is operational residue, not durable knowledge.</p>
+<h2 id="2-storage-is-an-implementation-detail"><a class="header" href="#2-storage-is-an-implementation-detail">2. Storage is an implementation detail</a></h2>
+<p>Postgres, pgvector, Redis, embeddings, and indexes are substrate choices. The durable design concepts are classification → stewardship → lifecycle → policy-aware retrieval. A storage backend is only correct if it preserves those semantics.</p>
+<h2 id="3-operational-state-is-disposable"><a class="header" href="#3-operational-state-is-disposable">3. Operational state is disposable</a></h2>
+<p>Operational memory (active plans, tool outputs, workflow checkpoints) should usually expire, be summarized, or be discarded. It should not silently become durable project knowledge.</p>
+<h2 id="4-knowledge-is-curated"><a class="header" href="#4-knowledge-is-curated">4. Knowledge is curated</a></h2>
+<p>Knowledge memory (decisions, stable facts, lessons learned) requires stronger classification, provenance, confidence, and scope than operational memory.</p>
+<h2 id="5-canonical-knowledge-lives-in-version-control"><a class="header" href="#5-canonical-knowledge-lives-in-version-control">5. Canonical knowledge lives in version control</a></h2>
+<p>Project truth belongs in docs, ADRs, runbooks, and specs. Normal memory rows are not the final authority.</p>
+<h2 id="6-retrieval-is-policy-bound"><a class="header" href="#6-retrieval-is-policy-bound">6. Retrieval is policy-bound</a></h2>
+<p>A supervisor or control surface should declare requester, purpose, scope, sensitivity limits, and verification requirements. The memory service returns bounded candidates and records retrieval events. Final context assembly belongs outside the memory service.</p>
+<h2 id="7-the-memory-steward-recommends-but-does-not-authorize"><a class="header" href="#7-the-memory-steward-recommends-but-does-not-authorize">7. The Memory Steward recommends but does not authorize</a></h2>
+<p>The steward may extract, classify, detect duplicates, and recommend promotion. It must not authorize access, bypass policy, blindly persist memory, or assemble final task context.</p>
+<h2 id="8-durable-memory-is-opt-in"><a class="header" href="#8-durable-memory-is-opt-in">8. Durable memory is opt-in</a></h2>
+<p>Sensitive or ambiguous inputs should remain operational, be summarized, or be rejected unless policy allows persistence.</p>
+<h2 id="9-memory-must-remain-explainable-and-auditable"><a class="header" href="#9-memory-must-remain-explainable-and-auditable">9. Memory must remain explainable and auditable</a></h2>
+<p>A future operator should be able to answer why a memory exists, what produced it, why it was retained and retrieved, and what policy allowed it. Memory operations should create enough provenance and event metadata for replay and review.</p>
+<h2 id="10-every-memory-has-scope-provenance-and-a-lifecycle"><a class="header" href="#10-every-memory-has-scope-provenance-and-a-lifecycle">10. Every memory has scope, provenance, and a lifecycle</a></h2>
+<p>Scope prevents cross-project contamination. Provenance distinguishes durable knowledge from unexplained context. Lifecycle states (candidate → operational → knowledge → archived) prevent the system from becoming a liability.</p>
+<h2 id="11-derived-indexes-are-rebuildable-state"><a class="header" href="#11-derived-indexes-are-rebuildable-state">11. Derived indexes are rebuildable state</a></h2>
+<p>Embeddings and vector indexes are retrieval aids, not source of truth. Deleting a memory record must also update derived indexes.</p>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="scheduling-and-automation"><a class="header" href="#scheduling-and-automation">Scheduling and Automation</a></h1>
+<p>Dubnium schedules local timed jobs and optional workflow automation alongside the AI control plane.</p>
+<h2 id="why-scheduling-matters"><a class="header" href="#why-scheduling-matters">Why scheduling matters</a></h2>
+<p>AI batch inference, model maintenance, context re-indexing, and routine host tasks all benefit from scheduled execution. Without a clear scheduling boundary, cron entries scatter across the system and automation becomes the source of host truth rather than a convenience layer.</p>
+<h2 id="scheduling-model"><a class="header" href="#scheduling-model">Scheduling model</a></h2>
+<ul>
+<li><strong>Local scheduler</strong> owns timed execution on the host — periodic tasks, batch inference jobs, and maintenance windows. It keeps the schedule attached to the machine that runs it.</li>
+<li><strong>n8n workflow orchestration</strong> provides an optional higher-level automation layer for multi-step pipelines, credential-bearing integrations, and webhook-driven flows. Not every host runs n8n.</li>
+<li><strong>Boundary discipline</strong> — the scheduler and n8n do not become the source of host truth. Declarative configuration stays in the Nix flake; schedules reference it but do not replace it.</li>
+</ul>
+<h2 id="relationship-to-the-control-plane"><a class="header" href="#relationship-to-the-control-plane">Relationship to the control plane</a></h2>
+<p>The AI control plane mediates agentic or credential-bearing scheduled work. A scheduled inference job routes through the same policy layer as an interactive request, so the governance model applies uniformly regardless of invocation method.</p>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="architecture-1"><a class="header" href="#architecture-1">Architecture</a></h1>
+<p>Dubnium organizes a NixOS workstation around operating modes, composable profiles, and a control plane that separates interactive and background workloads. It treats a workstation as a governed operating environment: reproducible configuration, explicit runtime posture, local-first AI, and controlled automation.</p>
+<h2 id="system-themes"><a class="header" href="#system-themes">System themes</a></h2>
+<p>The public architecture view is organized around a few ideas:</p>
+<ul>
+<li><strong>Rebuildability</strong>: the system should be recoverable from declared configuration and source-controlled intent.</li>
+<li><strong>Operating modes</strong>: interactive, compute, automation, and AI workloads should not silently compete for the same resources.</li>
+<li><strong>Local-first AI</strong>: local model use should remain practical while still allowing external model routing when appropriate.</li>
+<li><strong>Governed transitions</strong>: changes in posture should be explicit, observable, and reversible.</li>
+<li><strong>Layered ownership</strong>: system configuration, user configuration, runtime state, and generated artifacts need clear boundaries.</li>
+</ul>
+<h2 id="operating-modes"><a class="header" href="#operating-modes">Operating modes</a></h2>
+<p>A mode defines the runtime character of the system — whether it behaves as a desktop workstation, a headless AI compute node, a development environment, or some combination. The system boots into a configured default mode and can transition between modes at runtime. Modes control which services are active, what resources are allocated, and how the system responds to workload demands. This prevents AI batch jobs from competing with interactive desktop use and keeps the automation surface intentional.</p>
+<h2 id="profiles"><a class="header" href="#profiles">Profiles</a></h2>
+<p>Profiles are opt-in named sets of services. Only the minimal <code>base</code> profile is active by default. Additional profiles enable:</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Profile</th><th>Purpose</th></tr>
+</thead>
+<tbody>
+<tr><td><code>graphical</code></td><td>Desktop environment, display server, input</td></tr>
+<tr><td><code>studio</code></td><td>Creative and development tooling</td></tr>
+<tr><td><code>AI</code></td><td>LLM serving, model routing, memory</td></tr>
+<tr><td><code>compute</code></td><td>Batch processing, CI runners, k3s</td></tr>
+</tbody>
+</table>
+</div>
+<p>Profiles compose — you can enable AI on a graphical system or run a headless compute node with no desktop at all.</p>
+<h2 id="host-composition"><a class="header" href="#host-composition">Host composition</a></h2>
+<p>The repository builds installable NixOS configurations for multiple targets: a physical workstation, a headless VM for validation, WSL on Windows, and container hosts. Shared modules live in the flake and are composed per-target, so the same AI stack works across form factors with target-specific hardware configuration.</p>
+<h2 id="control-plane"><a class="header" href="#control-plane">Control plane</a></h2>
+<p>The control plane routes AI tooling through explicit policies rather than wiring clients directly to model endpoints. This allows:</p>
+<ul>
+<li>Intentional model selection per workload</li>
+<li>Separation of interactive and batch inference</li>
+<li>Local-first workflows that degrade gracefully when offline</li>
+<li>Governed tool access that preserves audit evidence</li>
+</ul>
+<h2 id="public-boundary-2"><a class="header" href="#public-boundary-2">Public boundary</a></h2>
+<p>This is a conceptual map. Operational topology, service wiring, hardware assignments, deployment procedures, and recovery paths belong in trusted-operator documentation.</p>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="ai-architecture"><a class="header" href="#ai-architecture">AI Architecture</a></h1>
+<p>Dubnium’s AI stack routes every inference request through policy rather than hard-wired client configuration. The architecture keeps policy and routing above raw model runtimes, supports local-first execution with explicit cloud escalation, and prevents direct exposure of high-value AI endpoints by default.</p>
+<h2 id="core-rule"><a class="header" href="#core-rule">Core rule</a></h2>
+<pre><code>Clients request AI work through a control plane.
+Gateways route.
+Runtimes generate tokens.
+</code></pre>
+<p>Only one layer owns a decision at a given abstraction level.</p>
+<h2 id="layer-model-1"><a class="header" href="#layer-model-1">Layer model</a></h2>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Layer</th><th>Owns</th><th>Must not own</th></tr>
+</thead>
+<tbody>
+<tr><td>Clients</td><td>User and workflow requests</td><td>Provider policy, direct memory access</td></tr>
+<tr><td>AI control plane</td><td>Policy, provider selection, tool governance</td><td>Raw inference runtime concerns</td></tr>
+<tr><td>Routing gateway</td><td>Request normalization, backend routing</td><td>Agent governance, memory policy</td></tr>
+<tr><td>Model runtimes</td><td>Token generation, streaming, model lifecycle</td><td>Tool governance, durable memory</td></tr>
+<tr><td>Cloud providers</td><td>Remote model execution</td><td>Local operator policy</td></tr>
+</tbody>
+</table>
+</div>
+<h2 id="paths"><a class="header" href="#paths">Paths</a></h2>
+<ul>
+<li><strong>Default path</strong>: client → control plane → local LLM server</li>
+<li><strong>Routed path</strong>: client → control plane → routing gateway → local or cloud backend</li>
+<li><strong>Escalation path</strong>: governed workflows → Hermes → gateway → cloud or local runtime</li>
+</ul>
+<h2 id="exposure-boundaries"><a class="header" href="#exposure-boundaries">Exposure boundaries</a></h2>
+<p>AI services bind to localhost by default. Tailscale or LAN exposure requires explicit per-service configuration. Raw runtime and gateway endpoints should not become the default operator entrypoint. Automation clients call the configured control plane for agentic or credential-bearing work.</p>
+<h2 id="degraded-behavior"><a class="header" href="#degraded-behavior">Degraded behavior</a></h2>
+<p>The base host remains healthy when no AI services are enabled. If the local LLM server is unavailable, the control plane may escalate to configured cloud providers when allowed. Policy and credential boundaries fail closed — routing fallback must not bypass approval or exposure rules.</p>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="control-plane-1"><a class="header" href="#control-plane-1">Control Plane</a></h1>
+<p>The control plane reconciles requested mode intent with runtime facts. It is a local privileged authority, not a convenience shell script.</p>
+<h2 id="authority-model"><a class="header" href="#authority-model">Authority model</a></h2>
+<p>Transition execution is privileged — the operator path is <code>sudo modectl request &lt;mode&gt;</code> or a root-owned systemd service. Unprivileged users must not mutate observed state or forge transition success.</p>
+<h2 id="state-model"><a class="header" href="#state-model">State model</a></h2>
+<p>Live state lives under <code>/run/mode-controller</code>: desired mode, current mode, lock, last transition, last guard results, capability placement, and hardware topology. Persistent transition history lives as an append-only JSONL event stream under <code>/var/lib/mode-controller/events.jsonl</code>.</p>
+<h2 id="reconciliation-sequence"><a class="header" href="#reconciliation-sequence">Reconciliation sequence</a></h2>
+<p>Every requested transition follows a ten-step sequence: acquire lock, observe current state, validate target, validate capability placement, run guards, execute bounded actions, re-observe, classify final state, record outcome, release lock. If target predicates fail after mutation, the controller attempts rollback or reports a failed transition.</p>
+<h2 id="observer-contract"><a class="header" href="#observer-contract">Observer contract</a></h2>
+<p>The observer derives current state from evidence only. It must not trust desired state as proof of success. Required signals include graphical session presence, compositor state, target isolation status, service markers, GPU evidence, and controller lock state. The observer reports <code>unknown</code>, <code>transitioning</code>, <code>degraded</code>, or <code>failed-transition</code> instead of pretending a stable target has been reached.</p>
+<h2 id="guards"><a class="header" href="#guards">Guards</a></h2>
+<p>Guards are small deterministic checks with stable exit codes: 0 for pass, 10-19 for policy block, 20+ for execution error. The initial set covers target reachability, audio idle, graphical session terminability, GPU display release, LLM server drainability, capability presence, memory headroom, and persistence paths.</p>
+<h2 id="failure-semantics"><a class="header" href="#failure-semantics">Failure semantics</a></h2>
+<p>Blocked transitions (guard policy block) leave desired state requested without rewriting current state. Execution errors mean a guard or action could not run reliably. Degraded state means the system is usable but does not satisfy all guarantees. Failed transitions mean no stable contract could be established.</p>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="profiles-and-modes-architecture"><a class="header" href="#profiles-and-modes-architecture">Profiles and Modes Architecture</a></h1>
+<p>Dubnium distinguishes two related but separate concepts:</p>
+<ul>
+<li><strong>Mode</strong> = current operational state (how the machine is behaving right now)</li>
+<li><strong>Profile</strong> = installed or enabled capability set (what the machine can run)</li>
+</ul>
+<p>Keeping them separate prevents overloaded meanings and conceptual drift.</p>
+<h2 id="vocabulary"><a class="header" href="#vocabulary">Vocabulary</a></h2>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Term</th><th>Meaning</th><th>Examples</th></tr>
+</thead>
+<tbody>
+<tr><td>Mode</td><td>Runtime state selected or observed on a host</td><td><code>desktop</code>, <code>compute</code></td></tr>
+<tr><td>Profile</td><td>Declarative capability bundle</td><td><code>base</code>, <code>graphical</code>, <code>studio</code>, <code>ai</code>, <code>development</code>, <code>compute</code></td></tr>
+<tr><td>Target</td><td>Declarative runtime surface made available by profiles</td><td><code>graphical</code>, <code>ai</code>, <code>compute</code></td></tr>
+<tr><td>Service</td><td>Concrete daemon, timer, or runtime component</td><td><code>llm-server</code>, <code>n8n</code>, <code>github-runner</code></td></tr>
+<tr><td>Tier</td><td>Support expectation and maintenance priority</td><td>Tier 1, Tier 2, Tier 3</td></tr>
+</tbody>
+</table>
+</div>
+<h2 id="mental-model"><a class="header" href="#mental-model">Mental model</a></h2>
+<pre><code>Host
+  has Profiles
+  enables Targets
+  enters Modes
+  runs Services
+</code></pre>
+<p>A profile enables a target contract. The mode determines runtime behavior and resource posture. Optional services remain explicit selections rather than implicit profile payload.</p>
+<h2 id="why-it-matters-2"><a class="header" href="#why-it-matters-2">Why it matters</a></h2>
+<p>Conflating modes and profiles causes drift: <code>compute</code> starts meaning both GPU scheduling and LLM server installation. <code>desktop</code> starts carrying personal configuration and automation services. Keeping the boundary clean means profiles enable capability, targets expose mode surfaces, modes activate runtime posture, and services remain explicit operator selections.</p>
+<h2 id="control-plane-relationship"><a class="header" href="#control-plane-relationship">Control-plane relationship</a></h2>
+<p>Profiles and modes sit below the control-plane hierarchy: NixOS declarations feed systemd enforcement, which <code>dubctl</code> bridges for operator UX, and the mode controller manages runtime state against services.</p>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="runtime-behavior"><a class="header" href="#runtime-behavior">Runtime Behavior</a></h1>
+<p>Dubnium switches between three host-local modes, each with distinct runtime characteristics.</p>
+<h2 id="modes"><a class="header" href="#modes">Modes</a></h2>
+<p><strong>desktop</strong> — interactive workstation and development mode. Graphical session available, ordinary audio, display GPU protected for UI, LLM server inactive.</p>
+<p><strong>studio-local</strong> — low-latency audio profile layered on desktop. Audio-priority policy active, AI suppressed, heavy background pressure reduced.</p>
+<p><strong>compute</strong> — headless throughput mode for AI and platform work. Graphical session absent, compute target active, LLM server active when enabled, AI resources assigned to the configured GPU profile.</p>
+<h2 id="supported-transitions"><a class="header" href="#supported-transitions">Supported transitions</a></h2>
+<pre><code>desktop -&gt; studio-local
+studio-local -&gt; desktop
+desktop -&gt; compute
+compute -&gt; desktop
+</code></pre>
+<p><code>studio-local -&gt; compute</code> routes through <code>desktop</code> unless a future contract allows direct promotion.</p>
+<h2 id="transition-semantics"><a class="header" href="#transition-semantics">Transition semantics</a></h2>
+<p><strong>desktop → studio-local</strong>: validate studio capability, stop LLM server if active, start audio-priority services, re-observe. Success requires studio policy and audio overlay active, LLM server inactive.</p>
+<p><strong>studio-local → desktop</strong>: stop audio overlay services, verify desktop target, re-observe.</p>
+<p><strong>desktop → compute</strong>: the heaviest transition. Validate compute capability, check audio idle, terminate graphical session, release GPU display, isolate compute target, start LLM server, re-observe. Success requires compute target active, graphical session absent, LLM server active, GPU ownership evidence matching the compute profile.</p>
+<p><strong>compute → desktop</strong>: drain and stop LLM server, isolate desktop target, restore graphical session, re-observe. Rollback validated through the same post-action observation rules.</p>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="capability-map"><a class="header" href="#capability-map">Capability Map</a></h1>
+<p>Dubnium capabilities are intentionally layered. A fresh install should be useful as a workstation before any local AI, automation, cluster, or scheduler services are enabled.</p>
+<h2 id="capability-states"><a class="header" href="#capability-states">Capability states</a></h2>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>State</th><th>Meaning</th></tr>
+</thead>
+<tbody>
+<tr><td>Default</td><td>Enabled by the normal workstation install. Must be boring, safe, and maintainable.</td></tr>
+<tr><td>Opt-in</td><td>Available through Nix options or <code>dubctl apply</code>, but disabled by default.</td></tr>
+<tr><td>Experimental</td><td>Useful but still moving; expect interface changes.</td></tr>
+<tr><td>Planned</td><td>Design direction only; no stable operator contract yet.</td></tr>
+</tbody>
+</table>
+</div>
+<h2 id="key-capabilities"><a class="header" href="#key-capabilities">Key capabilities</a></h2>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Capability</th><th>State</th><th>Description</th></tr>
+</thead>
+<tbody>
+<tr><td><code>base-workstation</code></td><td>Default</td><td>NixOS system closure, users, Hyprland, audio, safe defaults</td></tr>
+<tr><td><code>home-layering</code></td><td>Default</td><td>Managed dotfiles with writable local overlays</td></tr>
+<tr><td><code>ai-helper</code></td><td>Default</td><td>Hermes and provider config wrappers (not model-serving daemons)</td></tr>
+<tr><td><code>ai-local</code></td><td>Opt-in</td><td>Local OpenAI-compatible LLM endpoint</td></tr>
+<tr><td><code>memory</code></td><td>Opt-in</td><td>Persistent memory and RAG substrate</td></tr>
+<tr><td><code>gateway</code></td><td>Opt-in</td><td>Local routing gateway (Plano)</td></tr>
+<tr><td><code>runner</code></td><td>Opt-in</td><td>GitHub Actions self-hosted runner</td></tr>
+<tr><td><code>scheduler</code></td><td>Opt-in</td><td>Local systemd timer substrate</td></tr>
+<tr><td><code>cluster</code></td><td>Opt-in</td><td>Local Kubernetes (k3s)</td></tr>
+<tr><td><code>model-seed</code></td><td>Opt-in</td><td>Model weight population outside Git and Nix store</td></tr>
+</tbody>
+</table>
+</div>
+<h2 id="ownership-rules"><a class="header" href="#ownership-rules">Ownership rules</a></h2>
+<p>Default capabilities must not require secrets or expose network services. Opt-in services must bind locally unless explicitly exposed. <code>dubctl</code> changes persistent capability state; <code>modectl</code> changes runtime posture only. Secrets enter through SOPS or host-local runtime files, not generated Nix-store files.</p>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="support-tiers-architecture"><a class="header" href="#support-tiers-architecture">Support Tiers Architecture</a></h1>
+<p>Dubnium is accumulating useful but unevenly mature capabilities. Support tiers keep useful experiments from destabilizing the base system.</p>
+<h2 id="core-rule-1"><a class="header" href="#core-rule-1">Core rule</a></h2>
+<pre><code>Higher-numbered tiers must not impose boot, rebuild, secret, network, or runtime requirements on lower-numbered tiers.
+</code></pre>
+<h2 id="tier-definitions"><a class="header" href="#tier-definitions">Tier definitions</a></h2>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Tier</th><th>Meaning</th><th>Expected behavior</th></tr>
+</thead>
+<tbody>
+<tr><td>Tier 1</td><td>Core supported system path</td><td>Must stay healthy through normal changes and CI validation</td></tr>
+<tr><td>Tier 2</td><td>Supported optional capability</td><td>Should work when enabled, but cannot block Tier 1</td></tr>
+<tr><td>Tier 3</td><td>Experimental opt-in capability</td><td>Useful but expected to change; requires operator awareness</td></tr>
+<tr><td>Archive</td><td>Historical or superseded</td><td>Kept for reference only</td></tr>
+</tbody>
+</table>
+</div>
+<h2 id="current-tier-map"><a class="header" href="#current-tier-map">Current tier map</a></h2>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Component</th><th>Tier</th></tr>
+</thead>
+<tbody>
+<tr><td>Installer, workstation baseline, headless target, secrets, basic <code>dubctl</code></td><td>Tier 1</td></tr>
+<tr><td>Hermes, Ollama, WSL, automation profile</td><td>Tier 2</td></tr>
+<tr><td>Plano, n8n, vLLM, k3s, GitHub runner, memory and RAG services</td><td>Tier 3</td></tr>
+</tbody>
+</table>
+</div>
+<h2 id="promotion-criteria"><a class="header" href="#promotion-criteria">Promotion criteria</a></h2>
+<p>Tier 3 moves to Tier 2 with stable options, documented enable/disable flow, predictable state directories, proper secret handling, localhost-by-default exposure policy, and basic health checks. Tier 2 moves to Tier 1 only when part of the base product contract without materially increasing fresh-install risk.</p>
+<p>Tiers are maintenance expectations, not feature value judgments. A Tier 3 service can be very useful while being Tier 3 because of maintenance cost, upgrade risk, secrets surface, or network exposure.</p>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="client-architecture"><a class="header" href="#client-architecture">Client Architecture</a></h1>
+<p>Dubnium distinguishes host composition (what the machine runs) from client architecture (how users and tools reach the machine).</p>
+<h2 id="client-classes"><a class="header" href="#client-classes">Client classes</a></h2>
+<ul>
+<li><strong>Local workstation</strong> — interactive user session on the host itself</li>
+<li><strong>Remote admin</strong> — laptop or secondary machine over Tailscale</li>
+<li><strong>Phone or secondary device</strong> — limited access for status checks</li>
+<li><strong>Automation clients</strong> — n8n workflows, CI-triggered jobs, scheduled tasks</li>
+</ul>
+<h2 id="boundaries"><a class="header" href="#boundaries">Boundaries</a></h2>
+<p>Clients do not define host truth — the flake does. Clients should prefer bounded entrypoints (the control plane, <code>dubctl</code>, <code>modectl</code>) over ad hoc service access. Remote admin access follows the VPN and service exposure architecture. Credential-bearing or agentic clients should route through the AI control plane rather than calling providers or runtimes directly.</p>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="memory-architecture"><a class="header" href="#memory-architecture">Memory Architecture</a></h1>
+<p>Dubnium treats durable memory as classified application data, not just infrastructure state. Storage technology does not define the memory model — the conceptual layering and governance do.</p>
+<h2 id="core-rule-2"><a class="header" href="#core-rule-2">Core rule</a></h2>
+<pre><code>The local LLM server is the inference runtime.
+Persistent memory is a separate classified lifecycle subsystem.
+</code></pre>
+<h2 id="conceptual-layers"><a class="header" href="#conceptual-layers">Conceptual layers</a></h2>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Layer</th><th>Question</th><th>Examples</th><th>Lifecycle</th></tr>
+</thead>
+<tbody>
+<tr><td>Operational</td><td>What am I doing?</td><td>Session context, plans, tool outputs</td><td>Expire or summarize</td></tr>
+<tr><td>Knowledge</td><td>What do I know?</td><td>Decisions, stable facts, lessons learned</td><td>Curate, review, archive</td></tr>
+<tr><td>Canonical</td><td>What is project truth?</td><td>Docs, ADRs, runbooks, specs</td><td>Version in repo</td></tr>
+</tbody>
+</table>
+</div>
+<p>The promotion boundary between operational and knowledge memory is the highest-risk part of the system — active planning should not become durable knowledge without classification and review.</p>
+<h2 id="data-classes"><a class="header" href="#data-classes">Data classes</a></h2>
+<p>Dubnium distinguishes source artifacts, memory records, policy envelopes, embeddings, indexes, context packets, and workflow state — each with its own canonical owner. Embeddings and indexes are derived, rebuildable state, not the source of truth.</p>
+<h2 id="policy-envelopes"><a class="header" href="#policy-envelopes">Policy envelopes</a></h2>
+<p>Memory lifecycle needs separate policy questions per operation:</p>
+<ul>
+<li><strong>Read policy</strong> — may this actor retrieve these candidates for this purpose?</li>
+<li><strong>Write policy</strong> — may this candidate become a memory record?</li>
+<li><strong>Promotion policy</strong> — may operational memory become knowledge?</li>
+<li><strong>Retention policy</strong> — should this memory expire or be reviewed?</li>
+<li><strong>Deletion policy</strong> — may this memory and its derived indexes be removed?</li>
+</ul>
+<h2 id="ownership-boundaries-1"><a class="header" href="#ownership-boundaries-1">Ownership boundaries</a></h2>
+<p>Dubnium hosts the memory service infrastructure. External governance tools evaluate access and promotion rules. The AI control plane assembles context from approved memory candidates. Vector indexes are rebuildable derived state. Canonical knowledge lives in versioned documentation.</p>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="local-override-convention"><a class="header" href="#local-override-convention">Local Override Convention</a></h1>
+<p>Dubnium supports several gitignored override points so operators can add host-local packages, user-local Home Manager config, installer secrets, and generated machine state without dirtying tracked source or forking the flake.</p>
+<h2 id="layer-model-2"><a class="header" href="#layer-model-2">Layer model</a></h2>
+<p>Five conceptual layers from closest to the machine to closest to the user:</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Layer</th><th>Path</th><th>Scope</th><th>Survives re-clone?</th></tr>
+</thead>
+<tbody>
+<tr><td>0 — Repo-Local Dev</td><td><code>local/*.nix</code></td><td>Temp system-wide packages and options</td><td>No</td></tr>
+<tr><td>1 — Host-Specific</td><td><code>hosts/&lt;host&gt;/user.local.nix</code></td><td>Per-host NixOS overrides</td><td>No</td></tr>
+<tr><td>2 — System External</td><td><code>/etc/dubnium/local/generated.nix</code></td><td>Durable machine identity, dubctl capability toggles</td><td>Yes — outside repo</td></tr>
+<tr><td>3 — Dotfiles User</td><td><code>home/&lt;user&gt;/git-local.nix</code></td><td>Temp user-level Home Manager packages</td><td>No</td></tr>
+<tr><td>4 — Home Machine Config</td><td><code>~/.config/&lt;tool&gt;/local.*</code></td><td>Durable per-machine user preferences</td><td>Yes — governed by home-layering</td></tr>
+</tbody>
+</table>
+</div>
+<h2 id="when-to-use-which"><a class="header" href="#when-to-use-which">When to use which</a></h2>
+<ul>
+<li><strong>Temporary system experiment</strong> → Layer 0 (<code>local/dubctl-packages.nix</code>)</li>
+<li><strong>Host-specific durable override</strong> → Layer 1 (<code>hosts/&lt;host&gt;/user.local.nix</code>, copied from <code>hosts/user.example.nix</code>)</li>
+<li><strong>State that survives repo re-clone</strong> → Layer 2 (<code>/etc/dubnium/local/generated.nix</code>)</li>
+<li><strong>Temporary user-level package</strong> → Layer 3 (<code>git-local.nix</code>)</li>
+<li><strong>Per-machine display, scaling, aliases</strong> → Layer 4 (<code>~/.config/&lt;tool&gt;/local.*</code>)</li>
+</ul>
+<h2 id="tool-boundaries"><a class="header" href="#tool-boundaries">Tool boundaries</a></h2>
+<p><code>dubctl</code> writes only Layer 2. <code>configctl</code> governs only Layer 4. Layers 0, 1, and 3 are hand-edited. The goal is to promote durable choices into versioned config after 2-3 stable rebuilds. Machine-specific state (GPU topology, disk layout) stays in Layer 1 or 2 permanently.</p>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="service-exposure-architecture"><a class="header" href="#service-exposure-architecture">Service Exposure Architecture</a></h1>
+<p>Dubnium services follow a tiered exposure model that defaults to localhost-only and requires explicit configuration for broader access.</p>
+<h2 id="exposure-tiers"><a class="header" href="#exposure-tiers">Exposure tiers</a></h2>
+<pre><code>localhost
+    -&gt; safest default
+
+Tailscale
+    -&gt; explicit private remote access
+
+LAN
+    -&gt; exceptional, service-specific justification required
+
+public
+    -&gt; discouraged by default, requires explicit design and auth
+</code></pre>
+<h2 id="policy"><a class="header" href="#policy">Policy</a></h2>
+<p>Services bind to localhost by default. Tailscale exposure is explicit and documented per service. LAN exposure is exceptional and must be justified service-by-service. Public ingress is not part of the default Dubnium posture.</p>
+<p>Services in scope include the local LLM server, n8n, the memory API, GitHub runner endpoints, and future optional services. Each service that broadens its bind address beyond localhost should document the authentication and trust assumptions it relies on.</p>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="dubctl--host-operator-ux"><a class="header" href="#dubctl--host-operator-ux">Dubctl — Host Operator UX</a></h1>
+<p><code>dubctl</code> is Dubnium’s narrow operator helper for common host-local operations — service enablement, capability management, flake input manipulation, package overrides, AI diagnostics, GPU monitoring, and NixOS rebuild orchestration.</p>
+<p>It is not a second configuration control plane. It writes bounded host-local selection state that NixOS sees at rebuild time, keeping the flake as the source of truth for architectural wiring.</p>
+<h2 id="key-capabilities-1"><a class="header" href="#key-capabilities-1">Key capabilities</a></h2>
+<ul>
+<li><strong>Service management</strong> — list, enable, and disable registered services with optional profile bindings and settings. Mutations require root.</li>
+<li><strong>Capability management</strong> — enable or disable registered integration and capability selections.</li>
+<li><strong>Flake input management</strong> — list, search, add, remove, and update flake inputs without editing Nix source by hand.</li>
+<li><strong>Local package overrides</strong> — inspect and manage local system package attrs outside the flake.</li>
+<li><strong>AI diagnostics</strong> — report provider and system diagnostics, delegate analysis to the AI control plane.</li>
+<li><strong>GPU monitoring</strong> — watch NVIDIA GPU utilization by role or profile (read-only wrapper around <code>nvidia-smi</code>).</li>
+<li><strong>Apply</strong> — run <code>nixos-rebuild</code> for the declared Dubnium state with automatic local path overrides.</li>
+</ul>
+<h2 id="external-command-trees"><a class="header" href="#external-command-trees">External command trees</a></h2>
+<p><code>dubctl</code> can dispatch a user-owned command subtree from <code>$PATH</code>. Executables use
+the naming convention <code>dubctl-&lt;token&gt;-&lt;token&gt;</code>, where each command token is
+lowercase ASCII alphanumeric text, and receive the remaining
+arguments unchanged:</p>
+<pre><code class="language-text">dubctl meeting session start --foo
+  -&gt; dubctl-meeting-session start --foo
+</code></pre>
+<p>The longest matching executable prefix wins. Built-in commands and aliases
+always take precedence. Resolution uses direct argv execution, never a shell,
+and is disabled for privileged execution, including UID transitions and
+effective UID 0. Plugins should own their own state and communicate with <code>dubctl</code> through argv, environment,
+stdin/stdout/stderr, exit codes, and signals.</p>
+<p>The initial intended consumer is a Home Manager-installed
+<code>dubctl-meeting-session</code> command for graphical user-session lifecycle actions.</p>
+<h2 id="command-surface-audit"><a class="header" href="#command-surface-audit">Command-surface audit</a></h2>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Logical paths and aliases</th><th>Implementation / owner</th><th>State, adapters, privilege/session model</th><th>Initial disposition</th></tr>
+</thead>
+<tbody>
+<tr><td><code>inputs list</code>, <code>search</code>, <code>info</code>, <code>install</code>/<code>add</code>, <code>remove</code>/<code>uninstall</code>, <code>update</code>/<code>upgrade</code></td><td><code>scripts/dubctl-core.py</code> plus <code>scripts/dubctl.py</code> input-update override; host operator</td><td>Reads/edits flake source and lock state; subprocesses <code>nix</code>; no graphical session</td><td>Evaluate later</td></tr>
+<tr><td><code>service list</code>, <code>enable</code>, <code>disable</code>, <code>refresh</code></td><td><code>scripts/dubctl-core.py</code>; host operator</td><td>Reads registry/state; writes <code>/var/lib/dubnium/local</code> and <code>/etc/dubnium/local</code>; mutations require root</td><td>Keep core initially</td></tr>
+<tr><td><code>capability list</code>, <code>enable</code>, <code>disable</code></td><td><code>scripts/dubctl-core.py</code>; host operator</td><td>Reads/writes generated host-local state; mutations require root</td><td>Keep core initially</td></tr>
+<tr><td><code>schedule list</code>, <code>show</code>, <code>trigger</code>, <code>pause</code>, <code>resume</code>, <code>history</code></td><td><code>scripts/dubctl-core.py</code>; scheduler API owner</td><td>Reads or mutates scheduler API state; no graphical session</td><td>Evaluate later</td></tr>
+<tr><td><code>apply</code></td><td><code>scripts/dubctl-core.py</code>; host rebuild boundary</td><td>Invokes <code>nixos-rebuild</code>; privilege boundary is explicit <code>sudo</code>; no plugin state</td><td>Keep core initially</td></tr>
+<tr><td><code>ai status</code>, <code>providers</code>/<code>provider</code>/<code>list</code>, <code>ask</code>, <code>diagnose</code></td><td><code>scripts/dubctl-ai.py</code>; AI control-plane owner</td><td>Provider HTTP, Hermes subprocess, and read-only diagnostics; may read user config; user session for user-owned Hermes tools</td><td>Migrate first</td></tr>
+<tr><td><code>gpu monitor</code>/<code>mon</code>/<code>watch</code></td><td><code>scripts/dubctl-gpu.py</code>; hardware adapter owner</td><td>Reads NVIDIA tools and runtime telemetry; hardware dependency; no state mutation</td><td>Migrate first</td></tr>
+<tr><td><code>llm profiles</code>, <code>download</code>, <code>serve</code>, <code>benchmark</code></td><td><code>scripts/dubctl-llm.py</code>; local model/runtime owner</td><td>Model profile files and service/process adapters; optional host packages; no core-private state contract</td><td>Migrate first</td></tr>
+<tr><td><code>package list</code>, <code>add</code>, <code>remove</code></td><td><code>scripts/dubctl-package.py</code>; package override owner</td><td>Reads/writes local package override state; filesystem adapter; state boundary requires audit</td><td>Migrate first after state audit</td></tr>
+<tr><td><code>runtime status</code>, <code>preflight</code>, <code>observe</code></td><td><code>scripts/dubctl-runtime.py</code>; runtime read-model owner</td><td>Reads runtime policy and process telemetry; read-only system adapters</td><td>Migrate first</td></tr>
+<tr><td><code>specialists catalog</code>, <code>status</code>, <code>run</code></td><td><code>scripts/dubctl-specialists.py</code>; specialist runtime owner</td><td>Reads catalog and delegates runs through runtime adapters; process/service boundary; no direct core-private mutation</td><td>Migrate first</td></tr>
+<tr><td><code>automation list</code>, <code>validate</code></td><td><code>scripts/dubctl-automation.py</code>; automation catalog owner</td><td>Reads/validates source-owned automation catalog; YAML/schema adapters; read-only</td><td>Keep as adapter initially</td></tr>
+<tr><td><code>supervisor status</code>, <code>health</code></td><td><code>scripts/dubctl-supervisor.py</code>; gateway owner</td><td>HTTP read model; read-only service adapter; no graphical session</td><td>Keep as adapter initially</td></tr>
+<tr><td><code>meeting session start</code>, <code>stop</code>, <code>status</code></td><td>External Home Manager plugin; user-session owner</td><td>Owns graphical-session state and Wayland/DBus adapters; normal user only; no core imports</td><td>External command</td></tr>
+</tbody>
+</table>
+</div>
+<p>The current source-file split is not itself treated as an architectural
+boundary. Later migrations must identify each command’s use cases, narrow
+ports, system adapters, privilege/session requirements, state ownership, and
+independent packaging value before removing static parser wiring.</p>
+<h2 id="discovery-and-external-help"><a class="header" href="#discovery-and-external-help">Discovery and external help</a></h2>
+<p>Use <code>dubctl commands</code> to inspect the unified command surface. The human output
+contains logical paths, whether each entry is built-in or external, its
+selection state, and the selected executable path. Use
+<code>dubctl commands --format json</code> for a versioned machine-readable inventory:</p>
+<pre><code class="language-json">{"schemaVersion": 1, "commands": []}
+</code></pre>
+<p>External entries can be inspected without knowing their executable name:</p>
+<pre><code class="language-bash">dubctl help meeting session
+</code></pre>
+<p>This forwards <code>--help</code> to the selected external executable. Discovery and help
+forwarding use the same privilege/trust policy as normal external dispatch.</p>
+<h2 id="home-manager-integration"><a class="header" href="#home-manager-integration">Home Manager integration</a></h2>
+<p>A user-session plugin can be installed without changing Dubnium’s core package:</p>
+<pre><code class="language-nix">{ pkgs, ... }:
+{
+  home.packages = [
+    (pkgs.writeShellApplication {
+      name = "dubctl-meeting-session";
+      text = ''
+        case "''${1-}" in
+          --help)
+            echo "usage: dubctl meeting session {start|stop|status}"
+            exit 0
+            ;;
+          --version)
+            echo "dubctl-meeting-session 0.1.0"
+            exit 0
+            ;;
+        esac
+        exec my-session-use-case "$@"
+      '';
+    })
+  ];
+}
+</code></pre>
+<p>The plugin owns its application state, graphical-session adapters, and domain
+use cases. It communicates with <code>dubctl</code> only through argv, environment,
+stdin/stdout/stderr, exit status, and signals. Read-only verbs such as
+<code>status</code> must not mutate state. Machine-readable output should use a versioned
+envelope such as <code>{ "schemaVersion": 1, "command": "meeting session status" }</code>.</p>
+<h2 id="safety-model"><a class="header" href="#safety-model">Safety model</a></h2>
+<p><code>dubctl</code> treats command arguments as untrusted input, validates Nix attr safety, backs up <code>flake.nix</code> before mutation, and uses argv arrays instead of shell string concatenation. Service and capability mutations require root; listing and diagnostics do not.</p>
+<h2 id="boundaries-1"><a class="header" href="#boundaries-1">Boundaries</a></h2>
+<p><code>dubctl</code> may manage generated host-local state and invoke <code>nixos-rebuild</code>. It must not become the owner of source-controlled policy, manage user home layering (that is <code>configctl</code>’s domain), store secrets, or edit service-specific app state.</p>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="configctl--home-configuration-reconciliation"><a class="header" href="#configctl--home-configuration-reconciliation">Configctl — Home Configuration Reconciliation</a></h1>
+<p><code>configctl</code> is a generic home-configuration reconciliation CLI for managing layered home config, init contracts for first-run tool state, and drift detection. It is not Dubnium-specific — usable on any Linux machine with layered dotfiles.</p>
+<h2 id="layer-model-3"><a class="header" href="#layer-model-3">Layer model</a></h2>
+<p>Per-tool home configuration is organized into ownership layers under <code>~/.config/&lt;tool&gt;/</code>:</p>
+<ul>
+<li><strong><code>managed.*</code></strong> — generated by Home Manager or dotfiles; never edit directly</li>
+<li><strong><code>local.*</code></strong> — machine-specific overrides; never automatically promoted</li>
+<li><strong><code>custom.d/</code></strong> — user-authored fragments that are candidates for promotion to dotfiles</li>
+<li><strong><code>adopted.d/</code></strong> — fragments already promoted or represented by managed config</li>
+</ul>
+<h2 id="key-capabilities-2"><a class="header" href="#key-capabilities-2">Key capabilities</a></h2>
+<ul>
+<li><strong><code>status</code></strong> — inspect layering state for one or all tools</li>
+<li><strong><code>adopt</code></strong> — scaffold the layered directory structure for a tool</li>
+<li><strong><code>promote</code></strong> — copy a custom fragment into the dotfiles repo and stage it</li>
+<li><strong><code>reconcile</code></strong> — detect drift between dotfiles and local custom fragments</li>
+<li><strong><code>doctor</code></strong> — environment health check for required tools and init contracts</li>
+<li><strong><code>init</code></strong> — manage first-run tool-state contracts (npm globals, pip packages, Hermes config, Codex config) with risk-gated approval</li>
+<li><strong><code>git-hooks</code></strong> — declarative git hook management through git config sections</li>
+</ul>
+<h2 id="use-case"><a class="header" href="#use-case">Use case</a></h2>
+<p><code>configctl</code> solves the tension between immutable managed config and the need for local overrides that should not end up in version control. It provides a structured promotion path from throwaway local customization to committed dotfile fragment.</p>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="mode-controller--runtime-mode-transitions"><a class="header" href="#mode-controller--runtime-mode-transitions">Mode Controller — Runtime Mode Transitions</a></h1>
+<p><code>modectl</code> manages runtime mode transitions between <code>desktop</code>, <code>studio-local</code>, and <code>compute</code> modes. It controls systemd target isolation, GPU and audio resource contention, and guard-based safety checks that prevent unsafe transitions.</p>
+<h2 id="modes-1"><a class="header" href="#modes-1">Modes</a></h2>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Mode</th><th>Description</th></tr>
+</thead>
+<tbody>
+<tr><td><code>desktop</code></td><td>Interactive workstation. GUI on, local AI off.</td></tr>
+<tr><td><code>studio-local</code></td><td>Overlay on desktop for audio-priority policy. AI suppressed.</td></tr>
+<tr><td><code>compute</code></td><td>Headless throughput mode. Graphical session absent, AI services active.</td></tr>
+</tbody>
+</table>
+</div>
+<p>Transitions between <code>desktop</code> and <code>studio-local</code> are lightweight. Transitions to <code>compute</code> isolate via systemd target switching and stop the graphical session.</p>
+<h2 id="guards-1"><a class="header" href="#guards-1">Guards</a></h2>
+<p>Pre-transition safety checks prevent transitions that would disrupt running work. Guards check audio idle state, CPU load, long-running user jobs, memory headroom, GPU display release, and vLLM drainability. Most guards are non-bypassable; the user-jobs check can be bypassed at request time.</p>
+<h2 id="key-capabilities-3"><a class="header" href="#key-capabilities-3">Key capabilities</a></h2>
+<ul>
+<li><strong><code>status</code></strong> — show current and desired mode, last transition, and guard results</li>
+<li><strong><code>request</code></strong> — request a mode transition with optional guard bypass</li>
+<li><strong><code>reconcile</code></strong> — run the full reconciliation loop against the desired mode</li>
+<li><strong><code>current</code> / <code>desired</code></strong> — print observed or stored mode</li>
+<li><strong><code>doctor</code></strong> — environment health check</li>
+</ul>
+<h2 id="architecture-2"><a class="header" href="#architecture-2">Architecture</a></h2>
+<p>State lives under <code>/run/mode-controller</code> (runtime) and <code>/var/lib/mode-controller</code> (durable event log). Reconciliation runs through a parameterised systemd oneshot service triggered by the <code>request</code> command. Every transition is recorded in an append-only JSONL event stream for audit and diagnosis.</p>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="decisions"><a class="header" href="#decisions">Decisions</a></h1>
+<p>Dubnium’s architecture decision records capture the rationale behind current defaults, boundaries, and tradeoffs. The architecture and runbook pages describe current guidance; the ADRs explain why those choices were made.</p>
+<h2 id="runtime-and-host-behavior"><a class="header" href="#runtime-and-host-behavior">Runtime and host behavior</a></h2>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>ADR</th><th>Decision</th></tr>
+</thead>
+<tbody>
+<tr><td>ADR-0001</td><td>Runtime switching first — modes before full profile abstraction</td></tr>
+<tr><td>ADR-0002</td><td>Studio-local is a desktop overlay, not an isolated target</td></tr>
+<tr><td>ADR-0004</td><td>Boot defaults to desktop mode</td></tr>
+<tr><td>ADR-0005</td><td>k3s stays stable across modes in v1</td></tr>
+<tr><td>ADR-0006</td><td>Tailscale is the primary remote connectivity layer</td></tr>
+<tr><td>ADR-0007</td><td>Headless VM as the CI-safe validation target</td></tr>
+</tbody>
+</table>
+</div>
+<h2 id="ai-and-model-serving"><a class="header" href="#ai-and-model-serving">AI and model serving</a></h2>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>ADR</th><th>Decision</th></tr>
+</thead>
+<tbody>
+<tr><td>ADR-0003</td><td>vLLM is compute-only in v1 — not mixed with desktop AI</td></tr>
+<tr><td>ADR-0008</td><td>Seed local vLLM model bundles, do not bake weights into the ISO</td></tr>
+<tr><td>ADR-0010</td><td>Keep persistent memory separate from the vLLM runtime</td></tr>
+<tr><td>ADR-0013</td><td>llama-server as the default local inference backend</td></tr>
+<tr><td>ADR-0014</td><td>Active models follow a symlink schema for runtime model switching</td></tr>
+<tr><td>ADR-0017</td><td>AI control plane architecture — policy above routing above runtimes</td></tr>
+</tbody>
+</table>
+</div>
+<h2 id="ownership-state-and-tooling"><a class="header" href="#ownership-state-and-tooling">Ownership, state, and tooling</a></h2>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>ADR</th><th>Decision</th></tr>
+</thead>
+<tbody>
+<tr><td>ADR-0009</td><td>Manage runtime secrets outside Nix source — SOPS and host-local files</td></tr>
+<tr><td>ADR-0011</td><td>External ownership boundaries — Dubnium vs dotfiles vs model-router</td></tr>
+<tr><td>ADR-0012</td><td>Tool boundary design — dubctl, configctl, and modectl scopes</td></tr>
+<tr><td>ADR-0015</td><td>Host-local generated state protocol — <code>/etc/dubnium/local/generated.nix</code></td></tr>
+<tr><td>ADR-0016</td><td>Service registry eval pattern — flake-evaluated service metadata consumed at runtime</td></tr>
+</tbody>
+</table>
+</div>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+
+            </nav>
+
+        </div>
+
+        <template id=fa-eye><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M288 32c-80.8 0-145.5 36.8-192.6 80.6C48.6 156 17.3 208 2.5 243.7c-3.3 7.9-3.3 16.7 0 24.6C17.3 304 48.6 356 95.4 399.4C142.5 443.2 207.2 480 288 480s145.5-36.8 192.6-80.6c46.8-43.5 78.1-95.4 93-131.1c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C433.5 68.8 368.8 32 288 32zM432 256c0 79.5-64.5 144-144 144s-144-64.5-144-144s64.5-144 144-144s144 64.5 144 144zM288 192c0 35.3-28.7 64-64 64c-11.5 0-22.3-3-31.6-8.4c-.2 2.8-.4 5.5-.4 8.4c0 53 43 96 96 96s96-43 96-96s-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6z"/></svg></span></template>
+        <template id=fa-eye-slash><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M38.8 5.1C28.4-3.1 13.3-1.2 5.1 9.2S-1.2 34.7 9.2 42.9l592 464c10.4 8.2 25.5 6.3 33.7-4.1s6.3-25.5-4.1-33.7L525.6 386.7c39.6-40.6 66.4-86.1 79.9-118.4c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C465.5 68.8 400.8 32 320 32c-68.2 0-125 26.3-169.3 60.8L38.8 5.1zM223.1 149.5C248.6 126.2 282.7 112 320 112c79.5 0 144 64.5 144 144c0 24.9-6.3 48.3-17.4 68.7L408 294.5c5.2-11.8 8-24.8 8-38.5c0-53-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6c0 10.2-2.4 19.8-6.6 28.3l-90.3-70.8zm223.1 298L373 389.9c-16.4 6.5-34.3 10.1-53 10.1c-79.5 0-144-64.5-144-144c0-6.9 .5-13.6 1.4-20.2L83.1 161.5C60.3 191.2 44 220.8 34.5 243.7c-3.3 7.9-3.3 16.7 0 24.6c14.9 35.7 46.2 87.7 93 131.1C174.5 443.2 239.2 480 320 480c47.8 0 89.9-12.9 126.2-32.5z"/></svg></span></template>
+        <template id=fa-copy><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M502.6 70.63l-61.25-61.25C435.4 3.371 427.2 0 418.7 0H255.1c-35.35 0-64 28.66-64 64l.0195 256C192 355.4 220.7 384 256 384h192c35.2 0 64-28.8 64-64V93.25C512 84.77 508.6 76.63 502.6 70.63zM464 320c0 8.836-7.164 16-16 16H255.1c-8.838 0-16-7.164-16-16L239.1 64.13c0-8.836 7.164-16 16-16h128L384 96c0 17.67 14.33 32 32 32h47.1V320zM272 448c0 8.836-7.164 16-16 16H63.1c-8.838 0-16-7.164-16-16L47.98 192.1c0-8.836 7.164-16 16-16H160V128H63.99c-35.35 0-64 28.65-64 64l.0098 256C.002 483.3 28.66 512 64 512h192c35.2 0 64-28.8 64-64v-32h-47.1L272 448z"/></svg></span></template>
+        <template id=fa-play><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M73 39c-14.8-9.1-33.4-9.4-48.5-.9S0 62.6 0 80V432c0 17.4 9.4 33.4 24.5 41.9s33.7 8.1 48.5-.9L361 297c14.3-8.7 23-24.2 23-41s-8.7-32.2-23-41L73 39z"/></svg></span></template>
+        <template id=fa-clock-rotate-left><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M75 75L41 41C25.9 25.9 0 36.6 0 57.9V168c0 13.3 10.7 24 24 24H134.1c21.4 0 32.1-25.9 17-41l-30.8-30.8C155 85.5 203 64 256 64c106 0 192 86 192 192s-86 192-192 192c-40.8 0-78.6-12.7-109.7-34.4c-14.5-10.1-34.4-6.6-44.6 7.9s-6.6 34.4 7.9 44.6C151.2 495 201.7 512 256 512c141.4 0 256-114.6 256-256S397.4 0 256 0C185.3 0 121.3 28.7 75 75zm181 53c-13.3 0-24 10.7-24 24V256c0 6.4 2.5 12.5 7 17l72 72c9.4 9.4 24.6 9.4 33.9 0s9.4-24.6 0-33.9l-65-65V152c0-13.3-10.7-24-24-24z"/></svg></span></template>
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="elasticlunr-ef4e11c1.min.js"></script>
+        <script src="mark-09e88c2c.min.js"></script>
+        <script src="searcher-c2a407aa.js"></script>
+
+        <script src="clipboard-1626706a.min.js"></script>
+        <script src="highlight-abc7f01d.js"></script>
+        <script src="book-a0b12cfe.js"></script>
+
+        <!-- Custom JS scripts -->
+        <script src="mermaid-eefea253.min.js"></script>
+        <script src="mermaid-init-ccf746f1.js"></script>
+
+        <script>
+        window.addEventListener('load', function() {
+            window.setTimeout(window.print, 100);
+        });
+        </script>
+
+
+    </div>
+    </body>
+</html>
