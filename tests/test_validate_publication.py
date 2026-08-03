@@ -23,7 +23,7 @@ class PublicationValidationTests(unittest.TestCase):
                 {
                     "source_repository": "ryjen/dubnium",
                     "source_commit": "a" * 40,
-                    "generator": "mdbook 0.4.52",
+                    "generator": "mdbook 0.5.2; mdbook-mermaid 0.17.0",
                     "generated_at": "2026-07-28T04:00:00Z",
                 }
             ),
@@ -36,6 +36,46 @@ class PublicationValidationTests(unittest.TestCase):
             root = Path(directory)
             self.make_book(root)
             self.assertEqual([], MODULE.validate(root))
+
+    def test_accepts_mdbook_generated_exceptions(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            docs = self.make_book(root, "<p>Use http://localhost:8000 locally.</p>")
+            (docs / ".nojekyll").write_text("", encoding="utf-8")
+            (docs / "searchindex-d035b8e1.js").write_text(
+                'window.search = "http://localhost:8000";', encoding="utf-8"
+            )
+            (docs / "mermaid-eefea253.min.js").write_text(
+                "TOKEN=parserToken;", encoding="utf-8"
+            )
+            self.assertEqual([], MODULE.validate(root))
+
+    def test_rejects_localhost_link_targets(self) -> None:
+        for html in (
+            '<a href="http://localhost:8000/admin">admin</a>',
+            '<a href=http://localhost:8000/admin>admin</a>',
+        ):
+            with self.subTest(html=html), tempfile.TemporaryDirectory() as directory:
+                root = Path(directory)
+                self.make_book(root, html)
+                errors = MODULE.validate(root)
+                self.assertTrue(any("localhost endpoint" in error for error in errors))
+
+    def test_rejects_secret_assignment_in_regular_script(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            docs = self.make_book(root)
+            (docs / "custom.js").write_text("TOKEN=actualValue;", encoding="utf-8")
+            errors = MODULE.validate(root)
+            self.assertTrue(any("secret-like assignment" in error for error in errors))
+
+    def test_rejects_unexpected_extensionless_file(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            docs = self.make_book(root)
+            (docs / "unexpected").write_text("data", encoding="utf-8")
+            errors = MODULE.validate(root)
+            self.assertTrue(any("unexpected generated file type" in error for error in errors))
 
     def test_rejects_private_repository_link(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
