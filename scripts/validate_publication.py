@@ -13,19 +13,29 @@ ALLOWED_SUFFIXES = {
     ".html", ".css", ".js", ".json", ".svg", ".png", ".jpg", ".jpeg",
     ".webp", ".gif", ".woff", ".woff2", ".ttf", ".eot", ".txt", ".map",
 }
+ALLOWED_BASENAMES = {".nojekyll"}
 SHA_RE = re.compile(r"^[0-9a-f]{40}$")
 RFC3339_RE = re.compile(r"^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d+)?Z$")
 PRIVATE_PATTERNS = {
     "private repository URL": re.compile(r"github\.com/ryjen/dubnium", re.I),
     "private edit link": re.compile(r"github\.com/ryjen/dubnium/edit/", re.I),
     "internal documentation path": re.compile(r"docs/internal|/internal/", re.I),
-    "localhost endpoint": re.compile(r"(?:https?://)?(?:localhost|127\.0\.0\.1)(?::\d+)?", re.I),
     "private IPv4 address": re.compile(
         r"\b(?:10\.\d{1,3}\.\d{1,3}\.\d{1,3}|192\.168\.\d{1,3}\.\d{1,3}|172\.(?:1[6-9]|2\d|3[01])\.\d{1,3}\.\d{1,3})\b"
     ),
     "absolute home path": re.compile(r"/(?:home|Users)/[A-Za-z0-9._-]+/"),
     "secret-like assignment": re.compile(r"\b(?:TOKEN|PASSWORD|SECRET|PRIVATE_KEY)\s*=\s*[^\s<]+", re.I),
 }
+LOCALHOST_ENDPOINT = re.compile(
+    r"(?:https?://)?(?:localhost|127\.0\.0\.1)(?::\d+)?",
+    re.I,
+)
+HTML_URL_ATTRIBUTE = re.compile(
+    r'''\b(?:href|src|action)\s*=\s*(?:"([^"]*)"|'([^']*)'|([^\s"'=<>`]+))''',
+    re.I | re.S,
+)
+MERMAID_BUNDLE = re.compile(r"^mermaid-[0-9a-f]+\.min\.js$", re.I)
+SEARCH_INDEX = re.compile(r"^searchindex-[0-9a-f]+\.js$", re.I)
 TEXT_SUFFIXES = {".html", ".css", ".js", ".json", ".svg", ".txt", ".map"}
 
 
@@ -44,6 +54,25 @@ def validate_changed_paths(paths: list[str]) -> list[str]:
     if not unexpected:
         return []
     return ["publication changes must be confined to site/docs/: " + ", ".join(unexpected)]
+
+
+def contains_localhost_endpoint(relative: Path, suffix: str, text: str) -> bool:
+    if SEARCH_INDEX.fullmatch(relative.name):
+        return False
+    if suffix == ".html":
+        for match in HTML_URL_ATTRIBUTE.finditer(text):
+            value = next(group for group in match.groups() if group is not None)
+            if LOCALHOST_ENDPOINT.search(value):
+                return True
+        return False
+    return bool(LOCALHOST_ENDPOINT.search(text))
+
+
+def should_scan_private(relative: Path, label: str) -> bool:
+    return not (
+        label == "secret-like assignment"
+        and MERMAID_BUNDLE.fullmatch(relative.name)
+    )
 
 
 def validate(root: Path) -> list[str]:
@@ -85,18 +114,23 @@ def validate(root: Path) -> list[str]:
             continue
         if not path.is_file():
             continue
-        if path.suffix.lower() not in ALLOWED_SUFFIXES:
+        if path.name in ALLOWED_BASENAMES:
+            continue
+        suffix = path.suffix.lower()
+        if suffix not in ALLOWED_SUFFIXES:
             fail(errors, f"unexpected generated file type: {relative}")
             continue
-        if path.suffix.lower() not in TEXT_SUFFIXES:
+        if suffix not in TEXT_SUFFIXES:
             continue
         try:
             text = path.read_text(encoding="utf-8")
         except UnicodeDecodeError:
             fail(errors, f"expected UTF-8 text file: {relative}")
             continue
+        if contains_localhost_endpoint(relative, suffix, text):
+            fail(errors, f"{relative}: contains localhost endpoint")
         for label, pattern in PRIVATE_PATTERNS.items():
-            if pattern.search(text):
+            if should_scan_private(relative, label) and pattern.search(text):
                 fail(errors, f"{relative}: contains {label}")
 
     return errors
