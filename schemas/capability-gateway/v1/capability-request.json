@@ -1,0 +1,42 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.micrantha.com/dubnium/capability-gateway/v1/capability-request.json",
+  "title": "CapabilityRequest v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "contract_version",
+    "request_id",
+    "capability",
+    "target",
+    "payload",
+    "evidence",
+    "requested_at"
+  ],
+  "properties": {
+    "contract_version": {
+      "$ref": "common.json#/$defs/contractVersion"
+    },
+    "request_id": {
+      "$ref": "common.json#/$defs/requestId"
+    },
+    "capability": {
+      "$ref": "common.json#/$defs/capability"
+    },
+    "target": {
+      "$ref": "common.json#/$defs/target"
+    },
+    "payload": {
+      "$ref": "common.json#/$defs/payload"
+    },
+    "evidence": {
+      "$ref": "common.json#/$defs/evidenceReferences"
+    },
+    "requested_at": {
+      "$ref": "common.json#/$defs/timestamp"
+    },
+    "expires_at": {
+      "$ref": "common.json#/$defs/timestamp"
+    }
+  }
+}
