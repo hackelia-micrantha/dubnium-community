@@ -1,0 +1,87 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.micrantha.com/dubnium/capability-gateway/v1/capability-submission.json",
+  "title": "CapabilitySubmission v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "contract_version",
+    "request_id",
+    "outcome",
+    "submitted_at"
+  ],
+  "properties": {
+    "contract_version": {
+      "$ref": "common.json#/$defs/contractVersion"
+    },
+    "request_id": {
+      "$ref": "common.json#/$defs/requestId"
+    },
+    "outcome": {
+      "type": "string",
+      "enum": [
+        "accepted",
+        "rejected"
+      ]
+    },
+    "request_digest": {
+      "$ref": "common.json#/$defs/digest"
+    },
+    "status_ref": {
+      "$ref": "common.json#/$defs/uriReference"
+    },
+    "error": {
+      "$ref": "error.json"
+    },
+    "submitted_at": {
+      "$ref": "common.json#/$defs/timestamp"
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "outcome": {
+            "const": "accepted"
+          }
+        },
+        "required": [
+          "outcome"
+        ]
+      },
+      "then": {
+        "required": [
+          "request_digest",
+          "status_ref"
+        ],
+        "not": {
+          "required": [
+            "error"
+          ]
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "outcome": {
+            "const": "rejected"
+          }
+        },
+        "required": [
+          "outcome"
+        ]
+      },
+      "then": {
+        "required": [
+          "error"
+        ],
+        "not": {
+          "required": [
+            "status_ref"
+          ]
+        }
+      }
+    }
+  ]
+}
