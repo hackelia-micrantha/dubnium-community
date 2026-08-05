@@ -20,6 +20,8 @@ from conformance.gateway_envelope_core_v1 import (
     validate_status_transition,
 )
 
+CANONICAL_FIXTURE_ROOT = Path(__file__).resolve().parent / "envelopes" / "v1"
+
 validate_submission = normalize_submission
 validate_status = normalize_status
 run_fixture_suite = run_envelope_fixture_suite
@@ -28,9 +30,14 @@ run_fixture_suite = run_envelope_fixture_suite
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("command", choices=("run-fixtures",))
-    parser.add_argument("root", type=Path)
-    args = parser.parse_args(argv)
-    errors = run_fixture_suite(args.root / "envelopes" / "v1" if (args.root / "envelopes" / "v1").is_dir() else args.root)
+    parser.add_argument(
+        "root",
+        nargs="?",
+        type=Path,
+        help="Deprecated compatibility argument; canonical fixtures are repository-owned.",
+    )
+    parser.parse_args(argv)
+    errors = run_fixture_suite(CANONICAL_FIXTURE_ROOT)
     if errors:
         for error in errors:
             print(f"- {error}", file=sys.stderr)
