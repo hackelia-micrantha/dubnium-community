@@ -28,7 +28,10 @@ POLICY_FILES = {
 
 
 def normalize(path: str) -> str:
-    return path.strip().replace("\\", "/").lstrip("./")
+    normalized = path.strip().replace("\\", "/")
+    while normalized.startswith("./"):
+        normalized = normalized[2:]
+    return normalized
 
 
 def classify_path(path: str) -> set[str]:
