@@ -38,6 +38,7 @@
         "schema_validation_failed",
         "invalid_timestamp",
         "request_id_conflict",
+        "request_not_found",
         "capability_not_admitted",
         "governance_denied",
         "governance_indeterminate",
