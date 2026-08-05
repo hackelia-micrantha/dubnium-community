@@ -109,7 +109,46 @@
       "then": {
         "required": [
           "error"
+        ],
+        "not": {
+          "required": [
+            "result"
+          ]
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "gateway_state": {
+            "enum": [
+              "received",
+              "validated",
+              "policy-pending",
+              "authorized",
+              "dispatched"
+            ]
+          }
+        },
+        "required": [
+          "gateway_state"
         ]
+      },
+      "then": {
+        "not": {
+          "anyOf": [
+            {
+              "required": [
+                "result"
+              ]
+            },
+            {
+              "required": [
+                "error"
+              ]
+            }
+          ]
+        }
       }
     }
   ]
