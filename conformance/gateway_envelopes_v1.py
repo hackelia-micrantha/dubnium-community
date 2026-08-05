@@ -42,6 +42,7 @@ STATUS_FIELDS = {
     "updated_at",
 }
 ERROR_FIELDS = {"code", "message", "field"}
+ERROR_CODE = core.re.compile(r"^[a-z][a-z0-9]*(?:\.[a-z][a-z0-9_]*)+$")
 STATES = {
     "received",
     "validated",
@@ -68,7 +69,7 @@ def validate_error(value: Any) -> dict[str, str]:
     error = core._expect_object(value, "error")
     core._expect_fields(error, ERROR_FIELDS, "error")
     code = core._expect_string(core._require(error, "code", "error"), "error.code", max_length=128)
-    if not core.CAPABILITY_NAME.fullmatch(code):
+    if not ERROR_CODE.fullmatch(code):
         raise core.ContractError("error.invalid_code", "error.code must be a dotted lowercase identifier")
     message = core._expect_string(core._require(error, "message", "error"), "error.message", max_length=512)
     normalized = {"code": code, "message": message}
@@ -87,7 +88,7 @@ def _optional_identity(
     has_digest = "request_digest" in envelope
     if has_id != has_digest:
         raise core.ContractError(
-            "submission.partial_identity",
+            "envelope.partial_identity",
             "request_id and request_digest must be present together",
         )
     if not has_id:
@@ -206,7 +207,7 @@ def run_fixture_suite(root: Path) -> list[str]:
     except core.ContractError as caught:
         errors.append(f"positive envelope fixture failed: {caught.code}: {caught.message}")
     negative = {
-        "submission-partial-identity.json": (validate_submission, "submission.partial_identity"),
+        "submission-partial-identity.json": (validate_submission, "envelope.partial_identity"),
         "submission-accepted-with-error.json": (validate_submission, "submission.unexpected_error"),
         "status-digest-mismatch.json": (validate_status, "envelope.digest_mismatch"),
         "status-nonterminal-result.json": (validate_status, "status.nonterminal_result"),
