@@ -42,7 +42,18 @@ class ContractTreeTests(unittest.TestCase):
                 encoding="utf-8",
             )
             (root / "api" / "openapi.json").write_text(
-                json.dumps({"openapi": MODULE.OPENAPI_VERSION, "info": {}, "paths": {}}),
+                json.dumps(
+                    {
+                        "openapi": MODULE.OPENAPI_VERSION,
+                        "info": {},
+                        "paths": {},
+                        "components": {
+                            "schemas": {
+                                "Request": {"$ref": "../schemas/request.json"}
+                            }
+                        },
+                    }
+                ),
                 encoding="utf-8",
             )
             (root / "examples" / "request.json").write_text(
@@ -90,6 +101,49 @@ class ContractTreeTests(unittest.TestCase):
             errors = MODULE.validate(root)
             self.assertTrue(any("reviewed pinned parser" in error for error in errors))
 
+    def test_openapi_may_reference_bundled_schema(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = self.make_root(directory)
+            self.write_schema(root)
+            (root / "api" / "openapi.json").write_text(
+                json.dumps(
+                    {
+                        "openapi": MODULE.OPENAPI_VERSION,
+                        "info": {},
+                        "paths": {},
+                        "components": {
+                            "schemas": {
+                                "Request": {"$ref": "../schemas/request.json"}
+                            }
+                        },
+                    }
+                ),
+                encoding="utf-8",
+            )
+            self.assertEqual([], MODULE.validate_openapi(root))
+
+    def test_openapi_rejects_reference_to_unapproved_bundled_path(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = self.make_root(directory)
+            (root / "private.json").write_text("{}", encoding="utf-8")
+            (root / "api" / "openapi.json").write_text(
+                json.dumps(
+                    {
+                        "openapi": MODULE.OPENAPI_VERSION,
+                        "info": {},
+                        "paths": {},
+                        "components": {
+                            "schemas": {
+                                "Private": {"$ref": "../private.json"}
+                            }
+                        },
+                    }
+                ),
+                encoding="utf-8",
+            )
+            errors = MODULE.validate_openapi(root)
+            self.assertTrue(any("unapproved bundled path" in error for error in errors))
+
     def test_rejects_unmarked_normative_spec(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             root = self.make_root(directory)
@@ -104,6 +158,9 @@ class ContractTreeTests(unittest.TestCase):
             [],
             MODULE.validate_change_record(["schemas/request.json", "changes/0001-request.md"]),
         )
+
+    def test_dot_prefixed_paths_are_not_mangled(self) -> None:
+        self.assertEqual(".github/workflows/test.yml", MODULE.normalize_repo_path("./.github/workflows/test.yml"))
 
     def test_rejects_nonfinite_json(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
