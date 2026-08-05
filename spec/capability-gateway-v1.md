@@ -115,6 +115,8 @@ An `AuthorizedCapabilityManifest` is immutable provider input created by the run
 - one final governance decision reference and policy reference;
 - granted constraints that narrow or equal requested constraints;
 - decision and manifest expiry;
+- an issuance time strictly earlier than manifest expiry;
+- a manifest expiry no later than either the decision expiry or caller-requested expiry;
 - required pre-execution and completion evidence references.
 
 The manifest MUST NOT widen capability, target, payload, constraints, expiry, or evidence authority. The decision digest MUST equal the request digest. Only a final `allow` outcome is executable. Approval-required, denied, expired, unsupported, malformed, unavailable, or indeterminate outcomes are not authority.
