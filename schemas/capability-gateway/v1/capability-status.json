@@ -1,0 +1,116 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.micrantha.com/dubnium/capability-gateway/v1/capability-status.json",
+  "title": "CapabilityStatus v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "contract_version",
+    "request_id",
+    "request_digest",
+    "gateway_state",
+    "updated_at",
+    "evidence"
+  ],
+  "properties": {
+    "contract_version": {
+      "$ref": "common.json#/$defs/contractVersion"
+    },
+    "request_id": {
+      "$ref": "common.json#/$defs/requestId"
+    },
+    "request_digest": {
+      "$ref": "common.json#/$defs/digest"
+    },
+    "gateway_state": {
+      "type": "string",
+      "enum": [
+        "received",
+        "validated",
+        "policy-pending",
+        "denied",
+        "authorized",
+        "dispatched",
+        "succeeded",
+        "failed",
+        "indeterminate"
+      ]
+    },
+    "provider_operation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "reference",
+        "state"
+      ],
+      "properties": {
+        "reference": {
+          "$ref": "common.json#/$defs/uriReference"
+        },
+        "state": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 64,
+          "pattern": "^[a-z][a-z0-9-]*$"
+        }
+      }
+    },
+    "result": {
+      "$ref": "common.json#/$defs/boundedResult"
+    },
+    "evidence": {
+      "$ref": "common.json#/$defs/evidenceReferences"
+    },
+    "error": {
+      "$ref": "error.json"
+    },
+    "updated_at": {
+      "$ref": "common.json#/$defs/timestamp"
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "gateway_state": {
+            "const": "succeeded"
+          }
+        },
+        "required": [
+          "gateway_state"
+        ]
+      },
+      "then": {
+        "required": [
+          "result"
+        ],
+        "not": {
+          "required": [
+            "error"
+          ]
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "gateway_state": {
+            "enum": [
+              "denied",
+              "failed",
+              "indeterminate"
+            ]
+          }
+        },
+        "required": [
+          "gateway_state"
+        ]
+      },
+      "then": {
+        "required": [
+          "error"
+        ]
+      }
+    }
+  ]
+}
