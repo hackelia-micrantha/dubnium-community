@@ -12,6 +12,7 @@ WORKFLOWS = ROOT / ".github" / "workflows"
 FULL_SHA = re.compile(r"^[0-9a-f]{40}$")
 USES = re.compile(r"^(?P<indent>\s*)uses:\s*(?P<target>[^\s#]+)", re.M)
 JOB_KEY = re.compile(r"^  (?P<name>[A-Za-z0-9_-]+):\s*$")
+CHECKOUT_LINE = re.compile(r"uses:\s*actions/checkout@[0-9a-f]{40}(?:\s+#.*)?$")
 
 
 def display_path(path: Path) -> str:
@@ -83,7 +84,7 @@ def validate_workflow(path: Path) -> list[str]:
             errors.append(f"{name}: action must use a full immutable SHA: {action}@{revision}")
 
     for index, line in enumerate(lines):
-        if not re.search(r"uses:\s*actions/checkout@[0-9a-f]{40}\s*$", line):
+        if not CHECKOUT_LINE.search(line):
             continue
         indent = len(line) - len(line.lstrip())
         block: list[str] = []
