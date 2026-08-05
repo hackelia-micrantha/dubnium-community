@@ -32,11 +32,13 @@ Every contribution MUST:
 
 ## Provenance and rights
 
-Each commit MUST include a sign-off:
+Every merged contribution MUST include a sign-off in the final commit retained on `main`:
 
 ```text
 Signed-off-by: Your Name <you@example.com>
 ```
+
+When commits are squash-merged, the squash commit sign-off satisfies this requirement. Repositories that later enable per-commit DCO enforcement may require every submitted commit to be signed off as well.
 
 The sign-off certifies that you created the contribution or otherwise have the right to submit it under the applicable repository license.
 
