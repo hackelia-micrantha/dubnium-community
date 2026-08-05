@@ -1,0 +1,9 @@
+{
+  "contract_version": "1.0",
+  "outcome": "accepted",
+  "request_id": "request-example-001",
+  "request_digest": "sha256:d74624c1ee49c193a4077e8833d91a9aaff1575bdcfc412a116153078d01059d",
+  "status_ref": "status:request-example-001",
+  "submitted_at": "2026-08-05T20:00:02Z",
+  "error": {"code": "policy.deny", "message": "must not be present", "retryable": false}
+}
