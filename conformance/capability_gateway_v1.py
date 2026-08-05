@@ -411,10 +411,17 @@ def validate_manifest(
         raise ContractError("manifest.missing_evidence", "required pre-execution evidence is absent from the request")
     issued_at = _expect_timestamp(_require(manifest, "issued_at", "authorized manifest"), "issued_at")
     expires_at = _expect_timestamp(_require(manifest, "expires_at", "authorized manifest"), "manifest.expires_at")
-    if parse_timestamp(expires_at) > parse_timestamp(decision["expires_at"]):
+    issued_time = parse_timestamp(issued_at)
+    expiry_time = parse_timestamp(expires_at)
+    if issued_time >= expiry_time:
+        raise ContractError("manifest.invalid_lifetime", "manifest expires_at must be later than issued_at")
+    if expiry_time > parse_timestamp(decision["expires_at"]):
         raise ContractError("manifest.expiry_widening", "manifest expiry exceeds the decision expiry")
+    request_expiry = request.get("expires_at")
+    if isinstance(request_expiry, str) and expiry_time > parse_timestamp(request_expiry):
+        raise ContractError("manifest.expiry_widening", "manifest expiry exceeds the request expiry")
     effective_now = now or datetime.now(timezone.utc)
-    if parse_timestamp(expires_at) <= effective_now:
+    if expiry_time <= effective_now:
         raise ContractError("manifest.expired", "authorized manifest has expired")
     return {
         "contract_version": "1.0",
@@ -460,6 +467,8 @@ def _negative_cases(root: Path) -> Iterable[tuple[str, str, str]]:
         ("request-null.json", "request", "json.null_prohibited"),
         ("manifest-digest-mismatch.json", "manifest", "manifest.digest_mismatch"),
         ("manifest-expired.json", "manifest", "manifest.expired"),
+        ("manifest-request-expiry-widening.json", "manifest", "manifest.expiry_widening"),
+        ("manifest-issued-after-expiry.json", "manifest", "manifest.invalid_lifetime"),
         ("manifest-constraint-widening.json", "manifest", "manifest.constraint_widening"),
         ("manifest-payload-mismatch.json", "manifest", "manifest.payload_mismatch"),
     )
