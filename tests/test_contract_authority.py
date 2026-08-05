@@ -4,6 +4,8 @@ from pathlib import Path
 import unittest
 
 ROOT = Path(__file__).resolve().parents[1]
+SUPERSEDED_REQUEST_DIGEST = "sha256:0b5acd7911285ce29fba5d3bded3e3fb370bba5c956c6086c27e3e4cc39898bf"
+SUPERSEDED_PAYLOAD_DIGEST = "sha256:516d7c32a0bda4cef508a98712c5e7bc7d58863638b8e704b0559a9ceaa4bc67"
 
 
 class ContractAuthorityTests(unittest.TestCase):
@@ -28,6 +30,18 @@ class ContractAuthorityTests(unittest.TestCase):
         self.assertIn('CANONICAL_FIXTURE_ROOT = Path(__file__).resolve().parent / "envelopes" / "v1"', text)
         self.assertIn("run_fixture_suite(CANONICAL_FIXTURE_ROOT)", text)
         self.assertNotIn("else args.root", text)
+
+    def test_public_contract_tree_contains_no_superseded_digest(self) -> None:
+        roots = ("api", "conformance", "examples", "schemas", "spec")
+        offenders: list[str] = []
+        for name in roots:
+            for path in (ROOT / name).rglob("*"):
+                if not path.is_file() or path.suffix not in {".json", ".md", ".py", ".txt"}:
+                    continue
+                text = path.read_text(encoding="utf-8")
+                if SUPERSEDED_REQUEST_DIGEST in text or SUPERSEDED_PAYLOAD_DIGEST in text:
+                    offenders.append(path.relative_to(ROOT).as_posix())
+        self.assertEqual([], offenders)
 
 
 if __name__ == "__main__":
