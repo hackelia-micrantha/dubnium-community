@@ -1,0 +1,61 @@
+name: Publication review
+description: Review material derived from private, third-party, or generated sources before publication
+title: "publication: "
+labels: []
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Do not place confidential legal reasoning, security details, credentials, or private operational data in this public form.
+  - type: textarea
+    id: scope
+    attributes:
+      label: Candidate scope and public value
+      description: Identify the staged paths and why publication is useful.
+    validations:
+      required: true
+  - type: textarea
+    id: provenance
+    attributes:
+      label: Public provenance statement
+      description: Identify ownership, generation relationship, third-party inputs, license, and notices without exposing private coordinates.
+    validations:
+      required: true
+  - type: textarea
+    id: private_decisions
+    attributes:
+      label: Private review confirmations
+      description: Confirm that required ownership, patent or trade-secret, and competitive-disclosure decisions were completed privately.
+    validations:
+      required: true
+  - type: textarea
+    id: artifact
+    attributes:
+      label: Staged artifact inventory and validation
+      description: Record public file inventory, digests, validator results, and manual review performed.
+    validations:
+      required: true
+  - type: textarea
+    id: exclusions
+    attributes:
+      label: Material intentionally excluded
+      description: State which implementation, operational, policy, data, or provenance details remain private.
+    validations:
+      required: true
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Publication checks
+      options:
+        - label: Rights and license compatibility are confirmed.
+          required: true
+        - label: The staged artifact contains no confidential or operator-specific material.
+          required: true
+        - label: Examples and fixtures are synthetic.
+          required: true
+        - label: Generated metadata does not disclose private source coordinates by default.
+          required: true
+        - label: The destination repository validated the artifact independently.
+          required: true
+        - label: The irreversible nature of publication is understood.
+          required: true
