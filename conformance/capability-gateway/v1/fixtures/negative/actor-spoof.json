@@ -1,0 +1,22 @@
+{
+  "contract_version": "1",
+  "request_id": "req_actor_0000001",
+  "capability": {
+    "name": "example.echo",
+    "schema_version": "1"
+  },
+  "target": {
+    "kind": "example",
+    "reference": "urn:dubnium:example:target:actor-spoof"
+  },
+  "payload": {
+    "message": "spoofed actor",
+    "repeat": 1,
+    "max_output_bytes": 64
+  },
+  "evidence": [],
+  "requested_at": "2026-08-05T20:00:00Z",
+  "actor": {
+    "reference": "urn:dubnium:actor:untrusted-caller"
+  }
+}
