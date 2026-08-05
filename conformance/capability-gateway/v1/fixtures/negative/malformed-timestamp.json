@@ -1,0 +1,19 @@
+{
+  "contract_version": "1",
+  "request_id": "req_time_00000001",
+  "capability": {
+    "name": "example.echo",
+    "schema_version": "1"
+  },
+  "target": {
+    "kind": "example",
+    "reference": "urn:dubnium:example:target:bad-time"
+  },
+  "payload": {
+    "message": "bad timestamp",
+    "repeat": 1,
+    "max_output_bytes": 64
+  },
+  "evidence": [],
+  "requested_at": "2026-08-05T13:00:00-07:00"
+}
