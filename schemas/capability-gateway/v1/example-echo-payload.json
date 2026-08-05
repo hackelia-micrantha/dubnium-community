@@ -1,0 +1,29 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.micrantha.com/dubnium/capability-gateway/v1/example-echo-payload.json",
+  "title": "example.echo payload v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "message",
+    "repeat",
+    "max_output_bytes"
+  ],
+  "properties": {
+    "message": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 256
+    },
+    "repeat": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 4
+    },
+    "max_output_bytes": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 4096
+    }
+  }
+}
