@@ -7,7 +7,7 @@
     "expires_at": "2099-01-01T00:00:00Z",
     "outcome": "allow",
     "policy_ref": "policy:synthetic:001",
-    "request_digest": "sha256:d9a8274483bbf7d3f4a6a4f1b48b0666321bb4fd264a3f3425d8f86d7ab2cc45"
+    "request_digest": "sha256:d74624c1ee49c193a4077e8833d91a9aaff1575bdcfc412a116153078d01059d"
   },
   "evidence_requirements": {
     "before_execution": ["evidence:synthetic-ci:001"],
@@ -18,8 +18,8 @@
   "issued_at": "2026-08-05T20:00:01Z",
   "manifest_id": "manifest:synthetic:widening",
   "normalized_payload": {"message": "hello", "repeat": 2},
-  "normalized_payload_digest": "sha256:7c00e1d351eb3a3001bb4fd167a3f9675a8f86d7000786d77fc69b8023f4bb04",
-  "request_digest": "sha256:d9a8274483bbf7d3f4a6a4f1b48b0666321bb4fd264a3f3425d8f86d7ab2cc45",
+  "normalized_payload_digest": "sha256:ec63d22086cbed3a75979f56d3fff564ea80b192dc8c14fc40f6c8c7d28c7e0b",
+  "request_digest": "sha256:d74624c1ee49c193a4077e8833d91a9aaff1575bdcfc412a116153078d01059d",
   "request_id": "request-example-001",
   "target_ref": "example:local"
 }
