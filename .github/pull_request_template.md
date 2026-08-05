@@ -18,7 +18,7 @@ Describe the public value and why this change belongs in this repository.
 ## Provenance and licensing
 
 - [ ] I have the right to submit this material under the repository license.
-- [ ] Commits include `Signed-off-by` lines.
+- [ ] The final merged commit will include a `Signed-off-by` line.
 - [ ] Copied, adapted, generated, employer-owned, third-party, and materially AI-assisted inputs are disclosed.
 - [ ] Required notices and attributions are included.
 
