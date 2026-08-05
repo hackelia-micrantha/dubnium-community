@@ -85,6 +85,14 @@ A gateway MUST treat `request_id` plus canonical request digest as the idempoten
 
 Operational persistence and dispatch mechanics remain runtime-specific.
 
+## Submission envelope
+
+An accepted `CapabilitySubmission` MUST contain the normalized request ID and digest and MUST NOT contain an error.
+
+A rejection produced after request normalization SHOULD contain the same request ID and digest. A rejection produced before a trustworthy identity can be computed, such as invalid UTF-8, duplicate keys, oversized input, or malformed JSON, MAY omit both fields. It MUST NOT include only one of the two identity fields.
+
+A rejected submission MUST contain a stable error. Rejection is not a durable request state unless the runtime successfully established and persisted the request identity.
+
 ## Gateway state
 
 Portable gateway status uses only:
@@ -101,7 +109,9 @@ failed
 indeterminate
 ```
 
-Provider-specific phases are not mirrored into this state machine. A status MAY include a stable provider operation reference and bounded terminal result or error.
+Every `CapabilityStatus` MUST contain the exact normalized request ID and digest. Provider-specific phases are not mirrored into this state machine. A status MAY include a stable provider operation reference and evidence references.
+
+`denied`, `failed`, and `indeterminate` statuses MUST contain an error. Other statuses MUST NOT contain an error. A bounded `terminal_result` MAY appear only for `succeeded` or `failed`; the v1 conformance profile limits its canonical representation to 4,096 bytes.
 
 ## Authorized manifest
 
@@ -162,10 +172,11 @@ This contract is `v1alpha`.
 
 ## Conformance
 
-The offline suite is run with:
+The offline suites are run with:
 
 ```text
 python3 conformance/capability_gateway_v1.py run-fixtures conformance/fixtures/v1
+python3 conformance/gateway_envelopes_v1.py run-fixtures conformance/fixtures/v1
 ```
 
-A conforming implementation SHOULD consume the same canonical bytes, digest vectors, positive manifest, and negative fixtures. The suite requires no network, credentials, private source, policy service, system service manager, or privileged access.
+A conforming implementation SHOULD consume the same canonical bytes, digest vectors, positive manifests and envelopes, and negative fixtures. The suites require no network, credentials, private source, policy service, system service manager, or privileged access.
