@@ -112,6 +112,11 @@ jobs:
           PYTHONDONTWRITEBYTECODE: "1"
         run: python3 -m unittest discover -s tests -v
 
+      - name: Run Capability Gateway v1 conformance fixtures
+        env:
+          PYTHONDONTWRITEBYTECODE: "1"
+        run: python3 conformance/capability_gateway_v1.py run-fixtures conformance/fixtures/v1
+
   contract-gate:
     name: contract-gate
     if: always()
