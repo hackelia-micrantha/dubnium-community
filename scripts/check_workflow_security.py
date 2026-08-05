@@ -90,7 +90,7 @@ def validate_workflow(path: Path) -> list[str]:
         block: list[str] = []
         for following in lines[index + 1 :]:
             following_indent = len(following) - len(following.lstrip())
-            if following.strip() and following_indent <= indent:
+            if following.strip() and following_indent < indent:
                 break
             block.append(following)
         if not any(re.search(r"persist-credentials:\s*false\s*$", item) for item in block):
