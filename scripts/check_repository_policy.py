@@ -26,6 +26,7 @@ REQUIRED_FILES = {
     "docs/content-markers.md",
     "docs/publication-review.md",
     "docs/publication-boundary.md",
+    "docs/standards.md",
 }
 
 PUBLIC_ROOTS = {
@@ -51,6 +52,7 @@ MARKED_POLICY_FILES = {
     "docs/content-markers.md",
     "docs/publication-review.md",
     "docs/publication-boundary.md",
+    "docs/standards.md",
 }
 
 PROHIBITED_PUBLIC_PATTERNS: tuple[tuple[str, re.Pattern[str]], ...] = (
