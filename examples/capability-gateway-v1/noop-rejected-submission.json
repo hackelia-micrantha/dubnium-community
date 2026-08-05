@@ -1,0 +1,1 @@
+{"$schema":"../../schemas/v1/capability-submission.schema.json","contract_version":"1.0","error":{"code":"json.invalid","message":"synthetic parse rejection"},"state":"rejected"}

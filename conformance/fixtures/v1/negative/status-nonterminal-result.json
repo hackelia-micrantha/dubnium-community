@@ -1,0 +1,1 @@
+{"contract_version":"1.0","request_digest":"sha256:0b5acd7911285ce29fba5d3bded3e3fb370bba5c956c6086c27e3e4cc39898bf","request_id":"request-example-001","state":"authorized","terminal_result":{"echo":["hello"]},"updated_at":"2026-08-05T20:00:02Z"}
