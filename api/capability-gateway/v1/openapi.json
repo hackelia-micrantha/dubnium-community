@@ -1,0 +1,139 @@
+{
+  "openapi": "3.1.2",
+  "info": {
+    "title": "Dubnium Capability Gateway v1",
+    "version": "0.1.0",
+    "description": "Experimental portable HTTP message binding. Production transport authentication, listener profiles, socket paths, policy adapters, provider routing, and host deployment remain private."
+  },
+  "paths": {
+    "/v1/capability-requests": {
+      "post": {
+        "operationId": "submitCapabilityRequest",
+        "summary": "Submit one typed capability request",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "../../../schemas/capability-gateway/v1/capability-request.json"
+              }
+            }
+          }
+        },
+        "responses": {
+          "202": {
+            "description": "Logical request accepted for processing",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "../../../schemas/capability-gateway/v1/capability-submission.json"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error"
+          },
+          "413": {
+            "$ref": "#/components/responses/Error"
+          },
+          "422": {
+            "$ref": "#/components/responses/Error"
+          },
+          "503": {
+            "$ref": "#/components/responses/Error"
+          }
+        }
+      }
+    },
+    "/v1/capability-requests/{request_id}": {
+      "get": {
+        "operationId": "getCapabilityRequestStatus",
+        "summary": "Inspect one Gateway-level request status",
+        "parameters": [
+          {
+            "name": "request_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "^req_[a-z0-9][a-z0-9_-]{7,63}$"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Current Gateway-level status",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "../../../schemas/capability-gateway/v1/capability-status.json"
+                }
+              }
+            }
+          },
+          "404": {
+            "$ref": "#/components/responses/Error"
+          }
+        }
+      }
+    },
+    "/healthz": {
+      "get": {
+        "operationId": "getCapabilityGatewayHealth",
+        "summary": "Return bounded service health",
+        "responses": {
+          "200": {
+            "description": "Service is available",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "status",
+                    "contract_versions"
+                  ],
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "const": "ok"
+                    },
+                    "contract_versions": {
+                      "type": "array",
+                      "minItems": 1,
+                      "maxItems": 16,
+                      "items": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "responses": {
+      "Error": {
+        "description": "RFC 9457-aligned bounded error",
+        "content": {
+          "application/problem+json": {
+            "schema": {
+              "$ref": "../../../schemas/capability-gateway/v1/error.json"
+            }
+          }
+        }
+      }
+    }
+  }
+}
