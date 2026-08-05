@@ -14,8 +14,11 @@ USES = re.compile(r"^(?P<indent>\s*)uses:\s*(?P<target>[^\s#]+)", re.M)
 JOB_KEY = re.compile(r"^  (?P<name>[A-Za-z0-9_-]+):\s*$")
 
 
-def relative(path: Path) -> str:
-    return path.relative_to(ROOT).as_posix()
+def display_path(path: Path) -> str:
+    try:
+        return path.relative_to(ROOT).as_posix()
+    except ValueError:
+        return path.name
 
 
 def is_pull_request_workflow(text: str) -> bool:
@@ -54,7 +57,7 @@ def validate_workflow(path: Path) -> list[str]:
     errors: list[str] = []
     text = path.read_text(encoding="utf-8")
     lines = text.splitlines()
-    name = relative(path)
+    name = display_path(path)
 
     if re.search(r"^\s{2}pull_request_target:\s*$", text, re.M):
         errors.append(f"{name}: executable pull_request_target is prohibited")
