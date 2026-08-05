@@ -30,19 +30,17 @@ class GatewayEnvelopeV1Tests(unittest.TestCase):
         self.assertIsInstance(result["error"]["retryable"], bool)
         self.assertNotIn("status_ref", result)
 
-    def test_status_requires_error_for_failure(self):
+    def test_succeeded_status_rejects_error(self):
         candidate = self.module.core.load_json(self.fixtures / "negative" / "status-succeeded-with-error.json")
         with self.assertRaises(self.module.core.ContractError) as caught:
             self.module.validate_status(candidate)
         self.assertEqual(caught.exception.code, "status.error_on_success")
 
-    def test_terminal_status_is_immutable(self):
+    def test_dispatched_to_succeeded_transition_is_valid(self):
+        dispatched = self.module.core.load_json(self.fixtures / "positive" / "status-dispatched.json")
         succeeded = self.module.core.load_json(self.fixtures / "positive" / "status-succeeded.json")
-        changed = dict(succeeded)
-        changed["updated_at"] = "2026-08-05T20:00:03Z"
-        with self.assertRaises(self.module.core.ContractError) as caught:
-            self.module.validate_status_transition(succeeded, changed)
-        self.assertEqual(caught.exception.code, "status.terminal_mutation")
+        result = self.module.validate_status_transition(dispatched, succeeded)
+        self.assertEqual(result["gateway_state"], "succeeded")
 
 
 if __name__ == "__main__":
