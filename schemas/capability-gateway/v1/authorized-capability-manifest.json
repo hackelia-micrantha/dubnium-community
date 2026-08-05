@@ -1,0 +1,104 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.micrantha.com/dubnium/capability-gateway/v1/authorized-capability-manifest.json",
+  "title": "AuthorizedCapabilityManifest v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "contract_version",
+    "manifest_id",
+    "request",
+    "request_digest",
+    "actor",
+    "authorization",
+    "issued_at"
+  ],
+  "properties": {
+    "contract_version": {
+      "$ref": "common.json#/$defs/contractVersion"
+    },
+    "manifest_id": {
+      "$ref": "common.json#/$defs/manifestId"
+    },
+    "request": {
+      "$ref": "capability-request.json"
+    },
+    "request_digest": {
+      "$ref": "common.json#/$defs/digest"
+    },
+    "actor": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "reference",
+        "authentication_method"
+      ],
+      "properties": {
+        "reference": {
+          "$ref": "common.json#/$defs/uriReference"
+        },
+        "authentication_method": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 64,
+          "pattern": "^[a-z][a-z0-9-]*$"
+        },
+        "authentication_evidence": {
+          "$ref": "common.json#/$defs/evidenceReference"
+        }
+      }
+    },
+    "authorization": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "decision_ref",
+        "outcome",
+        "granted_constraints",
+        "approval_refs",
+        "evidence_requirements",
+        "expires_at"
+      ],
+      "properties": {
+        "decision_ref": {
+          "$ref": "common.json#/$defs/uriReference"
+        },
+        "policy_ref": {
+          "$ref": "common.json#/$defs/uriReference"
+        },
+        "outcome": {
+          "type": "string",
+          "const": "allow"
+        },
+        "granted_constraints": {
+          "$ref": "common.json#/$defs/payload"
+        },
+        "approval_refs": {
+          "$ref": "common.json#/$defs/referenceList"
+        },
+        "evidence_requirements": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "before_execution",
+            "completion"
+          ],
+          "properties": {
+            "before_execution": {
+              "$ref": "common.json#/$defs/referenceList"
+            },
+            "completion": {
+              "$ref": "common.json#/$defs/referenceList"
+            }
+          }
+        },
+        "expires_at": {
+          "$ref": "common.json#/$defs/timestamp"
+        }
+      }
+    },
+    "issued_at": {
+      "$ref": "common.json#/$defs/timestamp"
+    }
+  }
+}
