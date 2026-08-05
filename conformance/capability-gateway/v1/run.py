@@ -73,6 +73,16 @@ def positive_vectors() -> list[str]:
         )
     checks.append("positive.digest")
 
+    unicode_value = load_strict(POSITIVE / "unicode-order.json")
+    expected_unicode = (POSITIVE / "unicode-order.canonical.json").read_bytes()
+    if canonical_bytes(unicode_value) != expected_unicode:
+        raise ConformanceFailure("positive.unicode-order: canonical bytes differ")
+    checks.append("positive.unicode-order")
+
+    if canonical_bytes({"value": "é"}) == canonical_bytes({"value": "é"}):
+        raise ConformanceFailure("positive.unicode-normalization: strings were normalized")
+    checks.append("positive.unicode-normalization")
+
     manifest = load_strict(POSITIVE / "echo-manifest.json")
     validate_manifest(manifest, now=NOW)
     checks.append("positive.manifest")
@@ -118,6 +128,15 @@ def negative_vectors() -> list[str]:
 
         expect_violation(expected_code, operation, f"negative.{filename}")
         checks.append(f"negative.{filename}")
+
+    request_with_null_expiry = dict(load_strict(POSITIVE / "echo-request.json"))
+    request_with_null_expiry["expires_at"] = None
+    expect_violation(
+        "invalid_timestamp",
+        lambda: validate_request(request_with_null_expiry),
+        "negative.optional-null",
+    )
+    checks.append("negative.optional-null")
 
     oversized = json.loads(
         (NEGATIVE / "oversized-body.json").read_text(encoding="utf-8")
