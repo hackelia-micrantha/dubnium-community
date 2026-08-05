@@ -1,0 +1,5 @@
+blank_issues_enabled: true
+contact_links:
+  - name: Private security report
+    url: https://github.com/hackelia-micrantha/dubnium-community/security
+    about: Use the Security tab for vulnerability reports when private reporting is available.
