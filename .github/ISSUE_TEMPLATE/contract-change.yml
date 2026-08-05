@@ -1,0 +1,73 @@
+name: Contract change
+description: Propose a public contract, schema, compatibility, or conformance change
+title: "contract: "
+labels: []
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Use this form for normative behavior. Experimental proposals still require explicit boundaries and synthetic evidence.
+  - type: input
+    id: contract
+    attributes:
+      label: Contract and current version
+      placeholder: Capability Gateway experimental draft
+    validations:
+      required: true
+  - type: dropdown
+    id: stability
+    attributes:
+      label: Proposed stability
+      options:
+        - experimental
+        - v1alpha
+        - v1beta
+        - stable
+    validations:
+      required: true
+  - type: textarea
+    id: outcome
+    attributes:
+      label: Outcome and public value
+      description: Explain the interoperable behavior and real consumer need.
+    validations:
+      required: true
+  - type: textarea
+    id: compatibility
+    attributes:
+      label: Compatibility impact
+      description: Classify compatible, breaking, or security-hardening behavior and cover unknown data.
+    validations:
+      required: true
+  - type: textarea
+    id: authority
+    attributes:
+      label: Authority and private boundary
+      description: State what this contract owns, what another project owns, and what remains private.
+    validations:
+      required: true
+  - type: textarea
+    id: security
+    attributes:
+      label: Security and threat-model impact
+      description: Cover identity, replay, parsing, canonicalization, authority, effects, constraints, and failure behavior.
+    validations:
+      required: true
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Schemas, fixtures, conformance, and migration evidence
+      description: List positive, negative, adversarial, generated-output, and consumer validation needed.
+    validations:
+      required: true
+  - type: checkboxes
+    id: provenance
+    attributes:
+      label: Provenance
+      options:
+        - label: The proposal uses only material that can be published under the repository license.
+          required: true
+        - label: Examples and proposed fixtures are synthetic.
+          required: true
+        - label: The proposal does not require public access to private source or services.
+          required: true

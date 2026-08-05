@@ -15,9 +15,19 @@ ALLOWED_SUFFIXES = {
 }
 ALLOWED_BASENAMES = {".nojekyll"}
 SHA_RE = re.compile(r"^[0-9a-f]{40}$")
+SHA256_RE = re.compile(r"^sha256:[0-9a-f]{64}$")
+PUBLICATION_ID_RE = re.compile(r"^[a-z0-9][a-z0-9._-]{7,127}$")
 RFC3339_RE = re.compile(r"^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d+)?Z$")
+PRIVATE_METADATA_FIELDS = {
+    "source_repository",
+    "source_commit",
+    "source_path",
+    "workflow_id",
+    "workflow_run_id",
+    "job_id",
+}
 PRIVATE_PATTERNS = {
-    "private repository URL": re.compile(r"github\.com/ryjen/dubnium", re.I),
+    "private repository URL": re.compile(r"github\.com/ryjen/dubnium(?:/|$)", re.I),
     "private edit link": re.compile(r"github\.com/ryjen/dubnium/edit/", re.I),
     "internal documentation path": re.compile(r"docs/internal|/internal/", re.I),
     "private IPv4 address": re.compile(
@@ -43,8 +53,12 @@ def fail(errors: list[str], message: str) -> None:
     errors.append(message)
 
 
+def normalized_changed_paths(paths: list[str]) -> list[str]:
+    return [path.strip().lstrip("./") for path in paths if path.strip()]
+
+
 def validate_changed_paths(paths: list[str]) -> list[str]:
-    normalized = [path.strip().lstrip("./") for path in paths if path.strip()]
+    normalized = normalized_changed_paths(paths)
     if not any(path == "site/docs" or path.startswith("site/docs/") for path in normalized):
         return []
     unexpected = sorted(
@@ -54,6 +68,10 @@ def validate_changed_paths(paths: list[str]) -> list[str]:
     if not unexpected:
         return []
     return ["publication changes must be confined to site/docs/: " + ", ".join(unexpected)]
+
+
+def publication_metadata_changed(paths: list[str]) -> bool:
+    return "site/docs/publication.json" in normalized_changed_paths(paths)
 
 
 def contains_localhost_endpoint(relative: Path, suffix: str, text: str) -> bool:
@@ -75,7 +93,50 @@ def should_scan_private(relative: Path, label: str) -> bool:
     )
 
 
-def validate(root: Path) -> list[str]:
+def validate_public_metadata(metadata: dict[object, object], errors: list[str]) -> None:
+    required_fields = {
+        "schema_version",
+        "publication_id",
+        "content_digest",
+        "generator",
+        "generated_at",
+    }
+    missing = sorted(required_fields - metadata.keys())
+    if missing:
+        fail(errors, f"publication.json missing public fields: {', '.join(missing)}")
+
+    if metadata.get("schema_version") != 2:
+        fail(errors, "publication.json schema_version must be 2")
+    if not PUBLICATION_ID_RE.fullmatch(str(metadata.get("publication_id", ""))):
+        fail(errors, "publication.json publication_id has invalid syntax")
+    if not SHA256_RE.fullmatch(str(metadata.get("content_digest", ""))):
+        fail(errors, "publication.json content_digest must be sha256:<64 lowercase hex characters>")
+    if not str(metadata.get("generator", "")).startswith("mdbook "):
+        fail(errors, "publication.json generator must identify an mdbook version")
+    if not RFC3339_RE.fullmatch(str(metadata.get("generated_at", ""))):
+        fail(errors, "publication.json generated_at must be UTC RFC 3339")
+
+    leaked_fields = sorted(PRIVATE_METADATA_FIELDS & metadata.keys())
+    if leaked_fields:
+        fail(errors, "publication.json public schema forbids private provenance fields: " + ", ".join(leaked_fields))
+
+
+def validate_legacy_metadata(metadata: dict[object, object], errors: list[str]) -> None:
+    required_fields = {"source_repository", "source_commit", "generator", "generated_at"}
+    missing = sorted(required_fields - metadata.keys())
+    if missing:
+        fail(errors, f"publication.json missing legacy fields: {', '.join(missing)}")
+    if not str(metadata.get("source_repository", "")).strip():
+        fail(errors, "publication.json legacy source_repository must be non-empty")
+    if not SHA_RE.fullmatch(str(metadata.get("source_commit", ""))):
+        fail(errors, "publication.json legacy source_commit must be a full lowercase SHA-1")
+    if not str(metadata.get("generator", "")).startswith("mdbook "):
+        fail(errors, "publication.json generator must identify an mdbook version")
+    if not RFC3339_RE.fullmatch(str(metadata.get("generated_at", ""))):
+        fail(errors, "publication.json generated_at must be UTC RFC 3339")
+
+
+def validate(root: Path, *, require_public_schema: bool = False) -> list[str]:
     errors: list[str] = []
     docs = root / "site" / "docs"
     if not docs.exists():
@@ -94,18 +155,14 @@ def validate(root: Path) -> list[str]:
         except (OSError, UnicodeDecodeError, json.JSONDecodeError) as exc:
             fail(errors, f"invalid publication.json: {exc}")
         else:
-            required_fields = {"source_repository", "source_commit", "generator", "generated_at"}
-            missing = sorted(required_fields - metadata.keys())
-            if missing:
-                fail(errors, f"publication.json missing fields: {', '.join(missing)}")
-            if metadata.get("source_repository") != "ryjen/dubnium":
-                fail(errors, "publication.json source_repository must be ryjen/dubnium")
-            if not SHA_RE.fullmatch(str(metadata.get("source_commit", ""))):
-                fail(errors, "publication.json source_commit must be a full lowercase SHA-1")
-            if not str(metadata.get("generator", "")).startswith("mdbook "):
-                fail(errors, "publication.json generator must identify an mdbook version")
-            if not RFC3339_RE.fullmatch(str(metadata.get("generated_at", ""))):
-                fail(errors, "publication.json generated_at must be UTC RFC 3339")
+            if not isinstance(metadata, dict):
+                fail(errors, "publication.json must contain a JSON object")
+            elif metadata.get("schema_version") == 2:
+                validate_public_metadata(metadata, errors)
+            elif require_public_schema:
+                fail(errors, "changed publications must use publication.json schema_version 2")
+            else:
+                validate_legacy_metadata(metadata, errors)
 
     for path in docs.rglob("*"):
         relative = path.relative_to(root)
@@ -141,9 +198,14 @@ def main() -> int:
     parser.add_argument("root", nargs="?", default=".")
     parser.add_argument("--changed-paths-stdin", action="store_true")
     args = parser.parse_args()
-    errors = validate(Path(args.root).resolve())
+
+    changed_paths = sys.stdin.read().splitlines() if args.changed_paths_stdin else []
+    errors = validate(
+        Path(args.root).resolve(),
+        require_public_schema=publication_metadata_changed(changed_paths),
+    )
     if args.changed_paths_stdin:
-        errors.extend(validate_changed_paths(sys.stdin.read().splitlines()))
+        errors.extend(validate_changed_paths(changed_paths))
     if errors:
         print("Public book publication validation failed:", file=sys.stderr)
         for error in errors:

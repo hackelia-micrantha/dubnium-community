@@ -21,7 +21,25 @@ class PublicationValidationTests(unittest.TestCase):
         (docs / "publication.json").write_text(
             json.dumps(
                 {
-                    "source_repository": "ryjen/dubnium",
+                    "schema_version": 2,
+                    "publication_id": "dubnium-docs-example-0001",
+                    "content_digest": "sha256:" + "b" * 64,
+                    "generator": "mdbook 0.5.2; mdbook-mermaid 0.17.0",
+                    "generated_at": "2026-08-05T20:00:00Z",
+                }
+            ),
+            encoding="utf-8",
+        )
+        return docs
+
+    def make_legacy_book(self, root: Path) -> Path:
+        docs = root / "site" / "docs"
+        docs.mkdir(parents=True)
+        (docs / "index.html").write_text("<html>legacy</html>", encoding="utf-8")
+        (docs / "publication.json").write_text(
+            json.dumps(
+                {
+                    "source_repository": "legacy/private-producer",
                     "source_commit": "a" * 40,
                     "generator": "mdbook 0.5.2; mdbook-mermaid 0.17.0",
                     "generated_at": "2026-07-28T04:00:00Z",
@@ -36,6 +54,19 @@ class PublicationValidationTests(unittest.TestCase):
             root = Path(directory)
             self.make_book(root)
             self.assertEqual([], MODULE.validate(root))
+
+    def test_accepts_existing_legacy_publication_without_change(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            self.make_legacy_book(root)
+            self.assertEqual([], MODULE.validate(root))
+
+    def test_rejects_legacy_metadata_for_changed_publication(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            self.make_legacy_book(root)
+            errors = MODULE.validate(root, require_public_schema=True)
+            self.assertTrue(any("schema_version 2" in error for error in errors))
 
     def test_accepts_mdbook_generated_exceptions(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
@@ -87,7 +118,7 @@ class PublicationValidationTests(unittest.TestCase):
     def test_rejects_internal_path(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
-            self.make_book(root, "docs/internal/runbooks/secrets.md")
+            self.make_book(root, "docs/internal/runbooks/example.md")
             errors = MODULE.validate(root)
             self.assertTrue(any("internal documentation path" in error for error in errors))
 
@@ -101,15 +132,25 @@ class PublicationValidationTests(unittest.TestCase):
             errors = MODULE.validate(root)
             self.assertTrue(any("symlinks are not allowed" in error for error in errors))
 
-    def test_rejects_malformed_provenance(self) -> None:
+    def test_rejects_malformed_public_digest(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
             docs = self.make_book(root)
             metadata = json.loads((docs / "publication.json").read_text(encoding="utf-8"))
-            metadata["source_commit"] = "main"
+            metadata["content_digest"] = "sha256:not-a-digest"
             (docs / "publication.json").write_text(json.dumps(metadata), encoding="utf-8")
             errors = MODULE.validate(root)
-            self.assertTrue(any("full lowercase SHA-1" in error for error in errors))
+            self.assertTrue(any("64 lowercase hex" in error for error in errors))
+
+    def test_rejects_private_fields_in_public_metadata(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            docs = self.make_book(root)
+            metadata = json.loads((docs / "publication.json").read_text(encoding="utf-8"))
+            metadata["source_commit"] = "a" * 40
+            (docs / "publication.json").write_text(json.dumps(metadata), encoding="utf-8")
+            errors = MODULE.validate(root)
+            self.assertTrue(any("forbids private provenance fields" in error for error in errors))
 
     def test_accepts_publication_only_changed_paths(self) -> None:
         self.assertEqual([], MODULE.validate_changed_paths(["site/docs/index.html", "site/docs/publication.json"]))
@@ -117,6 +158,10 @@ class PublicationValidationTests(unittest.TestCase):
     def test_rejects_mixed_publication_changes(self) -> None:
         errors = MODULE.validate_changed_paths(["site/docs/index.html", ".github/workflows/pages.yml"])
         self.assertTrue(any("confined to site/docs" in error for error in errors))
+
+    def test_detects_changed_publication_metadata(self) -> None:
+        self.assertTrue(MODULE.publication_metadata_changed(["site/docs/publication.json"]))
+        self.assertFalse(MODULE.publication_metadata_changed(["site/docs/index.html"]))
 
 
 if __name__ == "__main__":

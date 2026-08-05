@@ -1,84 +1,88 @@
-# Dubnium
+# Dubnium Community
 
-**Micrantha's reproducible, local-first distribution for agentic software development and operations.**
+**Public contracts, conformance assets, developer tooling, and safe reference implementations for the Dubnium capability ecosystem.**
 
-Dubnium combines an opinionated NixOS system with local and cloud model routing, development environments, workflow automation, bounded tool execution, and governance-aware operational controls.
+Dubnium is a reproducible, local-first agentic development and operations environment. This repository is its public community and interoperability boundary. It is not a mirror of the private production runtime.
 
-It asks a practical systems question:
+## Repository role
 
-> How should a developer workstation behave when it is also an AI runtime, automation host, build environment, and governed operations surface?
+This monorepo is authoritative for public Dubnium-owned:
 
-## Product role
+- specifications and machine-readable schemas;
+- compatibility, canonicalization, and error semantics;
+- synthetic conformance fixtures and tests;
+- thin public clients, validators, and authoring libraries;
+- minimal no-effect reference implementations;
+- examples, architecture, threat models, and release documentation;
+- the generated public site under `site/`.
 
-Dubnium is an **incubating Micrantha Solution** rather than a general-purpose Linux distribution. NixOS provides the reproducible operating-system foundation, while the product boundary is the integrated agentic development and operations environment built on top of it.
+The private Dubnium system may implement these contracts, but public artifacts must build and validate without private source, private services, credentials, host configuration, or operator data.
 
-Dubnium is intended to provide:
+## Explicit boundary
 
-- rebuildable workstation, compute, and automation profiles;
-- explicit operating modes and resource ownership;
-- local-first inference with controlled provider fallback;
-- model and workload routing;
-- repository-scoped agent workflows;
-- reproducible development environments and self-hosted CI runners;
-- governed automation and bounded execution;
-- secrets, observability, provenance, and evidence boundaries.
+Public contracts can describe an integration boundary without publishing the production implementation behind it.
 
-## Agentic architecture
+Private by default:
 
-Dubnium separates planning and orchestration from authorization authority:
+- supervisor planning, routing, prompts, retries, fallbacks, and specialist selection;
+- production policy, approvals, risk thresholds, and trusted identities;
+- memory ranking, consolidation, retention, trust scoring, and stored data;
+- privileged capability providers, deployment workers, and recovery behavior;
+- NixOS host topology, runner mappings, credentials, local paths, and runbooks;
+- real logs, incidents, traces, evidence, and operational measurements.
+
+Anthesis remains authoritative for governance decision and approval semantics where those contracts are referenced. Dubnium transports and enforces bounded decisions; it does not redefine Anthesis policy authority here.
+
+## Monorepo layout
+
+| Path | Purpose |
+| --- | --- |
+| `spec/` | Normative Dubnium-owned protocol specifications |
+| `schemas/` | Canonical machine-readable schemas |
+| `api/` | Transport bindings such as OpenAPI descriptions |
+| `packages/` | Thin public libraries and validators |
+| `conformance/` | Implementation-neutral test suites and fixtures |
+| `reference/` | Deliberately non-production, no-effect implementations |
+| `examples/` | Synthetic usage examples |
+| `policy-examples/` | Synthetic, non-authoritative policy illustrations |
+| `docs/` | Architecture, process, threat-model, and publication documentation |
+| `site/` | Generated public-site artifacts; never canonical specification source |
+
+Each directory contains its own ownership and dependency rules. Empty areas are placeholders for reviewed work, not commitments to publish private implementation.
+
+## Dependency direction
 
 ```text
-operator or workflow
-        |
-        v
-Dubnium agentic runtime
-        |
-        v
-Anthesis policy decision
-        |
-        +---- deny ----------------------> evidence
-        |
-        +---- approval required --------> approval gate
-        |
-        +---- allow / approved ----------> bounded executor
-                                              |
-                                              v
-                                      diff + run evidence
+specifications and schemas
+  -> generated public types
+    -> public validators, clients, conformance, and references
+      -> external and private consumers
 ```
 
-- **Dubnium** owns agent runtime composition, planning intake, routing, bounded execution, and host-level operational controls.
-- **Anthesis** owns deterministic governance decisions, policy attribution, approval requirements, provenance, and governance contracts.
-- **Anthesis Governance Lab** independently tests the public governance contract, canonical scenarios, and evaluator compatibility.
-- The **Dubnium Governed Agent Demo** exercises that public contract and evaluator boundary through the bounded execution path without treating the agent or model as its own authorization authority.
+Public content must not depend on private Git repositories, private registries, absolute local paths, private runtime endpoints, production policy, or operator configuration.
 
-## Public testbed
+## Status and compatibility
 
-The current integration consumes the public Governance Lab contract and immutable evaluator releases from [anthesis-community](https://github.com/hackelia-micrantha/anthesis-community). The independent [Anthesis Governance Lab](https://github.com/ryjen/anthesis-governance-lab) repository validates the same boundary through canonical and adversarial scenarios; Dubnium does not require direct access to its fixture tree.
+The repository is **incubating**. Content is explicitly marked `experimental`, `v1alpha`, `v1beta`, or `stable`. Unmarked content is not a compatibility commitment.
 
-The testbed demonstrates:
+The monorepo uses one coordinated release version initially. Compatibility and deprecation rules are defined in [COMPATIBILITY.md](COMPATIBILITY.md).
 
-- structured agent plans;
-- deterministic `allow`, `approval_required`, and `deny` decisions;
-- exact approval binding;
-- a capability-bounded executor;
-- protected-path and synthetic-secret denial;
-- sanitized diffs and evidence bundles;
-- fail-closed evaluator identity and contract checks.
+## Licensing and marks
 
-It is a functioning integration slice, not yet a claim of complete production sandboxing, durable approvals, or generalized autonomous orchestration.
+Code, specifications, schemas, documentation, and generated public artifacts are licensed under Apache License 2.0 unless a path contains an explicit, reviewed exception. See [LICENSING.md](LICENSING.md) and [NOTICE](NOTICE).
 
-## Repository boundaries
+The source license does not grant rights to imply endorsement, certification, or official compatibility. See [TRADEMARKS.md](TRADEMARKS.md).
 
-This repository is the public community and distribution boundary for Dubnium.
+## Contributing and security
 
-Some implementation and reference-integration work currently remains under [`ryjen`](https://github.com/ryjen) while ownership is consolidated into the Micrantha organization. Public documentation intentionally describes product direction, architectural contracts, and supported integration surfaces without exposing trusted-operator configuration or machine-specific secrets.
+- [CONTRIBUTING.md](CONTRIBUTING.md) — contribution, provenance, contract-change, and sign-off requirements.
+- [SECURITY.md](SECURITY.md) — private vulnerability reporting and disclosure expectations.
+- [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md) — participation standards.
+- [GOVERNANCE.md](GOVERNANCE.md) — maintainership and decision authority.
+- [ROADMAP.md](ROADMAP.md) — bounded public roadmap.
 
-Related projects:
+Every private-to-public import requires an irreversible-publication review covering ownership, patent and trade-secret posture, third-party provenance, secrets, operational disclosure, synthetic fixtures, generated metadata, and Git history.
 
-- [Micrantha organization profile](https://github.com/hackelia-micrantha)
-- [Anthesis public contracts and releases](https://github.com/hackelia-micrantha/anthesis-community)
-- [Anthesis Governance Lab](https://github.com/ryjen/anthesis-governance-lab)
+## Current first slice
 
-## Status
-
-Dubnium is **Incubating**. The workstation, AI runtime, automation, and governed-agent capabilities are being integrated behind explicit support tiers and trust boundaries. Interfaces may still evolve as the public distribution contract is stabilized.
+The first planned contract slice is a narrow, experimental Capability Gateway envelope with canonicalization, synthetic adversarial fixtures, conformance checks, and a no-effect reference. It does not include the production gateway, privileged providers, deployment implementation, supervisor, memory implementation, or host configuration.
