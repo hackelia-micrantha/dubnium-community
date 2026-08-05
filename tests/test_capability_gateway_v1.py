@@ -88,6 +88,8 @@ class CapabilityGatewayV1Tests(unittest.TestCase):
         cases = {
             "manifest-digest-mismatch.json": "manifest.digest_mismatch",
             "manifest-expired.json": "manifest.expired",
+            "manifest-request-expiry-widening.json": "manifest.expiry_widening",
+            "manifest-issued-after-expiry.json": "manifest.invalid_lifetime",
             "manifest-constraint-widening.json": "manifest.constraint_widening",
             "manifest-payload-mismatch.json": "manifest.payload_mismatch",
         }
