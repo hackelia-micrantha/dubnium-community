@@ -1,0 +1,1 @@
+{"$id":"https://schemas.micrantha.com/dubnium/v1/example-noop-payload.schema.json","$schema":"https://json-schema.org/draft/2020-12/schema","additionalProperties":false,"properties":{"message":{"maxLength":64,"minLength":1,"type":"string"},"repeat":{"maximum":3,"minimum":1,"type":"integer"}},"required":["message","repeat"],"title":"example.noop payload v1","type":"object"}
