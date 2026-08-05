@@ -1,0 +1,177 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.micrantha.com/dubnium/capability-gateway/v1/common.json",
+  "title": "Dubnium Capability Gateway v1 common definitions",
+  "$defs": {
+    "contractVersion": {
+      "type": "string",
+      "const": "1"
+    },
+    "requestId": {
+      "type": "string",
+      "pattern": "^req_[a-z0-9][a-z0-9_-]{7,63}$"
+    },
+    "manifestId": {
+      "type": "string",
+      "pattern": "^manifest_[a-z0-9][a-z0-9_-]{7,63}$"
+    },
+    "digest": {
+      "type": "string",
+      "pattern": "^sha256:[0-9a-f]{64}$"
+    },
+    "timestamp": {
+      "type": "string",
+      "pattern": "^[0-9]{4}-(0[1-9]|1[0-2])-([0-2][0-9]|3[01])T([01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]Z$"
+    },
+    "uriReference": {
+      "type": "string",
+      "minLength": 8,
+      "maxLength": 512,
+      "format": "uri"
+    },
+    "capabilityName": {
+      "type": "string",
+      "minLength": 3,
+      "maxLength": 127,
+      "pattern": "^[a-z][a-z0-9-]*(\\.[a-z][a-z0-9-]*)+$"
+    },
+    "schemaVersion": {
+      "type": "string",
+      "pattern": "^[1-9][0-9]{0,3}$"
+    },
+    "capability": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "name",
+        "schema_version"
+      ],
+      "properties": {
+        "name": {
+          "$ref": "#/$defs/capabilityName"
+        },
+        "schema_version": {
+          "$ref": "#/$defs/schemaVersion"
+        }
+      }
+    },
+    "target": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "kind",
+        "reference"
+      ],
+      "properties": {
+        "kind": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 64,
+          "pattern": "^[a-z][a-z0-9-]*$"
+        },
+        "reference": {
+          "$ref": "#/$defs/uriReference"
+        }
+      }
+    },
+    "evidenceReference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "kind",
+        "reference",
+        "digest"
+      ],
+      "properties": {
+        "kind": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 64,
+          "pattern": "^[a-z][a-z0-9-]*$"
+        },
+        "reference": {
+          "$ref": "#/$defs/uriReference"
+        },
+        "digest": {
+          "$ref": "#/$defs/digest"
+        }
+      }
+    },
+    "evidenceReferences": {
+      "type": "array",
+      "maxItems": 16,
+      "items": {
+        "$ref": "#/$defs/evidenceReference"
+      }
+    },
+    "canonicalValue": {
+      "oneOf": [
+        {
+          "type": "null"
+        },
+        {
+          "type": "boolean"
+        },
+        {
+          "type": "integer",
+          "minimum": -9007199254740991,
+          "maximum": 9007199254740991
+        },
+        {
+          "type": "string",
+          "maxLength": 4096
+        },
+        {
+          "type": "array",
+          "maxItems": 64,
+          "items": {
+            "$ref": "#/$defs/canonicalValue"
+          }
+        },
+        {
+          "type": "object",
+          "maxProperties": 64,
+          "propertyNames": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 128
+          },
+          "additionalProperties": {
+            "$ref": "#/$defs/canonicalValue"
+          }
+        }
+      ]
+    },
+    "payload": {
+      "type": "object",
+      "maxProperties": 64,
+      "propertyNames": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 128
+      },
+      "additionalProperties": {
+        "$ref": "#/$defs/canonicalValue"
+      }
+    },
+    "boundedResult": {
+      "type": "object",
+      "maxProperties": 64,
+      "propertyNames": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 128
+      },
+      "additionalProperties": {
+        "$ref": "#/$defs/canonicalValue"
+      }
+    },
+    "referenceList": {
+      "type": "array",
+      "maxItems": 16,
+      "items": {
+        "$ref": "#/$defs/uriReference"
+      }
+    }
+  }
+}
