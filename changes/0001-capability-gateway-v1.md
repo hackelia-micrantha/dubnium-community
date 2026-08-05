@@ -1,6 +1,9 @@
 # Publish the experimental Capability Gateway v1 contract
 
 Status: experimental
+Content: informative
+Canonical source: this file
+Generated: no
 Compatibility: breaking
 Contracts:
 
