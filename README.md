@@ -40,11 +40,13 @@ Anthesis remains authoritative for governance decision and approval semantics wh
 | `spec/` | Normative Dubnium-owned protocol specifications |
 | `schemas/` | Canonical machine-readable schemas |
 | `api/` | Transport bindings such as OpenAPI descriptions |
+| `changes/` | Reviewed compatibility, security, migration, and evidence records |
 | `packages/` | Thin public libraries and validators |
 | `conformance/` | Implementation-neutral test suites and fixtures |
 | `reference/` | Deliberately non-production, no-effect implementations |
 | `examples/` | Synthetic usage examples |
 | `policy-examples/` | Synthetic, non-authoritative policy illustrations |
+| `release/` | Inactive deterministic release tooling pending a real contract bundle |
 | `docs/` | Architecture, process, threat-model, and publication documentation |
 | `site/` | Generated public-site artifacts; never canonical specification source |
 
@@ -54,12 +56,18 @@ Each directory contains its own ownership and dependency rules. Empty areas are 
 
 ```text
 specifications and schemas
-  -> generated public types
+  -> generated public types and API bindings
     -> public validators, clients, conformance, and references
       -> external and private consumers
 ```
 
 Public content must not depend on private Git repositories, private registries, absolute local paths, private runtime endpoints, production policy, or operator configuration.
+
+## CI and protection
+
+`Contract CI / contract-gate` runs on every pull request and protected-branch push. It validates change classification, public repository policy, GitHub Actions trust boundaries, dependency changes, bounded contract parsing, change records, and the full validator test suite.
+
+Repository settings must require the aggregate gate. See [docs/ci-security.md](docs/ci-security.md) and [docs/branch-protection.md](docs/branch-protection.md).
 
 ## Status and compatibility
 
