@@ -9,7 +9,7 @@ Generated: no
 
 ```text
 spec/ and schemas/
-  -> generated public types
+  -> generated public types and API bindings
     -> packages/, conformance/, reference/, and examples/
       -> external and private consumers
 ```
@@ -32,6 +32,10 @@ Remote schema resolution is disabled for conformance and release validation unle
 
 Transport bindings derived from normative contracts, such as OpenAPI descriptions. A binding cannot introduce authority, lifecycle, error, identity, canonicalization, or compatibility semantics absent from the normative specification.
 
+### `changes/`
+
+Reviewed contract-change records. A normative contract, schema, or API change MUST add a record describing compatibility, security, authority, migration, evidence, and the private boundary. Records feed release notes but do not replace them.
+
 ### `packages/`
 
 Thin public validators, clients, and authoring libraries. Packages MUST be usable without private services and MUST NOT embed production orchestration, policy, privileged dispatch, host topology, or operator configuration.
@@ -52,6 +56,10 @@ Synthetic examples only. Examples MUST NOT contain real identities, repositories
 
 Illustrative, synthetic policy material. It is non-authoritative and MUST NOT be presented as Anthesis policy, production Dubnium policy, or a safe default for deployment.
 
+### `release/`
+
+Reviewed deterministic bundle and manifest tooling. It remains inactive until a real contract bundle exists. Release jobs MUST NOT publish empty scaffolding, private provenance, credentials, or private implementation.
+
 ### `docs/`
 
 Architecture and process documentation. Normative policy files identify themselves explicitly. Documentation may describe boundaries but should minimize private coordinates and operational detail.
@@ -70,4 +78,4 @@ Private-to-public material is imported as a clean reviewed artifact, not by maki
 
 ## Architecture enforcement
 
-Repository policy CI performs lightweight checks for required policy files, prohibited dependency forms, symlinks, private/local runtime coordinates in public implementation paths, and canonical/generated markers. Contract-specific schema and conformance enforcement is added with the first contract slice and hardened under issue #14.
+The always-running Contract CI gate validates repository policy, workflow trust boundaries, JSON resource limits and duplicate keys, bundled references, contract markers, OpenAPI JSON, examples, change records, and validator tests. Release activation and repository settings remain separately tracked where they require a real bundle or administrative access.

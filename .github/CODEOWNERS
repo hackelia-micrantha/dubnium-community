@@ -1,0 +1,28 @@
+# Current project owner. Add qualified maintainers before requiring multiple approvals.
+* @ryjen
+
+# Normative contracts and compatibility
+/spec/ @ryjen
+/schemas/ @ryjen
+/api/ @ryjen
+/changes/ @ryjen
+/COMPATIBILITY.md @ryjen
+/docs/standards.md @ryjen
+
+# Security, licensing, governance, and marks
+/SECURITY.md @ryjen
+/LICENSE @ryjen
+/LICENSING.md @ryjen
+/NOTICE @ryjen
+/THIRD_PARTY_NOTICES.md @ryjen
+/GOVERNANCE.md @ryjen
+/TRADEMARKS.md @ryjen
+
+# CI, releases, and publication infrastructure
+/.github/workflows/ @ryjen
+/.github/CODEOWNERS @ryjen
+/release/ @ryjen
+/scripts/check_*.py @ryjen
+/scripts/validate_publication.py @ryjen
+/docs/publication-boundary.md @ryjen
+/docs/publication-review.md @ryjen

@@ -1,0 +1,149 @@
+name: Contract CI
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: read
+
+concurrency:
+  group: contract-ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  classify:
+    name: classify
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    outputs:
+      contract: ${{ steps.classify.outputs.contract }}
+      implementation: ${{ steps.classify.outputs.implementation }}
+      site: ${{ steps.classify.outputs.site }}
+      policy: ${{ steps.classify.outputs.policy }}
+      build: ${{ steps.classify.outputs.build }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v6
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Classify changed paths
+        id: classify
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [[ "${{ github.event_name }}" == "pull_request" ]]; then
+            git diff --name-only "${{ github.event.pull_request.base.sha }}...${{ github.sha }}"
+          elif [[ "${{ github.event.before }}" == "0000000000000000000000000000000000000000" ]]; then
+            git ls-files
+          else
+            git diff --name-only "${{ github.event.before }}...${{ github.sha }}"
+          fi | tee /tmp/changed-paths.txt
+          python3 scripts/classify_changes.py --stdin --github-output < /tmp/changed-paths.txt
+
+  policy:
+    name: policy-and-workflows
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Checkout
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v6
+        with:
+          persist-credentials: false
+
+      - name: Validate public repository policy
+        run: python3 scripts/check_repository_policy.py
+
+      - name: Validate workflow trust boundary
+        run: python3 scripts/check_workflow_security.py
+
+  dependency-review:
+    name: dependency-review
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Review dependency changes
+        uses: actions/dependency-review-action@a1d282b36b6f3519aa1f3fc636f609c47dddb294 # v5.0.0
+        with:
+          fail-on-severity: moderate
+          comment-summary-in-pr: never
+
+  contract-static:
+    name: contract-static
+    needs: classify
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Checkout
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v6
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Validate contract tree and change record
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [[ "${{ github.event_name }}" == "pull_request" ]]; then
+            git diff --name-only "${{ github.event.pull_request.base.sha }}...${{ github.sha }}"
+          elif [[ "${{ github.event.before }}" == "0000000000000000000000000000000000000000" ]]; then
+            git ls-files
+          else
+            git diff --name-only "${{ github.event.before }}...${{ github.sha }}"
+          fi | python3 scripts/check_contract_tree.py --changed-paths-stdin
+
+  tests:
+    name: python-tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v6
+        with:
+          persist-credentials: false
+
+      - name: Run bounded validator tests
+        env:
+          PYTHONDONTWRITEBYTECODE: "1"
+        run: python3 -m unittest discover -s tests -v
+
+  contract-gate:
+    name: contract-gate
+    if: always()
+    needs:
+      - classify
+      - policy
+      - dependency-review
+      - contract-static
+      - tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Require all Contract CI jobs
+        env:
+          CLASSIFY_RESULT: ${{ needs.classify.result }}
+          POLICY_RESULT: ${{ needs.policy.result }}
+          DEPENDENCY_RESULT: ${{ needs.dependency-review.result }}
+          CONTRACT_RESULT: ${{ needs.contract-static.result }}
+          TEST_RESULT: ${{ needs.tests.result }}
+        run: |
+          set -euo pipefail
+          for result in "$CLASSIFY_RESULT" "$POLICY_RESULT" "$CONTRACT_RESULT" "$TEST_RESULT"; do
+            [[ "$result" == "success" ]] || {
+              echo "required Contract CI job did not succeed: $result" >&2
+              exit 1
+            }
+          done
+          case "$DEPENDENCY_RESULT" in
+            success|skipped) ;;
+            *)
+              echo "dependency review did not succeed: $DEPENDENCY_RESULT" >&2
+              exit 1
+              ;;
+          esac
+          echo "Contract CI aggregate gate passed"

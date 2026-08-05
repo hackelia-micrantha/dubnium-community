@@ -108,6 +108,22 @@ class PublicationValidationTests(unittest.TestCase):
             errors = MODULE.validate(root)
             self.assertTrue(any("unexpected generated file type" in error for error in errors))
 
+    def test_rejects_source_map(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            docs = self.make_book(root)
+            (docs / "private-paths.js.map").write_text("{}", encoding="utf-8")
+            errors = MODULE.validate(root)
+            self.assertTrue(any("unexpected generated file type" in error for error in errors))
+
+    def test_rejects_oversized_file(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            docs = self.make_book(root)
+            (docs / "oversized.js").write_bytes(b"x" * (MODULE.MAX_FILE_BYTES + 1))
+            errors = MODULE.validate(root)
+            self.assertTrue(any("exceeds" in error and "oversized.js" in error for error in errors))
+
     def test_rejects_private_repository_link(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)

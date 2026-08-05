@@ -22,11 +22,20 @@ REQUIRED_FILES = {
     "TRADEMARKS.md",
     "COMPATIBILITY.md",
     "ROADMAP.md",
+    ".github/CODEOWNERS",
+    ".github/dependabot.yml",
+    ".github/workflows/contract-ci.yml",
     "docs/repository-layout.md",
     "docs/content-markers.md",
     "docs/publication-review.md",
     "docs/publication-boundary.md",
     "docs/standards.md",
+    "docs/ci-security.md",
+    "docs/branch-protection.md",
+    "docs/release-integrity.md",
+    "scripts/classify_changes.py",
+    "scripts/check_contract_tree.py",
+    "scripts/check_workflow_security.py",
 }
 
 PUBLIC_ROOTS = {
@@ -38,6 +47,8 @@ PUBLIC_ROOTS = {
     "reference",
     "examples",
     "policy-examples",
+    "changes",
+    "release",
 }
 
 MARKED_POLICY_FILES = {
@@ -53,6 +64,9 @@ MARKED_POLICY_FILES = {
     "docs/publication-review.md",
     "docs/publication-boundary.md",
     "docs/standards.md",
+    "docs/ci-security.md",
+    "docs/branch-protection.md",
+    "docs/release-integrity.md",
 }
 
 PROHIBITED_PUBLIC_PATTERNS: tuple[tuple[str, re.Pattern[str]], ...] = (
