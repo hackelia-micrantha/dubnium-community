@@ -35,6 +35,13 @@ class NonFiniteNumberError(ValueError):
     pass
 
 
+def normalize_repo_path(path: str) -> str:
+    normalized = path.strip().replace("\\", "/")
+    while normalized.startswith("./"):
+        normalized = normalized[2:]
+    return normalized
+
+
 def object_without_duplicates(pairs: list[tuple[str, Any]]) -> dict[str, Any]:
     result: dict[str, Any] = {}
     for key, value in pairs:
@@ -89,7 +96,13 @@ def iter_refs(value: Any) -> Iterable[str]:
             yield from iter_refs(child)
 
 
-def resolve_local_ref(source: Path, ref: str, root: Path) -> Path | None:
+def resolve_local_ref(
+    source: Path,
+    ref: str,
+    root: Path,
+    *,
+    allowed_roots: tuple[Path, ...] | None = None,
+) -> Path | None:
     if ref.startswith("#"):
         return None
     if "://" in ref or ref.startswith("//"):
@@ -103,6 +116,19 @@ def resolve_local_ref(source: Path, ref: str, root: Path) -> Path | None:
         candidate.relative_to(root_resolved)
     except ValueError as exc:
         raise ValueError(f"reference escapes bundled root: {ref}") from exc
+
+    if allowed_roots is not None:
+        allowed = False
+        for allowed_root in allowed_roots:
+            try:
+                candidate.relative_to(allowed_root.resolve())
+            except ValueError:
+                continue
+            allowed = True
+            break
+        if not allowed:
+            raise ValueError(f"reference targets an unapproved bundled path: {ref}")
+
     if not candidate.is_file():
         raise ValueError(f"unresolved bundled reference: {ref}")
     return candidate
@@ -177,6 +203,7 @@ def validate_schemas(root: Path) -> list[str]:
 def validate_openapi(root: Path) -> list[str]:
     errors: list[str] = []
     api_root = root / "api"
+    schema_root = root / "schemas"
     if not api_root.is_dir():
         return errors
 
@@ -206,7 +233,12 @@ def validate_openapi(root: Path) -> list[str]:
             errors.append(f"{relative}: paths object is required")
         for ref in iter_refs(document):
             try:
-                resolve_local_ref(path, ref, api_root)
+                resolve_local_ref(
+                    path,
+                    ref,
+                    root,
+                    allowed_roots=(api_root, schema_root),
+                )
             except ValueError as exc:
                 errors.append(f"{relative}: {exc}")
     return errors
@@ -255,13 +287,14 @@ def validate_examples(root: Path) -> list[str]:
             resolve_local_ref(path, schema_ref, root)
         except ValueError as exc:
             errors.append(f"{relative}: {exc}")
-        if schema_root.resolve() not in (path.parent / schema_ref.split("#", 1)[0]).resolve().parents:
+        target = (path.parent / schema_ref.split("#", 1)[0]).resolve()
+        if schema_root.resolve() not in target.parents:
             errors.append(f"{relative}: example $schema must resolve beneath schemas/")
     return errors
 
 
 def is_contract_path(path: str) -> bool:
-    normalized = path.strip().replace("\\", "/").lstrip("./")
+    normalized = normalize_repo_path(path)
     if normalized in {"spec/README.md", "schemas/README.md", "api/README.md"}:
         return False
     return normalized.startswith(("spec/", "schemas/", "api/"))
@@ -270,11 +303,12 @@ def is_contract_path(path: str) -> bool:
 def validate_change_record(changed_paths: list[str]) -> list[str]:
     if not any(is_contract_path(path) for path in changed_paths):
         return []
+    normalized = [normalize_repo_path(path) for path in changed_paths]
     has_record = any(
-        path.strip().replace("\\", "/").lstrip("./").startswith("changes/")
-        and path.strip().lower().endswith(".md")
-        and not path.strip().endswith("changes/README.md")
-        for path in changed_paths
+        path.startswith("changes/")
+        and path.lower().endswith(".md")
+        and path != "changes/README.md"
+        for path in normalized
     )
     return [] if has_record else ["contract changes require a Markdown record under changes/"]
 
