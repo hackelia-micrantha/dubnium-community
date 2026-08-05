@@ -9,9 +9,13 @@ import re
 import sys
 from pathlib import Path
 
+MAX_FILES = 1_000
+MAX_TOTAL_BYTES = 25_000_000
+MAX_FILE_BYTES = 5_000_000
+MAX_PATH_LENGTH = 240
 ALLOWED_SUFFIXES = {
     ".html", ".css", ".js", ".json", ".svg", ".png", ".jpg", ".jpeg",
-    ".webp", ".gif", ".woff", ".woff2", ".ttf", ".eot", ".txt", ".map",
+    ".webp", ".gif", ".woff", ".woff2", ".ttf", ".eot", ".txt",
 }
 ALLOWED_BASENAMES = {".nojekyll"}
 SHA_RE = re.compile(r"^[0-9a-f]{40}$")
@@ -46,7 +50,7 @@ HTML_URL_ATTRIBUTE = re.compile(
 )
 MERMAID_BUNDLE = re.compile(r"^mermaid-[0-9a-f]+\.min\.js$", re.I)
 SEARCH_INDEX = re.compile(r"^searchindex-[0-9a-f]+\.js$", re.I)
-TEXT_SUFFIXES = {".html", ".css", ".js", ".json", ".svg", ".txt", ".map"}
+TEXT_SUFFIXES = {".html", ".css", ".js", ".json", ".svg", ".txt"}
 
 
 def fail(errors: list[str], message: str) -> None:
@@ -164,12 +168,24 @@ def validate(root: Path, *, require_public_schema: bool = False) -> list[str]:
             else:
                 validate_legacy_metadata(metadata, errors)
 
+    file_count = 0
+    total_bytes = 0
     for path in docs.rglob("*"):
         relative = path.relative_to(root)
+        relative_text = relative.as_posix()
+        if len(relative_text) > MAX_PATH_LENGTH:
+            fail(errors, f"generated path exceeds {MAX_PATH_LENGTH} characters: {relative_text}")
         if path.is_symlink():
             fail(errors, f"symlinks are not allowed: {relative}")
             continue
         if not path.is_file():
+            continue
+
+        file_count += 1
+        size = path.stat().st_size
+        total_bytes += size
+        if size > MAX_FILE_BYTES:
+            fail(errors, f"generated file exceeds {MAX_FILE_BYTES} bytes: {relative}")
             continue
         if path.name in ALLOWED_BASENAMES:
             continue
@@ -189,6 +205,11 @@ def validate(root: Path, *, require_public_schema: bool = False) -> list[str]:
         for label, pattern in PRIVATE_PATTERNS.items():
             if should_scan_private(relative, label) and pattern.search(text):
                 fail(errors, f"{relative}: contains {label}")
+
+    if file_count > MAX_FILES:
+        fail(errors, f"publication contains {file_count} files; maximum is {MAX_FILES}")
+    if total_bytes > MAX_TOTAL_BYTES:
+        fail(errors, f"publication contains {total_bytes} bytes; maximum is {MAX_TOTAL_BYTES}")
 
     return errors
 
