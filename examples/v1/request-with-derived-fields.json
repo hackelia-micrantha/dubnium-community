@@ -1,0 +1,33 @@
+{
+  "$schema": "../../schemas/v1/capability-request.schema.json",
+  "request": {
+    "$schema": "../../schemas/v1/capability-request.schema.json",
+    "capability": {
+      "name": "example.noop",
+      "schema_version": 1
+    },
+    "contract_version": "1.0",
+    "evidence_refs": [
+      "evidence:synthetic-ci:001"
+    ],
+    "expires_at": "2099-01-01T00:00:00Z",
+    "payload": {
+      "message": "hello",
+      "repeat": 2
+    },
+    "request_id": "request-example-001",
+    "requested_at": "2026-08-05T20:00:00Z",
+    "requested_constraints": {
+      "max_result_bytes": 256
+    },
+    "target_ref": "example:local"
+  },
+  "derived": {
+    "normalized_payload": {
+      "message": "hello",
+      "repeat": 2
+    },
+    "normalized_payload_digest": "sha256:7c00e1d351eb3a3001bb4fd167a3f9675a8f86d7ab2cc45",
+    "request_digest": "sha256:d9a8274483bbf7d3f4a6a4f1b48b0666321bb4fd264a3f3425d8f86d7ab2cc45"
+  }
+}
