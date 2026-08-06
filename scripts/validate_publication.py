@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import re
 import sys
@@ -33,6 +34,7 @@ PRIVATE_METADATA_FIELDS = {
 PRIVATE_PATTERNS = {
     "private repository URL": re.compile(r"github\.com/ryjen/dubnium(?:/|$)", re.I),
     "private edit link": re.compile(r"github\.com/ryjen/dubnium/edit/", re.I),
+    "private issue reference": re.compile(r"\bryjen/dubnium#\d+\b", re.I),
     "internal documentation path": re.compile(r"docs/internal|/internal/", re.I),
     "private IPv4 address": re.compile(
         r"\b(?:10\.\d{1,3}\.\d{1,3}\.\d{1,3}|192\.168\.\d{1,3}\.\d{1,3}|172\.(?:1[6-9]|2\d|3[01])\.\d{1,3}\.\d{1,3})\b"
@@ -97,7 +99,21 @@ def should_scan_private(relative: Path, label: str) -> bool:
     )
 
 
-def validate_public_metadata(metadata: dict[object, object], errors: list[str]) -> None:
+def calculate_content_digest(docs: Path) -> str:
+    digest = hashlib.sha256()
+    for path in sorted(docs.rglob("*")):
+        if not path.is_file() or path.name == "publication.json":
+            continue
+        relative = path.relative_to(docs).as_posix().encode("utf-8")
+        content = path.read_bytes()
+        digest.update(len(relative).to_bytes(8, "big"))
+        digest.update(relative)
+        digest.update(len(content).to_bytes(8, "big"))
+        digest.update(content)
+    return digest.hexdigest()
+
+
+def validate_public_metadata(metadata: dict[object, object], docs: Path, errors: list[str]) -> None:
     required_fields = {
         "schema_version",
         "publication_id",
@@ -111,10 +127,22 @@ def validate_public_metadata(metadata: dict[object, object], errors: list[str]) 
 
     if metadata.get("schema_version") != 2:
         fail(errors, "publication.json schema_version must be 2")
-    if not PUBLICATION_ID_RE.fullmatch(str(metadata.get("publication_id", ""))):
+
+    publication_id = str(metadata.get("publication_id", ""))
+    content_digest = str(metadata.get("content_digest", ""))
+    if not PUBLICATION_ID_RE.fullmatch(publication_id):
         fail(errors, "publication.json publication_id has invalid syntax")
-    if not SHA256_RE.fullmatch(str(metadata.get("content_digest", ""))):
+    if not SHA256_RE.fullmatch(content_digest):
         fail(errors, "publication.json content_digest must be sha256:<64 lowercase hex characters>")
+
+    calculated = calculate_content_digest(docs)
+    expected_digest = f"sha256:{calculated}"
+    expected_publication_id = f"dubnium-book-{calculated[:20]}"
+    if SHA256_RE.fullmatch(content_digest) and content_digest != expected_digest:
+        fail(errors, "publication.json content_digest does not match site/docs content")
+    if PUBLICATION_ID_RE.fullmatch(publication_id) and publication_id != expected_publication_id:
+        fail(errors, "publication.json publication_id does not match the public content digest")
+
     if not str(metadata.get("generator", "")).startswith("mdbook "):
         fail(errors, "publication.json generator must identify an mdbook version")
     if not RFC3339_RE.fullmatch(str(metadata.get("generated_at", ""))):
@@ -162,7 +190,7 @@ def validate(root: Path, *, require_public_schema: bool = False) -> list[str]:
             if not isinstance(metadata, dict):
                 fail(errors, "publication.json must contain a JSON object")
             elif metadata.get("schema_version") == 2:
-                validate_public_metadata(metadata, errors)
+                validate_public_metadata(metadata, docs, errors)
             elif require_public_schema:
                 fail(errors, "changed publications must use publication.json schema_version 2")
             else:
