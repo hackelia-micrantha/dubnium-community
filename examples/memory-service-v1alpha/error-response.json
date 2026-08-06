@@ -1,0 +1,6 @@
+{
+  "$schema": "../../schemas/v1alpha/memory-service.schema.json#/$defs/ErrorExample",
+  "response": {
+    "error": "unauthorized"
+  }
+}
