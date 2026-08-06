@@ -1,0 +1,7 @@
+{
+  "$schema": "../../schemas/v1alpha/memory-service.schema.json#/$defs/HealthExample",
+  "response": {
+    "status": "ok",
+    "redis": "disabled"
+  }
+}
