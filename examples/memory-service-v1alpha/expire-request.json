@@ -1,0 +1,6 @@
+{
+  "$schema": "../../schemas/v1alpha/memory-service.schema.json#/$defs/ExpireRequestExample",
+  "request": {
+    "now": "2030-01-03T00:00:00Z"
+  }
+}
