@@ -1,7 +1,10 @@
 # Public Website and Book Publication Boundary
 
-Status: active  
-Content: normative for repository ownership and publication metadata
+Status: experimental
+Content: normative
+Canonical source: this file
+Generated: no
+Reviewed: 2026-08-05
 
 ## Authority
 
