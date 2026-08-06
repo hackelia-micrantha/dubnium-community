@@ -1,0 +1,185 @@
+{
+  "version": 1,
+  "bundles": [
+    {
+      "id": "memory-service-v1alpha",
+      "status": "experimental",
+      "spec": "spec/memory-service-v1alpha.md",
+      "openapi": "api/memory-service/v1alpha/openapi.json",
+      "schemas": [
+        "schemas/v1alpha/memory-service.schema.json"
+      ],
+      "examples": {
+        "positive": [
+          "examples/memory-service-v1alpha/store-request.json"
+        ],
+        "negative": [
+          "examples/memory-service-v1alpha/negative/invalid-scope.json"
+        ]
+      },
+      "openapi_expectations": {
+        "paths": [
+          "/healthz",
+          "/memory/store",
+          "/memory/retrieve",
+          "/memory/expire",
+          "/memory/retrieval-events"
+        ],
+        "components": [
+          "Memory",
+          "StoreMemoryRequest",
+          "RetrieveMemoryRequest",
+          "RetrievedMemory",
+          "RetrievalEvent",
+          "ExpireRequest"
+        ],
+        "assertions": [
+          {
+            "pointer": "#/x-dubnium-contract-status",
+            "operator": "equals",
+            "value": "experimental"
+          },
+          {
+            "pointer": "#/x-dubnium-canonical-source/repository",
+            "operator": "equals",
+            "value": "ryjen/dubnium"
+          }
+        ]
+      }
+    },
+    {
+      "id": "supervisor-gateway-v1alpha",
+      "status": "experimental",
+      "spec": "spec/supervisor-gateway-v1alpha.md",
+      "openapi": "api/supervisor-gateway/v1alpha/openapi.json",
+      "schemas": [
+        "schemas/v1alpha/supervisor-gateway.schema.json"
+      ],
+      "examples": {
+        "positive": [
+          "examples/supervisor-gateway-v1alpha/chat-request.json",
+          "examples/supervisor-gateway-v1alpha/chat-response.json"
+        ],
+        "negative": [
+          "examples/supervisor-gateway-v1alpha/negative/tools-request.json"
+        ]
+      },
+      "openapi_expectations": {
+        "paths": [
+          "/healthz",
+          "/v1/models",
+          "/v1/chat/completions"
+        ],
+        "components": [
+          "ChatCompletionRequest",
+          "AliasCapabilities",
+          "Model",
+          "ExecutionIdentity",
+          "DelegationLineage",
+          "Error"
+        ],
+        "assertions": [
+          {
+            "pointer": "#/x-dubnium-contract-version",
+            "operator": "equals",
+            "value": "dubnium.llm-gateway.v1"
+          },
+          {
+            "pointer": "#/x-dubnium-canonical-source/console_script",
+            "operator": "equals",
+            "value": "supervisor-gateway"
+          },
+          {
+            "pointer": "#/x-dubnium-canonical-source/entry_point",
+            "operator": "equals",
+            "value": "dubnium_supervisor_gateway.lineage_app:main"
+          },
+          {
+            "pointer": "#/components/schemas/ChatCompletionRequest/required",
+            "operator": "contains",
+            "value": "model"
+          },
+          {
+            "pointer": "#/components/schemas/ChatCompletionRequest/properties/tools",
+            "operator": "absent"
+          },
+          {
+            "pointer": "#/components/schemas/ChatCompletionRequest/properties/response_format",
+            "operator": "absent"
+          },
+          {
+            "pointer": "#/components/schemas/Model/required",
+            "operator": "contains",
+            "value": "dubnium"
+          },
+          {
+            "pointer": "#/components/schemas/DubniumResponseMetadata/required",
+            "operator": "contains",
+            "value": "execution"
+          },
+          {
+            "pointer": "#/components/schemas/DubniumResponseMetadata/properties/lineage",
+            "operator": "present"
+          },
+          {
+            "pointer": "#/components/schemas/Error/properties/error/required",
+            "operator": "contains",
+            "value": "dubnium"
+          }
+        ]
+      }
+    },
+    {
+      "id": "scheduler-v1alpha",
+      "status": "experimental",
+      "spec": "spec/scheduler-v1alpha.md",
+      "openapi": "api/scheduler/v1alpha/openapi.json",
+      "schemas": [
+        "schemas/v1alpha/scheduler.schema.json"
+      ],
+      "examples": {
+        "positive": [
+          "examples/scheduler-v1alpha/schedule-response.json"
+        ],
+        "negative": [
+          "examples/scheduler-v1alpha/negative/invalid-control-status.json"
+        ]
+      },
+      "openapi_expectations": {
+        "paths": [
+          "/healthz",
+          "/schedules",
+          "/schedules/{schedule_id}",
+          "/schedules/{schedule_id}/history",
+          "/schedules/{schedule_id}/trigger",
+          "/schedules/{schedule_id}/pause",
+          "/schedules/{schedule_id}/resume"
+        ],
+        "components": [
+          "Dispatch",
+          "ScheduleSummary",
+          "Schedule",
+          "ControlResult",
+          "Error"
+        ],
+        "assertions": [
+          {
+            "pointer": "#/x-dubnium-contract-status",
+            "operator": "equals",
+            "value": "experimental"
+          },
+          {
+            "pointer": "#/x-dubnium-canonical-source/repository",
+            "operator": "equals",
+            "value": "ryjen/dubnium"
+          },
+          {
+            "pointer": "#/paths/~1schedules~1{schedule_id}~1trigger/post/x-dubnium-visibility",
+            "operator": "equals",
+            "value": "operator"
+          }
+        ]
+      }
+    }
+  ]
+}
