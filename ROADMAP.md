@@ -21,7 +21,8 @@ The public foundation is in place:
 - an experimental Capability Gateway contract slice;
 - canonicalization, error, fixture, conformance, and no-effect reference assets;
 - deterministic contract archive, manifest, checksum, SPDX, attestation, and consumer-verification tooling;
-- a repository-owned tool for applying and checking `main` branch protection and merge policy.
+- a repository-owned tool for applying and checking `main` branch protection and merge policy;
+- downstream v1alpha consumption feedback tracked through public contract issues.
 
 The repository remains incubating. Presence does not imply a stable compatibility commitment. No protected `contract-v*` release has yet been accepted as consumer identity.
 
@@ -31,6 +32,8 @@ The repository remains incubating. Presence does not imply a stable compatibilit
 - verify publication no-op behavior and keep generated changes confined to `site/docs/**`;
 - apply and read back the committed `main` protection and squash-only merge policy;
 - establish immutable `contract-v*` tag protection or an equivalent audited administrative control;
+- resolve or explicitly classify the v1alpha status-read `503` question in #29;
+- resolve or explicitly classify the pre-dispatch `indeterminate` attribution question in #31;
 - publish the tag named by `release/contract-bundle-version.txt` only from the current protected `main` commit;
 - require the post-publication consumer job to verify checksums, provenance, safe extraction, the embedded manifest, and public conformance;
 - record release and protection evidence on the public tracking issues.
@@ -40,6 +43,8 @@ The repository remains incubating. Presence does not imply a stable compatibilit
 - improve contract integration documentation and synthetic examples;
 - pin the immutable release tag, source commit, archive digest, and verified attestation in each consumer;
 - exercise public conformance against independent and private consumers at the contract boundary;
+- add positive fixtures for pre-dispatch and post-dispatch uncertainty once #31 selects a compatible model;
+- keep transport error documentation and OpenAPI response sets aligned as #29 is resolved;
 - refine compatibility, deprecation, and migration guidance from actual consumer feedback;
 - expand public threat models without disclosing production policy or topology;
 - complete one supersession or maintenance exercise without replacing published artifacts.
