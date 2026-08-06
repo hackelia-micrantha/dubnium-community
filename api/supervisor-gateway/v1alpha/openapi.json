@@ -3,7 +3,7 @@
   "info": {
     "title": "Dubnium Supervisor LLM Gateway API",
     "version": "0.1.0",
-    "description": "Experimental OpenAI-compatible subset exposed by the current Dubnium supervisor gateway. The gateway accepts a bounded set of chat-completion fields, can attach scoped read-only memory evidence, and can request one catalogued specialist through a deterministic seam. Model and specialist outputs remain proposal-only. The current service does not enforce inbound authentication and must be placed behind a trusted local or authenticated ingress boundary."
+    "description": "Experimental OpenAI-compatible subset exposed by the packaged Dubnium supervisor gateway. The executable resolves a logical model alias, negotiates dubnium.llm-gateway.v1 capabilities, attaches scoped read-only memory evidence, performs bounded specialist delegation, and emits gateway-authored execution identity and specialist lineage. Model and specialist outputs remain proposal-only. The current service does not enforce inbound authentication and must be placed behind a trusted local or authenticated ingress boundary."
   },
   "servers": [
     {
@@ -12,15 +12,23 @@
     }
   ],
   "tags": [
-    { "name": "Health" },
-    { "name": "Models" },
-    { "name": "Chat" }
+    {
+      "name": "Health"
+    },
+    {
+      "name": "Models"
+    },
+    {
+      "name": "Chat"
+    }
   ],
   "paths": {
     "/healthz": {
       "get": {
         "operationId": "getSupervisorGatewayHealth",
-        "tags": ["Health"],
+        "tags": [
+          "Health"
+        ],
         "summary": "Return process health",
         "responses": {
           "200": {
@@ -30,9 +38,14 @@
                 "schema": {
                   "type": "object",
                   "additionalProperties": false,
-                  "required": ["status"],
+                  "required": [
+                    "status"
+                  ],
                   "properties": {
-                    "status": { "type": "string", "const": "ok" }
+                    "status": {
+                      "type": "string",
+                      "const": "ok"
+                    }
                   }
                 }
               }
@@ -44,22 +57,32 @@
     "/v1/models": {
       "get": {
         "operationId": "listSupervisorModels",
-        "tags": ["Models"],
-        "summary": "List the configured logical supervisor model",
+        "tags": [
+          "Models"
+        ],
+        "summary": "List the configured logical supervisor model and capabilities",
         "responses": {
           "200": {
-            "description": "OpenAI-compatible model list.",
+            "description": "Model alias declaration and Dubnium contract capabilities.",
             "content": {
               "application/json": {
                 "schema": {
                   "type": "object",
                   "additionalProperties": false,
-                  "required": ["object", "data"],
+                  "required": [
+                    "object",
+                    "data"
+                  ],
                   "properties": {
-                    "object": { "type": "string", "const": "list" },
+                    "object": {
+                      "type": "string",
+                      "const": "list"
+                    },
                     "data": {
                       "type": "array",
-                      "items": { "$ref": "#/components/schemas/Model" }
+                      "items": {
+                        "$ref": "#/components/schemas/Model"
+                      }
                     }
                   }
                 }
@@ -72,17 +95,23 @@
     "/v1/chat/completions": {
       "post": {
         "operationId": "createSupervisorChatCompletion",
-        "tags": ["Chat"],
-        "summary": "Create a supervisor-routed chat completion",
-        "description": "For non-streaming requests, the backend JSON response is returned with the configured model name and Dubnium memory, specialist, and authority metadata. Streaming requests receive a synthetic Dubnium metadata event followed by the backend SSE stream with model fields rewritten.",
+        "tags": [
+          "Chat"
+        ],
+        "summary": "Create a contract-negotiated supervisor chat completion",
+        "description": "The model field must name the configured logical alias returned by /v1/models. The gateway rejects unavailable requested capabilities before backend dispatch. Tools and structured output are not currently advertised or accepted. For non-streaming requests, the backend JSON response is sanitized and enriched with memory, specialist, proposal-only authority, trusted execution identity, and optional specialist-lineage metadata. Streaming requests receive a synthetic trusted metadata event followed by sanitized backend SSE events with model names rewritten.",
         "requestBody": {
           "required": true,
           "content": {
             "application/json": {
-              "schema": { "$ref": "#/components/schemas/ChatCompletionRequest" }
+              "schema": {
+                "$ref": "#/components/schemas/ChatCompletionRequest"
+              }
             },
             "application/*+json": {
-              "schema": { "$ref": "#/components/schemas/ChatCompletionRequest" }
+              "schema": {
+                "$ref": "#/components/schemas/ChatCompletionRequest"
+              }
             }
           }
         },
@@ -91,18 +120,30 @@
             "description": "JSON completion or Server-Sent Events.",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/ChatCompletionResponse" }
+                "schema": {
+                  "$ref": "#/components/schemas/ChatCompletionResponse"
+                }
               },
               "text/event-stream": {
-                "schema": { "type": "string" },
-                "description": "The first event carries `object=chat.completion.chunk`, the configured model, empty choices, and Dubnium memory/specialist metadata. Subsequent backend events are proxied with model names rewritten."
+                "schema": {
+                  "type": "string"
+                },
+                "description": "The first event carries object=chat.completion.chunk, the configured logical model alias, empty choices, and gateway-authored memory, specialist, execution, and optional specialist-lineage metadata. Subsequent backend events have model names rewritten and backend-supplied dubnium metadata removed."
               }
             }
           },
-          "400": { "$ref": "#/components/responses/BadRequest" },
-          "413": { "$ref": "#/components/responses/PayloadTooLarge" },
-          "415": { "$ref": "#/components/responses/UnsupportedMediaType" },
-          "503": { "$ref": "#/components/responses/ServiceUnavailable" }
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "413": {
+            "$ref": "#/components/responses/PayloadTooLarge"
+          },
+          "415": {
+            "$ref": "#/components/responses/UnsupportedMediaType"
+          },
+          "503": {
+            "$ref": "#/components/responses/ServiceUnavailable"
+          }
         }
       }
     }
@@ -112,20 +153,54 @@
       "Error": {
         "type": "object",
         "additionalProperties": false,
-        "required": ["error"],
+        "required": [
+          "error"
+        ],
         "properties": {
           "error": {
             "type": "object",
             "additionalProperties": false,
-            "required": ["message", "type", "code"],
+            "required": [
+              "message",
+              "type",
+              "code",
+              "dubnium"
+            ],
             "properties": {
-              "message": { "type": "string" },
+              "message": {
+                "type": "string"
+              },
               "type": {
                 "type": "string",
-                "enum": ["invalid_request_error", "api_error"]
+                "enum": [
+                  "invalid_request_error",
+                  "api_error"
+                ]
               },
-              "code": { "type": "string" }
+              "code": {
+                "type": "string"
+              },
+              "dubnium": {
+                "$ref": "#/components/schemas/ErrorDubnium"
+              }
             }
+          }
+        }
+      },
+      "ErrorDubnium": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "contract_version",
+          "retryable"
+        ],
+        "properties": {
+          "contract_version": {
+            "type": "string",
+            "const": "dubnium.llm-gateway.v1"
+          },
+          "retryable": {
+            "type": "boolean"
           }
         }
       },
@@ -133,21 +208,31 @@
         "type": "object",
         "additionalProperties": true,
         "properties": {
-          "role": { "type": "string" },
+          "role": {
+            "type": "string"
+          },
           "content": {}
         },
-        "description": "Messages are forwarded after the gateway prepends policy and optional evidence messages."
+        "description": "Messages are forwarded after the gateway prepends immutable policy and optional memory and specialist evidence messages."
       },
       "SpecialistRequest": {
         "type": "object",
         "additionalProperties": true,
-        "required": ["kind", "input"],
+        "required": [
+          "kind",
+          "input"
+        ],
         "properties": {
-          "kind": { "type": "string", "minLength": 1 },
+          "kind": {
+            "type": "string",
+            "minLength": 1
+          },
           "input": {
             "type": "object",
             "additionalProperties": true,
-            "required": ["prompt"],
+            "required": [
+              "prompt"
+            ],
             "properties": {
               "prompt": {
                 "type": "string",
@@ -158,160 +243,651 @@
           }
         }
       },
+      "CapabilityRequirements": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "chat_completions": {
+            "type": "boolean"
+          },
+          "streaming": {
+            "type": "boolean"
+          },
+          "tools": {
+            "type": "boolean",
+            "description": "Requesting true is rejected by the current alias declaration."
+          },
+          "structured_output": {
+            "type": "boolean",
+            "description": "Requesting true is rejected by the current alias declaration."
+          },
+          "deterministic_seed": {
+            "type": "boolean",
+            "description": "Requesting true is rejected by the current alias declaration."
+          },
+          "sampling_parameters": {
+            "type": "array",
+            "uniqueItems": true,
+            "items": {
+              "type": "string",
+              "enum": [
+                "temperature",
+                "top_p"
+              ]
+            }
+          },
+          "topology": {
+            "type": "string",
+            "const": "supervisor-specialist"
+          },
+          "privacy_class": {
+            "type": "string",
+            "const": "local-only"
+          },
+          "evidence_level": {
+            "type": "string",
+            "const": "resolved-execution"
+          }
+        },
+        "description": "Optional requirements checked against the configured logical alias before dispatch. A requested value that exceeds the declaration produces capability_mismatch."
+      },
       "DubniumRequestMetadata": {
         "type": "object",
         "additionalProperties": true,
         "properties": {
-          "actor": { "type": "string" },
-          "workspace": { "type": "string" },
-          "project": { "type": "string" },
-          "session_id": { "type": "string" },
+          "contract_version": {
+            "type": "string",
+            "const": "dubnium.llm-gateway.v1"
+          },
+          "capabilities": {
+            "$ref": "#/components/schemas/CapabilityRequirements"
+          },
+          "actor": {
+            "type": "string"
+          },
+          "workspace": {
+            "type": "string"
+          },
+          "project": {
+            "type": "string"
+          },
+          "session_id": {
+            "type": "string"
+          },
           "memory_mode": {
             "type": "string",
-            "enum": ["off", "read-only"],
+            "enum": [
+              "off",
+              "read-only"
+            ],
             "default": "off",
             "description": "Other known modes are rejected because they are not implemented."
           },
-          "context_class": { "type": "string", "default": "project" },
-          "request_id": { "type": "string" },
+          "context_class": {
+            "type": "string",
+            "default": "project"
+          },
+          "request_id": {
+            "type": "string"
+          },
           "specialist": {
             "anyOf": [
-              { "$ref": "#/components/schemas/SpecialistRequest" },
-              { "type": "null" }
+              {
+                "$ref": "#/components/schemas/SpecialistRequest"
+              },
+              {
+                "type": "null"
+              }
             ]
           }
         },
-        "description": "When read-only memory is enabled, actor plus workspace or project are required. The deployment may be configured not to trust request identity metadata."
+        "description": "When read-only memory is enabled, actor plus workspace or project are required. The deployment may be configured not to trust request identity metadata. Caller-supplied execution or lineage metadata is not authoritative and is replaced by gateway-authored response metadata."
       },
       "ChatCompletionRequest": {
         "type": "object",
         "additionalProperties": false,
-        "required": ["messages"],
+        "required": [
+          "model",
+          "messages"
+        ],
         "properties": {
           "model": {
             "type": "string",
-            "description": "Accepted for compatibility; the configured served model is used."
+            "pattern": "^[a-z][a-z0-9]*(?:[._/-][a-z0-9]+)*$",
+            "description": "Must exactly match the configured logical alias returned by /v1/models."
           },
           "messages": {
             "type": "array",
-            "items": { "$ref": "#/components/schemas/ChatMessage" }
+            "items": {
+              "$ref": "#/components/schemas/ChatMessage"
+            }
           },
-          "stream": { "type": "boolean", "default": false },
-          "temperature": { "type": "number" },
-          "top_p": { "type": "number" },
-          "max_tokens": { "type": "integer" },
+          "stream": {
+            "type": "boolean",
+            "default": false
+          },
+          "temperature": {
+            "type": "number"
+          },
+          "top_p": {
+            "type": "number"
+          },
+          "max_tokens": {
+            "type": "integer"
+          },
           "stop": {
             "oneOf": [
-              { "type": "string" },
-              { "type": "array", "items": { "type": "string" } }
+              {
+                "type": "string"
+              },
+              {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
             ]
-          },
-          "response_format": {
-            "type": "object",
-            "additionalProperties": true
-          },
-          "tools": {
-            "type": "array",
-            "items": { "type": "object", "additionalProperties": true }
           },
           "dubnium": {
             "anyOf": [
-              { "$ref": "#/components/schemas/DubniumRequestMetadata" },
-              { "type": "null" }
+              {
+                "$ref": "#/components/schemas/DubniumRequestMetadata"
+              },
+              {
+                "type": "null"
+              }
             ]
+          }
+        }
+      },
+      "AliasCapabilities": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "chat_completions",
+          "streaming",
+          "tools",
+          "structured_output",
+          "deterministic_seed",
+          "sampling_parameters",
+          "topology",
+          "privacy_class",
+          "evidence_level"
+        ],
+        "properties": {
+          "chat_completions": {
+            "type": "boolean",
+            "const": true
+          },
+          "streaming": {
+            "type": "boolean",
+            "const": true
+          },
+          "tools": {
+            "type": "boolean",
+            "const": false
+          },
+          "structured_output": {
+            "type": "boolean",
+            "const": false
+          },
+          "deterministic_seed": {
+            "type": "boolean",
+            "const": false
+          },
+          "sampling_parameters": {
+            "type": "array",
+            "const": [
+              "temperature",
+              "top_p"
+            ]
+          },
+          "topology": {
+            "type": "string",
+            "const": "supervisor-specialist"
+          },
+          "privacy_class": {
+            "type": "string",
+            "const": "local-only"
+          },
+          "evidence_level": {
+            "type": "string",
+            "const": "resolved-execution"
+          }
+        }
+      },
+      "ModelDubnium": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "contract_version",
+          "logical_alias",
+          "capabilities"
+        ],
+        "properties": {
+          "contract_version": {
+            "type": "string",
+            "const": "dubnium.llm-gateway.v1"
+          },
+          "logical_alias": {
+            "type": "boolean",
+            "const": true
+          },
+          "capabilities": {
+            "$ref": "#/components/schemas/AliasCapabilities"
           }
         }
       },
       "Model": {
         "type": "object",
         "additionalProperties": false,
-        "required": ["id", "object", "created", "owned_by"],
+        "required": [
+          "id",
+          "object",
+          "created",
+          "owned_by",
+          "dubnium"
+        ],
         "properties": {
-          "id": { "type": "string" },
-          "object": { "type": "string", "const": "model" },
-          "created": { "type": "integer", "const": 0 },
-          "owned_by": { "type": "string", "const": "dubnium" }
+          "id": {
+            "type": "string"
+          },
+          "object": {
+            "type": "string",
+            "const": "model"
+          },
+          "created": {
+            "type": "integer",
+            "const": 0
+          },
+          "owned_by": {
+            "type": "string",
+            "const": "dubnium"
+          },
+          "dubnium": {
+            "$ref": "#/components/schemas/ModelDubnium"
+          }
         }
       },
       "MemoryMetadata": {
         "type": "object",
         "additionalProperties": true,
-        "required": ["status", "mode"],
+        "required": [
+          "status",
+          "mode"
+        ],
         "properties": {
           "status": {
             "type": "string",
-            "enum": ["disabled", "unavailable", "used", "empty", "reduced"]
+            "enum": [
+              "disabled",
+              "unavailable",
+              "used",
+              "empty",
+              "reduced"
+            ]
           },
           "mode": {
             "type": "string",
-            "enum": ["off", "read-only"]
+            "enum": [
+              "off",
+              "read-only"
+            ]
           },
-          "event_id": { "type": "string" },
-          "count": { "type": "integer", "minimum": 0 }
+          "event_id": {
+            "type": "string"
+          },
+          "count": {
+            "type": "integer",
+            "minimum": 0
+          }
         }
       },
       "SpecialistMetadata": {
         "type": "object",
-        "additionalProperties": true,
-        "required": ["status"],
+        "additionalProperties": false,
+        "required": [
+          "status"
+        ],
         "properties": {
           "status": {
             "type": "string",
-            "enum": ["not_requested", "selected", "completed"]
+            "enum": [
+              "not_requested",
+              "selected",
+              "completed"
+            ]
           },
-          "kind": { "type": "string" },
-          "logicalName": { "type": "string" },
-          "modelClass": { "type": "string" },
-          "providerClass": { "type": "string" },
-          "backend": { "type": "string" }
+          "kind": {
+            "type": "string"
+          },
+          "logicalName": {
+            "type": "string"
+          },
+          "modelClass": {
+            "type": "string"
+          },
+          "providerClass": {
+            "type": "string"
+          }
+        },
+        "description": "Private specialist backend identifiers are removed from public responses."
+      },
+      "AuthorityMetadata": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "model_role",
+          "specialist_integration"
+        ],
+        "properties": {
+          "model_role": {
+            "type": "string",
+            "const": "proposal_only"
+          },
+          "specialist_integration": {
+            "type": "string",
+            "const": "deterministic_seam_reserved"
+          }
+        }
+      },
+      "ResolvedExecution": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "provider",
+          "route",
+          "model",
+          "runtime",
+          "topology"
+        ],
+        "properties": {
+          "provider": {
+            "type": "string"
+          },
+          "route": {
+            "type": "string"
+          },
+          "model": {
+            "type": "string"
+          },
+          "runtime": {
+            "type": "string"
+          },
+          "topology": {
+            "type": "string"
+          },
+          "tokenizer": {
+            "type": "string"
+          },
+          "runtime_profile": {
+            "type": "string"
+          },
+          "prompt_profile": {
+            "type": "string"
+          },
+          "policy_profile": {
+            "type": "string"
+          }
+        }
+      },
+      "ExecutionStep": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "kind",
+          "provider",
+          "route",
+          "model",
+          "runtime",
+          "status",
+          "retry"
+        ],
+        "properties": {
+          "kind": {
+            "type": "string"
+          },
+          "provider": {
+            "type": "string"
+          },
+          "route": {
+            "type": "string"
+          },
+          "model": {
+            "type": "string"
+          },
+          "runtime": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string"
+          },
+          "retry": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "tokenizer": {
+            "type": "string"
+          },
+          "policy_profile": {
+            "type": "string"
+          },
+          "prompt_profile": {
+            "type": "string"
+          },
+          "fallback_from": {
+            "type": "string"
+          },
+          "parent_step": {
+            "type": "string"
+          },
+          "step_id": {
+            "type": "string"
+          }
+        }
+      },
+      "ExecutionIdentity": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "contract_version",
+          "requested_alias",
+          "resolved",
+          "sampling",
+          "fallback_chain",
+          "lineage"
+        ],
+        "properties": {
+          "contract_version": {
+            "type": "string",
+            "const": "dubnium.llm-gateway.v1"
+          },
+          "requested_alias": {
+            "type": "string"
+          },
+          "resolved": {
+            "$ref": "#/components/schemas/ResolvedExecution"
+          },
+          "sampling": {
+            "type": "object",
+            "additionalProperties": true
+          },
+          "fallback_chain": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "lineage": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ExecutionStep"
+            }
+          }
+        }
+      },
+      "DelegationLineage": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "request_id",
+          "supervisor",
+          "specialist",
+          "synthesis"
+        ],
+        "properties": {
+          "request_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "supervisor": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "execution_id",
+              "requested_alias",
+              "route"
+            ],
+            "properties": {
+              "execution_id": {
+                "type": "string",
+                "format": "uuid"
+              },
+              "requested_alias": {
+                "type": "string"
+              },
+              "route": {
+                "type": "string"
+              }
+            }
+          },
+          "specialist": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "invocation_id",
+              "parent_execution_id",
+              "alias",
+              "kind",
+              "status"
+            ],
+            "properties": {
+              "invocation_id": {
+                "type": "string",
+                "format": "uuid"
+              },
+              "parent_execution_id": {
+                "type": "string",
+                "format": "uuid"
+              },
+              "alias": {
+                "type": "string"
+              },
+              "kind": {
+                "type": "string"
+              },
+              "status": {
+                "type": "string",
+                "enum": [
+                  "selected",
+                  "completed"
+                ]
+              }
+            }
+          },
+          "synthesis": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "execution_id",
+              "parent_invocation_id"
+            ],
+            "properties": {
+              "execution_id": {
+                "type": "string",
+                "format": "uuid"
+              },
+              "parent_invocation_id": {
+                "type": "string",
+                "format": "uuid"
+              }
+            }
+          }
         }
       },
       "DubniumResponseMetadata": {
         "type": "object",
         "additionalProperties": false,
-        "required": ["memory", "specialist", "authority"],
+        "required": [
+          "memory",
+          "specialist",
+          "authority",
+          "execution"
+        ],
         "properties": {
-          "memory": { "$ref": "#/components/schemas/MemoryMetadata" },
-          "specialist": { "$ref": "#/components/schemas/SpecialistMetadata" },
+          "memory": {
+            "$ref": "#/components/schemas/MemoryMetadata"
+          },
+          "specialist": {
+            "$ref": "#/components/schemas/SpecialistMetadata"
+          },
           "authority": {
-            "type": "object",
-            "additionalProperties": false,
-            "required": ["model_role", "specialist_integration"],
-            "properties": {
-              "model_role": { "type": "string", "const": "proposal_only" },
-              "specialist_integration": {
-                "type": "string",
-                "const": "deterministic_seam_reserved"
-              }
-            }
+            "$ref": "#/components/schemas/AuthorityMetadata"
+          },
+          "execution": {
+            "$ref": "#/components/schemas/ExecutionIdentity"
+          },
+          "lineage": {
+            "$ref": "#/components/schemas/DelegationLineage"
           }
         }
       },
       "ChatCompletionResponse": {
         "type": "object",
         "additionalProperties": true,
-        "required": ["model", "dubnium"],
+        "required": [
+          "model",
+          "dubnium"
+        ],
         "properties": {
-          "id": { "type": "string" },
-          "object": { "type": "string" },
-          "created": { "type": "integer" },
-          "model": { "type": "string" },
+          "id": {
+            "type": "string"
+          },
+          "object": {
+            "type": "string"
+          },
+          "created": {
+            "type": "integer"
+          },
+          "model": {
+            "type": "string"
+          },
           "choices": {
             "type": "array",
-            "items": { "type": "object", "additionalProperties": true }
+            "items": {
+              "type": "object",
+              "additionalProperties": true
+            }
           },
-          "usage": { "type": "object", "additionalProperties": true },
-          "dubnium": { "$ref": "#/components/schemas/DubniumResponseMetadata" }
+          "usage": {
+            "type": "object",
+            "additionalProperties": true
+          },
+          "dubnium": {
+            "$ref": "#/components/schemas/DubniumResponseMetadata"
+          }
         },
-        "description": "The backend response is preserved, with model rewritten and Dubnium metadata added."
+        "description": "The backend response is preserved except that the model alias and Dubnium metadata are gateway-authored; private backend identity and caller-supplied lineage are not returned."
       }
     },
     "responses": {
       "BadRequest": {
-        "description": "The request is malformed, contains unsupported fields, or violates identity or specialist constraints.",
+        "description": "The request is malformed, uses an unknown logical alias, requests unavailable capabilities, or violates identity or specialist constraints.",
         "content": {
           "application/json": {
-            "schema": { "$ref": "#/components/schemas/Error" }
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            }
           }
         }
       },
@@ -319,7 +895,9 @@
         "description": "The request body exceeds 2 MiB.",
         "content": {
           "application/json": {
-            "schema": { "$ref": "#/components/schemas/Error" }
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            }
           }
         }
       },
@@ -327,33 +905,37 @@
         "description": "The request is not application/json or a +json media type.",
         "content": {
           "application/json": {
-            "schema": { "$ref": "#/components/schemas/Error" }
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            }
           }
         }
       },
       "ServiceUnavailable": {
-        "description": "The model backend, required memory service, specialist catalog, or specialist runner is unavailable.",
+        "description": "The approved model route, required memory service, specialist catalog, or specialist runner is unavailable.",
         "content": {
           "application/json": {
-            "schema": { "$ref": "#/components/schemas/Error" }
-          }
-        }
-      },
-      "NotFound": {
-        "description": "The route does not exist.",
-        "content": {
-          "application/json": {
-            "schema": { "$ref": "#/components/schemas/Error" }
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            }
           }
         }
       }
     }
   },
   "x-dubnium-contract-status": "experimental",
+  "x-dubnium-contract-version": "dubnium.llm-gateway.v1",
   "x-dubnium-canonical-source": {
     "repository": "ryjen/dubnium",
     "commit": "cfc0af808b3cac9e1098f630a187ab9497a80a70",
+    "console_script": "supervisor-gateway",
+    "entry_point": "dubnium_supervisor_gateway.lineage_app:main",
     "paths": [
+      "pkgs/supervisor-gateway/pyproject.toml",
+      "pkgs/supervisor-gateway/src/dubnium_supervisor_gateway/lineage_app.py",
+      "pkgs/supervisor-gateway/src/dubnium_supervisor_gateway/contract_app.py",
+      "pkgs/supervisor-gateway/src/dubnium_supervisor_gateway/contract.py",
+      "pkgs/supervisor-gateway/src/dubnium_supervisor_gateway/lineage.py",
       "pkgs/supervisor-gateway/src/dubnium_supervisor_gateway/app.py"
     ]
   }
