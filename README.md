@@ -114,3 +114,10 @@ Every private-to-public import requires an irreversible-publication review cover
 ## Current public slice
 
 The current experimental slice defines a narrow Capability Gateway envelope with canonicalization, synthetic adversarial fixtures, conformance checks, and a no-effect reference. It does not include any production gateway, privileged providers, deployment implementation, supervisor, memory implementation, or host configuration.
+
+At least one downstream consumer has exercised the v1alpha boundary from an exact source commit and reported contract-level feedback. That feedback is tracked publicly:
+
+- #29 — declare a bounded retryable `503` response for status inspection;
+- #31 — align pre-dispatch `indeterminate` attribution between the specification and schema.
+
+These are public contract questions, not permission to infer private runtime behavior. Consumers should pin an exact reviewed commit, run the conformance suites, and avoid treating the current v1alpha source as a stable release until the first protected `contract-v*` baseline is accepted.
