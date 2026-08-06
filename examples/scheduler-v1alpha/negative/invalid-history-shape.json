@@ -1,0 +1,6 @@
+{
+  "$schema": "../../../schemas/v1alpha/scheduler.schema.json#/$defs/InvalidHistoryExample",
+  "response": {
+    "history": "not-an-array"
+  }
+}
