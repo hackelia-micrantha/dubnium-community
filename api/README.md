@@ -11,17 +11,20 @@ A binding MUST NOT invent authority, identity, lifecycle, canonicalization, erro
 
 ## Published bindings
 
-| Binding | Release line | Scope |
-| --- | --- | --- |
-| `capability-gateway/v1/openapi.json` | v1alpha | Typed capability submission and bounded request status |
-| `memory-service/v1alpha/openapi.json` | experimental | Authenticated store/retrieve, expiry, retrieval-event inspection, and health |
-| `supervisor-gateway/v1alpha/openapi.json` | experimental | Contract-negotiated logical-model chat completions with memory, execution identity, and specialist lineage |
-| `scheduler/v1alpha/openapi.json` | experimental | Schedule inspection, journal history, and systemd-backed operator controls |
+| Binding | Release line | Specification | Canonical schema | Examples |
+| --- | --- | --- | --- | --- |
+| `capability-gateway/v1/openapi.json` | v1alpha | `spec/capability-gateway-v1.md` | `schemas/v1/` | `examples/capability-gateway-v1/` |
+| `memory-service/v1alpha/openapi.json` | experimental | `spec/memory-service-v1alpha.md` | `schemas/v1alpha/memory-service.schema.json` | `examples/memory-service-v1alpha/` |
+| `supervisor-gateway/v1alpha/openapi.json` | experimental | `spec/supervisor-gateway-v1alpha.md` | `schemas/v1alpha/supervisor-gateway.schema.json` | `examples/supervisor-gateway-v1alpha/` |
+| `scheduler/v1alpha/openapi.json` | experimental | `spec/scheduler-v1alpha.md` | `schemas/v1alpha/scheduler.schema.json` | `examples/scheduler-v1alpha/` |
+
+The three experimental service bindings are enrolled in `conformance/service-bundles.json`. That catalog is data-only and is validated by the generic `conformance.contract_bundle` runner.
 
 ## Boundary rules
 
 - OpenAPI documents describe wire shapes; they do not grant authority or define deployment exposure.
 - `x-dubnium-visibility: operator` marks operations that belong behind a trusted administrative boundary.
-- `x-dubnium-canonical-source` records the implementation repository, reviewed commit, source paths, and packaged entry point where applicable.
+- `x-dubnium-canonical-source` records implementation provenance for review; public specifications and schemas remain independently usable.
 - Alpha bindings intentionally leave private implementation semantics open. In particular, memory storage, embedding, and ranking and scheduler persistence, unit generation, concurrency, retry, and policy behavior are not standardized here.
-- The supervisor gateway is an OpenAI-compatible subset, not a claim of compatibility with every OpenAI API parameter or endpoint. Clients MUST inspect the logical alias declaration and capabilities returned by `/v1/models` before relying on optional fields.
+- The supervisor gateway is an OpenAI-compatible subset, not a claim of compatibility with every OpenAI API parameter or endpoint.
+- New API bundles SHOULD add catalog data, schemas, examples, and declarative assertions rather than a contract-specific script.
