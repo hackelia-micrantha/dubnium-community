@@ -44,6 +44,10 @@ Thin public validators, clients, and authoring libraries. Packages MUST be usabl
 
 Implementation-neutral suites and synthetic fixtures. Test targets are explicit and remote targets are disabled by default. Conformance assets MUST be able to test an implementation other than the bundled reference.
 
+HTTP contract bundles SHOULD be catalogued in `conformance/service-bundles.json` and validated by the generic `conformance.contract_bundle` module. Catalog entries MUST remain data-only and MUST NOT select arbitrary Python hooks.
+
+A contract-specific executable MAY exist only when required semantics cannot be expressed through schemas, examples, and declarative assertions. Common parsing, resource limits, reference resolution, fixture discovery, and reporting MUST be shared rather than copied into per-API scripts.
+
 ### `reference/`
 
 Minimal, deliberately non-production implementations. References use no real credentials, privileged effects, host control, production policy, or reusable privileged dispatch path.
@@ -68,6 +72,14 @@ Architecture and process documentation. Normative policy files identify themselv
 
 Generated publication output. `site/` is never canonical source for specifications, schemas, compatibility rules, or policy. Generated paths are reviewed and validated independently.
 
+## Scripts and reusable tooling
+
+`scripts/` is reserved for repository-wide operational entry points such as publication, release, policy, workflow, and whole-tree validation.
+
+Contract or API behavior MUST NOT be implemented as a new script by default. Reusable validation belongs in a package or `conformance/` module, while API-specific variation belongs in schemas, fixtures, examples, and catalogs.
+
+A script added to support one API MUST be generalized before merge or explicitly justified as irreducibly contract-specific.
+
 ## Private extensions
 
 Private consumers may use namespaced extensions behind adapters. Extensions cannot weaken public requirements, widen authority or effects, or claim public conformance for non-public behavior.
@@ -78,4 +90,4 @@ Private-to-public material is imported as a clean reviewed artifact, not by maki
 
 ## Architecture enforcement
 
-The always-running Contract CI gate validates repository policy, workflow trust boundaries, JSON resource limits and duplicate keys, bundled references, contract markers, OpenAPI JSON, examples, change records, and validator tests. Release activation and repository settings remain separately tracked where they require a real bundle or administrative access.
+The always-running Contract CI gate validates repository policy, workflow trust boundaries, JSON resource limits and duplicate keys, bundled references, contract markers, OpenAPI JSON, examples, change records, generic contract bundles, and validator tests. Release activation and repository settings remain separately tracked where they require a real bundle or administrative access.
