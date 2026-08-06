@@ -4,7 +4,7 @@ Status: experimental
 Content: informative
 Canonical source: this file
 Generated: no
-Reviewed: 2026-08-05
+Reviewed: 2026-08-06
 
 This roadmap describes intended public work. It is not a compatibility promise, a private implementation plan, or a commitment to publish production internals.
 
@@ -17,29 +17,32 @@ The public foundation is in place:
 - governance, security, compatibility, trademark, and disclosure policies;
 - repository-policy, contract, release, and Pages CI;
 - the authoritative public landing page and generated-book deployment under `site/**`;
+- schema-version-2 public-safe publication metadata with an opaque publication identifier and content digest;
 - an experimental Capability Gateway contract slice;
 - canonicalization, error, fixture, conformance, and no-effect reference assets;
-- destination-side public metadata and disclosure validation.
+- deterministic contract archive, manifest, checksum, SPDX, attestation, and consumer-verification tooling;
+- a repository-owned tool for applying and checking `main` branch protection and merge policy.
 
-The repository remains incubating. Presence does not imply a stable compatibility commitment.
+The repository remains incubating. Presence does not imply a stable compatibility commitment. No protected `contract-v*` release has yet been accepted as consumer identity.
 
-## Now — complete the public web and publication boundary
+## Now — complete activation gates
 
-- replace legacy generated-book metadata with schema-version-2 public-safe provenance;
-- publish an overview-only mdBook with no production topology or private source coordinates;
-- keep generated publication changes confined to `site/docs/**`;
-- validate the content digest and opaque publication identifier end to end;
-- document the public landing page, book, domain, validation, and deployment ownership here;
-- remove stale references to public-site deployment from private implementation repositories.
+- complete the first generated `site/docs/**` publication pull request and verify Pages deployment at `/docs/`;
+- verify publication no-op behavior and keep generated changes confined to `site/docs/**`;
+- apply and read back the committed `main` protection and squash-only merge policy;
+- establish immutable `contract-v*` tag protection or an equivalent audited administrative control;
+- publish the tag named by `release/contract-bundle-version.txt` only from the current protected `main` commit;
+- require the post-publication consumer job to verify checksums, provenance, safe extraction, the embedded manifest, and public conformance;
+- record release and protection evidence on the public tracking issues.
 
-## Next — adopter integration and first release maturity
+## Next — adopter integration and release maturity
 
 - improve contract integration documentation and synthetic examples;
-- verify immutable release consumption and digest/provenance checks;
+- pin the immutable release tag, source commit, archive digest, and verified attestation in each consumer;
 - exercise public conformance against independent and private consumers at the contract boundary;
-- complete checksums, software bills of materials, attestations, and release evidence;
 - refine compatibility, deprecation, and migration guidance from actual consumer feedback;
-- expand public threat models without disclosing production policy or topology.
+- expand public threat models without disclosing production policy or topology;
+- complete one supersession or maintenance exercise without replacing published artifacts.
 
 ## Later — evidence-driven expansion
 

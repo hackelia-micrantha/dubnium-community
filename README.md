@@ -81,13 +81,17 @@ Public content must not depend on private Git repositories, private registries, 
 
 ## CI and protection
 
-`Contract CI / contract-gate` runs on every pull request and protected-branch push. It validates change classification, public repository policy, GitHub Actions trust boundaries, dependency changes, bounded contract parsing, change records, and the full validator test suite.
+`Contract CI / contract-gate` runs on every pull request and `main` push. It validates change classification, public repository policy, GitHub Actions trust boundaries, dependency changes, bounded contract parsing, change records, and the full validator test suite.
 
-The Pages workflow separately validates the entire `site/` artifact before deployment. Repository settings must require the aggregate gates. See [docs/ci-security.md](docs/ci-security.md) and [docs/branch-protection.md](docs/branch-protection.md).
+`Contract Release CI / consume-release` builds the candidate bundle twice, requires byte-for-byte reproducibility, uploads it as a workflow artifact, and verifies it from a separate consumer job. The Pages workflow independently validates the entire `site/` artifact before deployment.
+
+Repository settings are expected to require the aggregate checks, but committed workflow and policy files do not prove that GitHub protection is active. The active settings must be verified with `scripts/apply_repository_policy.py check` before any release tag is created. See [docs/ci-security.md](docs/ci-security.md) and [docs/branch-protection.md](docs/branch-protection.md).
 
 ## Status and compatibility
 
-The repository is **incubating**. The first experimental capability-boundary slice, conformance fixtures, publication validation, and public website are present; stabilization and adopter integration remain active work.
+The repository is **incubating**. The first experimental capability-boundary slice, conformance fixtures, deterministic release tooling, publication validation, and public website are present; stabilization and adopter integration remain active work.
+
+No `contract-v*` release is currently an accepted consumer baseline. Issue #17 remains open until protected-main policy is active, the first tag is published, its artifacts and attestations are verified by the post-publication consumer job, and the release record is reviewed. Until then, `main` is development source rather than immutable contract identity.
 
 Content is explicitly marked `experimental`, `v1alpha`, `v1beta`, or `stable`. Unmarked content is not a compatibility commitment. The monorepo uses one coordinated release version initially. Compatibility and deprecation rules are defined in [COMPATIBILITY.md](COMPATIBILITY.md).
 

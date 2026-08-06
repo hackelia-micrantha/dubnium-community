@@ -35,7 +35,7 @@ This is a temporary governance constraint, not equivalent to independent review.
 
 ## Administrative application
 
-The repository-owned tool emits, applies, and verifies the exact REST policy:
+The repository-owned tool is located at `scripts/apply_repository_policy.py` in `hackelia-micrantha/dubnium-community`. Run it from that repository root:
 
 ```bash
 python3 scripts/apply_repository_policy.py plan
@@ -43,9 +43,24 @@ GH_TOKEN="$(gh auth token)" python3 scripts/apply_repository_policy.py apply
 GH_TOKEN="$(gh auth token)" python3 scripts/apply_repository_policy.py check
 ```
 
+If the script is missing, verify the repository and refresh the checkout before applying policy:
+
+```bash
+git remote -v
+git switch main
+git pull --ff-only
+test -f scripts/apply_repository_policy.py
+```
+
 The token requires repository administration permission. The tool is idempotent, uses the GitHub REST API directly, and fails when active settings differ from this policy.
 
 The application sequence updates repository merge methods first, then replaces `main` branch protection, then reads both resources back and compares their normalized active state with the expected policy. Do not create a contract release tag until `check` succeeds.
+
+## Scope boundary
+
+This tool manages repository merge settings and `main` branch protection only. It does **not** create or verify a GitHub ruleset for `contract-v*` tags.
+
+Release integrity separately requires tag creation, update, and deletion to be restricted through a GitHub tag ruleset or an equivalent audited administrative control. Both the protected-main check and the immutable-tag control must be verified before the first contract release. See [release-integrity.md](release-integrity.md) and [releasing-contracts.md](releasing-contracts.md).
 
 ## Verification record
 
