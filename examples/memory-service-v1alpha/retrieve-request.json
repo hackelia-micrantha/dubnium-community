@@ -1,0 +1,18 @@
+{
+  "$schema": "../../schemas/v1alpha/memory-service.schema.json#/$defs/RetrieveRequestExample",
+  "request": {
+    "query": "bounded execution preference",
+    "scope": "project:example-project",
+    "allowed_sensitivity": [
+      "internal"
+    ],
+    "require_verified": false,
+    "limit": 8,
+    "purpose": "review",
+    "requester": {
+      "actor_type": "agent",
+      "actor_id": "example-agent"
+    },
+    "envelope_id": "example-envelope"
+  }
+}
