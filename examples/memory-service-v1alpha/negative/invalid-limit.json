@@ -1,0 +1,8 @@
+{
+  "$schema": "../../../schemas/v1alpha/memory-service.schema.json#/$defs/InvalidRetrieveRequestExample",
+  "request": {
+    "query": "example",
+    "scope": "project:example-project",
+    "limit": 64
+  }
+}
