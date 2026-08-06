@@ -1,9 +1,9 @@
 # Public roadmap
 
-Status: experimental  
-Content: informative  
-Canonical source: this file  
-Generated: no  
+Status: experimental
+Content: informative
+Canonical source: this file
+Generated: no
 Reviewed: 2026-08-05
 
 This roadmap describes intended public work. It is not a compatibility promise, a private implementation plan, or a commitment to publish production internals.
