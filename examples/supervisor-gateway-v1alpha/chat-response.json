@@ -1,0 +1,76 @@
+{
+  "$schema": "../../schemas/v1alpha/supervisor-gateway.schema.json#/$defs/ChatResponseExample",
+  "response": {
+    "id": "chatcmpl-example",
+    "object": "chat.completion",
+    "created": 0,
+    "model": "supervisor",
+    "choices": [
+      {
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "Fictional summary."
+        },
+        "finish_reason": "stop"
+      }
+    ],
+    "dubnium": {
+      "memory": {
+        "status": "used",
+        "mode": "read-only",
+        "event_id": "22222222-2222-4222-8222-222222222222",
+        "count": 1
+      },
+      "specialist": {
+        "status": "completed",
+        "kind": "analysis",
+        "logicalName": "analysis-specialist",
+        "modelClass": "bounded-analysis",
+        "providerClass": "local-only"
+      },
+      "authority": {
+        "model_role": "proposal_only",
+        "specialist_integration": "deterministic_seam_reserved"
+      },
+      "execution": {
+        "contract_version": "dubnium.llm-gateway.v1",
+        "requested_alias": "supervisor",
+        "resolved": {
+          "provider": "local",
+          "route": "supervisor/example",
+          "model": "sha256:example-model",
+          "runtime": "llama.cpp@example",
+          "topology": "supervisor-specialist",
+          "policy_profile": "example-policy"
+        },
+        "sampling": {
+          "temperature": 0
+        },
+        "fallback_chain": [
+          "supervisor/example"
+        ],
+        "lineage": []
+      },
+      "lineage": {
+        "request_id": "33333333-3333-4333-8333-333333333333",
+        "supervisor": {
+          "execution_id": "44444444-4444-4444-8444-444444444444",
+          "requested_alias": "supervisor",
+          "route": "supervisor/example"
+        },
+        "specialist": {
+          "invocation_id": "55555555-5555-4555-8555-555555555555",
+          "parent_execution_id": "44444444-4444-4444-8444-444444444444",
+          "alias": "analysis-specialist",
+          "kind": "analysis",
+          "status": "completed"
+        },
+        "synthesis": {
+          "execution_id": "44444444-4444-4444-8444-444444444444",
+          "parent_invocation_id": "55555555-5555-4555-8555-555555555555"
+        }
+      }
+    }
+  }
+}
