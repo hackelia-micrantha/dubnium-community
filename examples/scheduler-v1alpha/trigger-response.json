@@ -1,0 +1,7 @@
+{
+  "$schema": "../../schemas/v1alpha/scheduler.schema.json#/$defs/ControlExample",
+  "response": {
+    "schedule_id": "example-hourly-report",
+    "status": "started"
+  }
+}
