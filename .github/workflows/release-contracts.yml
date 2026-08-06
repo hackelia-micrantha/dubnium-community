@@ -1,0 +1,99 @@
+name: Release Contract Bundle
+
+on:
+  push:
+    tags:
+      - contract-v*
+
+permissions:
+  contents: read
+
+jobs:
+  build-attest-publish:
+    name: build-attest-publish
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: write
+      id-token: write
+      attestations: write
+    steps:
+      - name: Checkout tagged source
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v6
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Require tag to point at current main
+        shell: bash
+        run: |
+          set -euo pipefail
+          git fetch origin main --no-tags
+          test "$(git rev-parse HEAD)" = "$(git rev-parse origin/main)" || {
+            echo "release tag must point at the current protected main commit" >&2
+            exit 1
+          }
+          expected="contract-v$(cat release/contract-bundle-version.txt)"
+          test "$GITHUB_REF_NAME" = "$expected" || {
+            echo "tag $GITHUB_REF_NAME does not match version file ($expected)" >&2
+            exit 1
+          }
+
+      - name: Build and verify deterministic release
+        run: |
+          set -euo pipefail
+          python3 scripts/build_contract_release.py --output dist-a --source-commit "$GITHUB_SHA"
+          python3 scripts/build_contract_release.py --output dist-b --source-commit "$GITHUB_SHA"
+          diff -qr dist-a dist-b
+          mv dist-a dist
+          python3 scripts/verify_contract_release.py dist
+
+      - name: Attest release artifacts
+        uses: actions/attest-build-provenance@977bb373ede98d70efdf65b84cb5f73e068dcc2a # v3
+        with:
+          subject-path: |
+            dist/*.tar.gz
+            dist/*.manifest.json
+            dist/*.spdx.json
+            dist/SHA256SUMS
+
+      - name: Publish immutable GitHub release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          gh release create "$GITHUB_REF_NAME" dist/* \
+            --repo "$GITHUB_REPOSITORY" \
+            --title "Capability Gateway contracts $(cat release/contract-bundle-version.txt)" \
+            --notes "Experimental public contract bundle. Verify SHA256SUMS and GitHub artifact attestations before consumption." \
+            --verify-tag
+
+  verify-published-release:
+    name: verify-published-release
+    needs: build-attest-publish
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: read
+      attestations: read
+    steps:
+      - name: Checkout verifier
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v6
+        with:
+          persist-credentials: false
+
+      - name: Download published release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          mkdir downloaded
+          gh release download "$GITHUB_REF_NAME" --repo "$GITHUB_REPOSITORY" --dir downloaded
+
+      - name: Verify provenance and contract behavior
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          gh attestation verify downloaded/*.tar.gz --repo "$GITHUB_REPOSITORY"
+          python3 scripts/verify_contract_release.py downloaded
