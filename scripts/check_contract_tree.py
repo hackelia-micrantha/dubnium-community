@@ -52,9 +52,8 @@ def load_json(path: Path) -> Any:
     size = path.stat().st_size
     if size > MAX_BYTES:
         raise ValueError(f"file exceeds {MAX_BYTES} byte limit")
-    text = path.read_text(encoding="utf-8")
     return json.loads(
-        text,
+        path.read_text(encoding="utf-8"),
         object_pairs_hook=object_without_duplicates,
         parse_constant=reject_constant,
     )
@@ -98,9 +97,8 @@ def resolve_local_ref(source: Path, ref: str, root: Path) -> Path | None:
     if not path_part:
         return None
     candidate = (source.parent / path_part).resolve()
-    root_resolved = root.resolve()
     try:
-        candidate.relative_to(root_resolved)
+        candidate.relative_to(root.resolve())
     except ValueError as exc:
         raise ValueError(f"reference escapes bundled root: {ref}") from exc
     if not candidate.is_file():
@@ -138,8 +136,8 @@ def validate_schemas(root: Path) -> list[str]:
     schema_root = root / "schemas"
     graph: dict[Path, set[Path]] = {}
     ids: dict[str, Path] = {}
-
-    for path in sorted(schema_root.rglob("*.json")) if schema_root.is_dir() else []:
+    paths = sorted(schema_root.rglob("*.json")) if schema_root.is_dir() else []
+    for path in paths:
         relative = path.relative_to(root).as_posix()
         try:
             document = load_json(path)
@@ -159,7 +157,6 @@ def validate_schemas(root: Path) -> list[str]:
             errors.append(f"{relative}: duplicate $id also used by {ids[schema_id].relative_to(root)}")
         else:
             ids[schema_id] = path
-
         graph[path.resolve()] = set()
         for ref in iter_refs(document):
             try:
@@ -169,9 +166,17 @@ def validate_schemas(root: Path) -> list[str]:
                 continue
             if target is not None:
                 graph[path.resolve()].add(target.resolve())
-
     errors.extend(detect_cycles(graph))
     return errors
+
+
+def validate_openapi_ref(root: Path, source: Path, ref: str) -> None:
+    target = resolve_local_ref(source, ref, root)
+    if target is None:
+        return
+    allowed_roots = ((root / "api").resolve(), (root / "schemas").resolve())
+    if not any(target == allowed or allowed in target.parents for allowed in allowed_roots):
+        raise ValueError(f"reference must resolve beneath api/ or schemas/: {ref}")
 
 
 def validate_openapi(root: Path) -> list[str]:
@@ -179,7 +184,6 @@ def validate_openapi(root: Path) -> list[str]:
     api_root = root / "api"
     if not api_root.is_dir():
         return errors
-
     for path in sorted(api_root.rglob("*")):
         if not path.is_file() or path.name == "README.md":
             continue
@@ -206,7 +210,7 @@ def validate_openapi(root: Path) -> list[str]:
             errors.append(f"{relative}: paths object is required")
         for ref in iter_refs(document):
             try:
-                resolve_local_ref(path, ref, api_root)
+                validate_openapi_ref(root, path, ref)
             except ValueError as exc:
                 errors.append(f"{relative}: {exc}")
     return errors
@@ -255,13 +259,16 @@ def validate_examples(root: Path) -> list[str]:
             resolve_local_ref(path, schema_ref, root)
         except ValueError as exc:
             errors.append(f"{relative}: {exc}")
-        if schema_root.resolve() not in (path.parent / schema_ref.split("#", 1)[0]).resolve().parents:
+        target = (path.parent / schema_ref.split("#", 1)[0]).resolve()
+        if schema_root.resolve() not in target.parents:
             errors.append(f"{relative}: example $schema must resolve beneath schemas/")
     return errors
 
 
 def is_contract_path(path: str) -> bool:
-    normalized = path.strip().replace("\\", "/").lstrip("./")
+    normalized = path.strip().replace("\\", "/")
+    if normalized.startswith("./"):
+        normalized = normalized[2:]
     if normalized in {"spec/README.md", "schemas/README.md", "api/README.md"}:
         return False
     return normalized.startswith(("spec/", "schemas/", "api/"))
@@ -271,7 +278,7 @@ def validate_change_record(changed_paths: list[str]) -> list[str]:
     if not any(is_contract_path(path) for path in changed_paths):
         return []
     has_record = any(
-        path.strip().replace("\\", "/").lstrip("./").startswith("changes/")
+        path.strip().replace("\\", "/").removeprefix("./").startswith("changes/")
         and path.strip().lower().endswith(".md")
         and not path.strip().endswith("changes/README.md")
         for path in changed_paths

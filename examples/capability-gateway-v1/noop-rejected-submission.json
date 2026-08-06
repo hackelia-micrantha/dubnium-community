@@ -1,1 +1,1 @@
-{"$schema":"../../schemas/v1/capability-submission.schema.json","contract_version":"1.0","error":{"code":"json.invalid","message":"synthetic parse rejection"},"state":"rejected"}
+{"$schema":"../../schemas/v1/capability-submission.schema.json","contract_version":"1.0","error":{"code":"json.invalid","message":"synthetic parse rejection","retryable":false},"outcome":"rejected","request_id":"request-example-001","submitted_at":"2026-08-05T20:00:02Z"}

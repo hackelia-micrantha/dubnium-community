@@ -1,0 +1,17 @@
+{
+  "$schema": "../../../../schemas/v1/capability-status.schema.json",
+  "contract_version": "1.0",
+  "gateway_state": "succeeded",
+  "provider_operation": {
+    "operation_ref": "operation:synthetic:001",
+    "phase": "completed",
+    "provider_ref": "provider:example-noop:001"
+  },
+  "request_digest": "sha256:d74624c1ee49c193a4077e8833d91a9aaff1575bdcfc412a116153078d01059d",
+  "request_id": "request-example-001",
+  "result": {
+    "evidence_refs": ["evidence:synthetic-result:001"],
+    "output": {"echo": ["hello", "hello"]}
+  },
+  "updated_at": "2026-08-05T20:00:03Z"
+}

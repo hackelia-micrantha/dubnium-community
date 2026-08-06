@@ -1,0 +1,8 @@
+{
+  "contract_version": "1.0",
+  "gateway_state": "policy-pending",
+  "request_digest": "sha256:d74624c1ee49c193a4077e8833d91a9aaff1575bdcfc412a116153078d01059d",
+  "request_id": "request-example-001",
+  "result": {"output": {"unexpected": true}, "evidence_refs": []},
+  "updated_at": "2026-08-05T20:00:02Z"
+}
