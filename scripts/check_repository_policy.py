@@ -3,6 +3,7 @@
 
 from __future__ import annotations
 
+import json
 import re
 import sys
 from pathlib import Path
@@ -22,6 +23,8 @@ REQUIRED_FILES = {
     "TRADEMARKS.md",
     "COMPATIBILITY.md",
     "ROADMAP.md",
+    "package.json",
+    "wrangler.jsonc",
     ".github/CODEOWNERS",
     ".github/dependabot.yml",
     ".github/workflows/contract-ci.yml",
@@ -86,6 +89,8 @@ MARKER_PATTERN = re.compile(
     r"^Generated: (?:no|yes from .+)$",
     re.M | re.S,
 )
+EXACT_SEMVER_PATTERN = re.compile(r"^[0-9]+\.[0-9]+\.[0-9]+$")
+COMPATIBILITY_DATE_PATTERN = re.compile(r"^20[0-9]{2}-[0-9]{2}-[0-9]{2}$")
 
 TEXT_SUFFIXES = {
     ".md",
@@ -120,6 +125,18 @@ def read_text(path: Path) -> str | None:
         return None
 
 
+def read_json_object(path: Path, label: str, errors: list[str]) -> dict[str, object] | None:
+    try:
+        value = json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, UnicodeDecodeError, json.JSONDecodeError) as exc:
+        errors.append(f"invalid {label}: {exc}")
+        return None
+    if not isinstance(value, dict):
+        errors.append(f"invalid {label}: root must be an object")
+        return None
+    return value
+
+
 def check_required(errors: list[str]) -> None:
     for item in sorted(REQUIRED_FILES):
         if not (ROOT / item).is_file():
@@ -131,6 +148,52 @@ def check_required(errors: list[str]) -> None:
             errors.append(f"missing public monorepo directory: {directory}/")
         elif not (path / "README.md").is_file():
             errors.append(f"missing boundary README: {directory}/README.md")
+
+
+def check_cloudflare_build(errors: list[str]) -> None:
+    wrangler_path = ROOT / "wrangler.jsonc"
+    package_path = ROOT / "package.json"
+    site_index = ROOT / "site" / "index.html"
+
+    if not site_index.is_file():
+        errors.append("missing Cloudflare static asset entry point: site/index.html")
+
+    if not wrangler_path.is_file() or not package_path.is_file():
+        return
+
+    wrangler = read_json_object(wrangler_path, "wrangler.jsonc", errors)
+    package = read_json_object(package_path, "package.json", errors)
+    if wrangler is None or package is None:
+        return
+
+    if wrangler.get("name") != "dubnium":
+        errors.append("Cloudflare Worker name must be exactly 'dubnium'")
+
+    compatibility_date = wrangler.get("compatibility_date")
+    if not isinstance(compatibility_date, str) or not COMPATIBILITY_DATE_PATTERN.fullmatch(compatibility_date):
+        errors.append("Cloudflare compatibility_date must use YYYY-MM-DD")
+
+    assets = wrangler.get("assets")
+    asset_directory = assets.get("directory") if isinstance(assets, dict) else None
+    if not isinstance(asset_directory, str) or asset_directory.rstrip("/") != "./site":
+        errors.append("Cloudflare assets.directory must resolve to './site/'")
+
+    if package.get("private") is not True:
+        errors.append("Cloudflare package must be private")
+
+    scripts = package.get("scripts")
+    if not isinstance(scripts, dict):
+        errors.append("package.json scripts must be an object")
+    else:
+        if scripts.get("deploy") != "wrangler deploy":
+            errors.append("package.json deploy script must be 'wrangler deploy'")
+        if scripts.get("preview") != "wrangler versions upload":
+            errors.append("package.json preview script must be 'wrangler versions upload'")
+
+    dev_dependencies = package.get("devDependencies")
+    wrangler_version = dev_dependencies.get("wrangler") if isinstance(dev_dependencies, dict) else None
+    if not isinstance(wrangler_version, str) or not EXACT_SEMVER_PATTERN.fullmatch(wrangler_version):
+        errors.append("Wrangler must be pinned to an exact semantic version")
 
 
 def check_symlinks(errors: list[str]) -> None:
@@ -183,6 +246,7 @@ def check_private_coordinate_leakage(errors: list[str]) -> None:
 def main() -> int:
     errors: list[str] = []
     check_required(errors)
+    check_cloudflare_build(errors)
     check_symlinks(errors)
     check_markers(errors)
     check_public_roots(errors)
