@@ -14,22 +14,26 @@ SPEC.loader.exec_module(MODULE)
 
 
 class PublicationValidationTests(unittest.TestCase):
-    def make_book(self, root: Path, html: str = "<html>public</html>") -> Path:
-        docs = root / "site" / "docs"
-        docs.mkdir(parents=True)
-        (docs / "index.html").write_text(html, encoding="utf-8")
+    def write_public_metadata(self, docs: Path) -> None:
+        digest = MODULE.calculate_content_digest(docs)
         (docs / "publication.json").write_text(
             json.dumps(
                 {
                     "schema_version": 2,
-                    "publication_id": "dubnium-docs-example-0001",
-                    "content_digest": "sha256:" + "b" * 64,
+                    "publication_id": f"dubnium-book-{digest[:20]}",
+                    "content_digest": f"sha256:{digest}",
                     "generator": "mdbook 0.5.2; mdbook-mermaid 0.17.0",
                     "generated_at": "2026-08-05T20:00:00Z",
                 }
             ),
             encoding="utf-8",
         )
+
+    def make_book(self, root: Path, html: str = "<html>public</html>") -> Path:
+        docs = root / "site" / "docs"
+        docs.mkdir(parents=True)
+        (docs / "index.html").write_text(html, encoding="utf-8")
+        self.write_public_metadata(docs)
         return docs
 
     def make_legacy_book(self, root: Path) -> Path:
@@ -79,6 +83,7 @@ class PublicationValidationTests(unittest.TestCase):
             (docs / "mermaid-eefea253.min.js").write_text(
                 "TOKEN=parserToken;", encoding="utf-8"
             )
+            self.write_public_metadata(docs)
             self.assertEqual([], MODULE.validate(root))
 
     def test_rejects_localhost_link_targets(self) -> None:
@@ -131,6 +136,13 @@ class PublicationValidationTests(unittest.TestCase):
             errors = MODULE.validate(root)
             self.assertTrue(any("private repository URL" in error for error in errors))
 
+    def test_rejects_private_issue_reference(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            self.make_book(root, "Tracked by ryjen/dubnium#403")
+            errors = MODULE.validate(root)
+            self.assertTrue(any("private issue reference" in error for error in errors))
+
     def test_rejects_internal_path(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
@@ -157,6 +169,26 @@ class PublicationValidationTests(unittest.TestCase):
             (docs / "publication.json").write_text(json.dumps(metadata), encoding="utf-8")
             errors = MODULE.validate(root)
             self.assertTrue(any("64 lowercase hex" in error for error in errors))
+
+    def test_rejects_digest_that_does_not_match_content(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            docs = self.make_book(root)
+            metadata = json.loads((docs / "publication.json").read_text(encoding="utf-8"))
+            metadata["content_digest"] = "sha256:" + "b" * 64
+            (docs / "publication.json").write_text(json.dumps(metadata), encoding="utf-8")
+            errors = MODULE.validate(root)
+            self.assertTrue(any("does not match site/docs content" in error for error in errors))
+
+    def test_rejects_publication_id_that_does_not_match_content(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            docs = self.make_book(root)
+            metadata = json.loads((docs / "publication.json").read_text(encoding="utf-8"))
+            metadata["publication_id"] = "dubnium-book-incorrect000000"
+            (docs / "publication.json").write_text(json.dumps(metadata), encoding="utf-8")
+            errors = MODULE.validate(root)
+            self.assertTrue(any("publication_id does not match" in error for error in errors))
 
     def test_rejects_private_fields_in_public_metadata(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
