@@ -1,0 +1,20 @@
+{
+  "$schema": "../../../schemas/v1alpha/supervisor-gateway.schema.json#/$defs/InvalidChatRequestExample",
+  "request": {
+    "model": "supervisor",
+    "messages": [
+      {
+        "role": "user",
+        "content": "This fixture intentionally requests an unsupported tool."
+      }
+    ],
+    "tools": [
+      {
+        "type": "function",
+        "function": {
+          "name": "fictional_tool"
+        }
+      }
+    ]
+  }
+}
