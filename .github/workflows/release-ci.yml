@@ -1,0 +1,62 @@
+name: Contract Release CI
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: read
+
+jobs:
+  build-release:
+    name: build-release
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v6
+        with:
+          persist-credentials: false
+
+      - name: Build twice and require byte reproducibility
+        env:
+          SOURCE_COMMIT: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: |
+          set -euo pipefail
+          python3 scripts/build_contract_release.py --output dist-a --source-commit "$SOURCE_COMMIT"
+          python3 scripts/build_contract_release.py --output dist-b --source-commit "$SOURCE_COMMIT"
+          diff -qr dist-a dist-b
+          mv dist-a dist
+
+      - name: Verify builder output
+        run: python3 scripts/verify_contract_release.py dist
+
+      - name: Upload release candidate
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: contract-release-candidate
+          path: dist/
+          if-no-files-found: error
+          retention-days: 7
+
+  consume-release:
+    name: consume-release
+    needs: build-release
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout verifier
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v6
+        with:
+          persist-credentials: false
+
+      - name: Download release candidate
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
+        with:
+          name: contract-release-candidate
+          path: downloaded
+
+      - name: Independently verify downloaded artifact
+        run: python3 scripts/verify_contract_release.py downloaded
