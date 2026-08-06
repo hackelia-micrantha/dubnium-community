@@ -1,1 +1,360 @@
-{"openapi":"3.1.2","info":{"title":"Dubnium Supervisor LLM Gateway API","version":"0.1.0","description":"Experimental OpenAI-compatible subset exposed by the current Dubnium supervisor gateway. The gateway accepts a bounded set of chat-completion fields, can attach scoped read-only memory evidence, and can request one catalogued specialist through a deterministic seam. Model and specialist outputs remain proposal-only. The current service does not enforce inbound authentication and must be placed behind a trusted local or authenticated ingress boundary."},"servers":[{"url":"https://supervisor.example.invalid","description":"Illustrative deployment only"}],"tags":[{"name":"Health"},{"name":"Models"},{"name":"Chat"}],"paths":{"/healthz":{"get":{"operationId":"getSupervisorGatewayHealth","tags":["Health"],"summary":"Return process health","responses":{"200":{"description":"The supervisor gateway is running.","content":{"application/json":{"schema":{"type":"object","additionalProperties":false,"required":["status"],"properties":{"status":{"type":"string","const":"ok"}}}}}}}}},"/v1/models":{"get":{"operationId":"listSupervisorModels","tags":["Models"],"summary":"List the configured logical supervisor model","responses":{"200":{"description":"OpenAI-compatible model list.","content":{"application/json":{"schema":{"type":"object","additionalProperties":false,"required":["object","data"],"properties":{"object":{"type":"string","const":"list"},"data":{"type":"array","items":{"$ref":"#/components/schemas/Model"}}}}}}}}}},"/v1/chat/completions":{"post":{"operationId":"createSupervisorChatCompletion","tags":["Chat"],"summary":"Create a supervisor-routed chat completion","description":"For non-streaming requests, the backend JSON response is returned with the configured model name and Dubnium memory, specialist, and authority metadata. Streaming requests receive a synthetic Dubnium metadata event followed by the backend SSE stream with model fields rewritten.","requestBody":{"required":true,"content":{"application/json":{"schema":{"$ref":"#/components/schemas/ChatCompletionRequest"}},"application/*+json":{"schema":{"$ref":"#/components/schemas/ChatCompletionRequest"}}}},"responses":{"200":{"description":"JSON completion or Server-Sent Events.","content":{"application/json":{"schema":{"$ref":"#/components/schemas/ChatCompletionResponse"}},"text/event-stream":{"schema":{"type":"string"},"description":"The first event carries `object=chat.completion.chunk`, the configured model, empty choices, and Dubnium memory/specialist metadata. Subsequent backend events are proxied with model names rewritten."}}},"400":{"$ref":"#/components/responses/BadRequest"},"413":{"$ref":"#/components/responses/PayloadTooLarge"},"415":{"$ref":"#/components/responses/UnsupportedMediaType"},"503":{"$ref":"#/components/responses/ServiceUnavailable"}}}}},"components":{"schemas":{"Error":{"type":"object","additionalProperties":false,"required":["error"],"properties":{"error":{"type":"object","additionalProperties":false,"required":["message","type","code"],"properties":{"message":{"type":"string"},"type":{"type":"string","enum":["invalid_request_error","api_error"]},"code":{"type":"string"}}}}},"ChatMessage":{"type":"object","additionalProperties":true,"properties":{"role":{"type":"string"},"content":{}},"description":"Messages are forwarded after the gateway prepends policy and optional evidence messages."},"SpecialistRequest":{"type":"object","additionalProperties":true,"required":["kind","input"],"properties":{"kind":{"type":"string","minLength":1},"input":{"type":"object","additionalProperties":true,"required":["prompt"],"properties":{"prompt":{"type":"string","minLength":1,"description":"The gateway truncates the selected prompt to 2,000 characters."}}}}},"DubniumRequestMetadata":{"type":"object","additionalProperties":true,"properties":{"actor":{"type":"string"},"workspace":{"type":"string"},"project":{"type":"string"},"session_id":{"type":"string"},"memory_mode":{"type":"string","enum":["off","read-only"],"default":"off","description":"Other known modes are rejected because they are not implemented."},"context_class":{"type":"string","default":"project"},"request_id":{"type":"string"},"specialist":{"$ref":"#/components/schemas/SpecialistRequest"}},"description":"When read-only memory is enabled, actor plus workspace or project are required. The deployment may be configured not to trust request identity metadata."},"ChatCompletionRequest":{"type":"object","additionalProperties":false,"required":["messages"],"properties":{"model":{"type":"string","description":"Accepted for compatibility; the configured served model is used."},"messages":{"type":"array","items":{"$ref":"#/components/schemas/ChatMessage"}},"stream":{"type":"boolean","default":false},"temperature":{"type":"number"},"top_p":{"type":"number"},"max_tokens":{"type":"integer"},"stop":{"oneOf":[{"type":"string"},{"type":"array","items":{"type":"string"}}]},"response_format":{"type":"object","additionalProperties":true},"tools":{"type":"array","items":{"type":"object","additionalProperties":true}},"dubnium":{"$ref":"#/components/schemas/DubniumRequestMetadata"}}},"Model":{"type":"object","additionalProperties":false,"required":["id","object","created","owned_by"],"properties":{"id":{"type":"string"},"object":{"type":"string","const":"model"},"created":{"type":"integer","const":0},"owned_by":{"type":"string","const":"dubnium"}}},"MemoryMetadata":{"type":"object","additionalProperties":true,"required":["status","mode"],"properties":{"status":{"type":"string","enum":["disabled","unavailable","used","empty","reduced"]},"mode":{"type":"string","enum":["off","read-only"]},"event_id":{"type":"string"},"count":{"type":"integer","minimum":0}}},"SpecialistMetadata":{"type":"object","additionalProperties":true,"required":["status"],"properties":{"status":{"type":"string","enum":["not_requested","selected","completed"]},"kind":{"type":"string"},"logicalName":{"type":"string"},"modelClass":{"type":"string"},"providerClass":{"type":"string"},"backend":{"type":"string"}}},"DubniumResponseMetadata":{"type":"object","additionalProperties":false,"required":["memory","specialist","authority"],"properties":{"memory":{"$ref":"#/components/schemas/MemoryMetadata"},"specialist":{"$ref":"#/components/schemas/SpecialistMetadata"},"authority":{"type":"object","additionalProperties":false,"required":["model_role","specialist_integration"],"properties":{"model_role":{"type":"string","const":"proposal_only"},"specialist_integration":{"type":"string","const":"deterministic_seam_reserved"}}}}},"ChatCompletionResponse":{"type":"object","additionalProperties":true,"required":["model","dubnium"],"properties":{"id":{"type":"string"},"object":{"type":"string"},"created":{"type":"integer"},"model":{"type":"string"},"choices":{"type":"array","items":{"type":"object","additionalProperties":true}},"usage":{"type":"object","additionalProperties":true},"dubnium":{"$ref":"#/components/schemas/DubniumResponseMetadata"}},"description":"The backend response is preserved, with model rewritten and Dubnium metadata added."}},"responses":{"BadRequest":{"description":"The request is malformed, contains unsupported fields, or violates identity or specialist constraints.","content":{"application/json":{"schema":{"$ref":"#/components/schemas/Error"}}}},"PayloadTooLarge":{"description":"The request body exceeds 2 MiB.","content":{"application/json":{"schema":{"$ref":"#/components/schemas/Error"}}}},"UnsupportedMediaType":{"description":"The request is not application/json or a +json media type.","content":{"application/json":{"schema":{"$ref":"#/components/schemas/Error"}}}},"ServiceUnavailable":{"description":"The model backend, required memory service, specialist catalog, or specialist runner is unavailable.","content":{"application/json":{"schema":{"$ref":"#/components/schemas/Error"}}}},"NotFound":{"description":"The route does not exist.","content":{"application/json":{"schema":{"$ref":"#/components/schemas/Error"}}}}}},"x-dubnium-contract-status":"experimental","x-dubnium-canonical-source":{"repository":"ryjen/dubnium","commit":"cfc0af808b3cac9e1098f630a187ab9497a80a70","paths":["pkgs/supervisor-gateway/src/dubnium_supervisor_gateway/app.py"]}}
+{
+  "openapi": "3.1.2",
+  "info": {
+    "title": "Dubnium Supervisor LLM Gateway API",
+    "version": "0.1.0",
+    "description": "Experimental OpenAI-compatible subset exposed by the current Dubnium supervisor gateway. The gateway accepts a bounded set of chat-completion fields, can attach scoped read-only memory evidence, and can request one catalogued specialist through a deterministic seam. Model and specialist outputs remain proposal-only. The current service does not enforce inbound authentication and must be placed behind a trusted local or authenticated ingress boundary."
+  },
+  "servers": [
+    {
+      "url": "https://supervisor.example.invalid",
+      "description": "Illustrative deployment only"
+    }
+  ],
+  "tags": [
+    { "name": "Health" },
+    { "name": "Models" },
+    { "name": "Chat" }
+  ],
+  "paths": {
+    "/healthz": {
+      "get": {
+        "operationId": "getSupervisorGatewayHealth",
+        "tags": ["Health"],
+        "summary": "Return process health",
+        "responses": {
+          "200": {
+            "description": "The supervisor gateway is running.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": ["status"],
+                  "properties": {
+                    "status": { "type": "string", "const": "ok" }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/models": {
+      "get": {
+        "operationId": "listSupervisorModels",
+        "tags": ["Models"],
+        "summary": "List the configured logical supervisor model",
+        "responses": {
+          "200": {
+            "description": "OpenAI-compatible model list.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": ["object", "data"],
+                  "properties": {
+                    "object": { "type": "string", "const": "list" },
+                    "data": {
+                      "type": "array",
+                      "items": { "$ref": "#/components/schemas/Model" }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/chat/completions": {
+      "post": {
+        "operationId": "createSupervisorChatCompletion",
+        "tags": ["Chat"],
+        "summary": "Create a supervisor-routed chat completion",
+        "description": "For non-streaming requests, the backend JSON response is returned with the configured model name and Dubnium memory, specialist, and authority metadata. Streaming requests receive a synthetic Dubnium metadata event followed by the backend SSE stream with model fields rewritten.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/ChatCompletionRequest" }
+            },
+            "application/*+json": {
+              "schema": { "$ref": "#/components/schemas/ChatCompletionRequest" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "JSON completion or Server-Sent Events.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ChatCompletionResponse" }
+              },
+              "text/event-stream": {
+                "schema": { "type": "string" },
+                "description": "The first event carries `object=chat.completion.chunk`, the configured model, empty choices, and Dubnium memory/specialist metadata. Subsequent backend events are proxied with model names rewritten."
+              }
+            }
+          },
+          "400": { "$ref": "#/components/responses/BadRequest" },
+          "413": { "$ref": "#/components/responses/PayloadTooLarge" },
+          "415": { "$ref": "#/components/responses/UnsupportedMediaType" },
+          "503": { "$ref": "#/components/responses/ServiceUnavailable" }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Error": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["error"],
+        "properties": {
+          "error": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["message", "type", "code"],
+            "properties": {
+              "message": { "type": "string" },
+              "type": {
+                "type": "string",
+                "enum": ["invalid_request_error", "api_error"]
+              },
+              "code": { "type": "string" }
+            }
+          }
+        }
+      },
+      "ChatMessage": {
+        "type": "object",
+        "additionalProperties": true,
+        "properties": {
+          "role": { "type": "string" },
+          "content": {}
+        },
+        "description": "Messages are forwarded after the gateway prepends policy and optional evidence messages."
+      },
+      "SpecialistRequest": {
+        "type": "object",
+        "additionalProperties": true,
+        "required": ["kind", "input"],
+        "properties": {
+          "kind": { "type": "string", "minLength": 1 },
+          "input": {
+            "type": "object",
+            "additionalProperties": true,
+            "required": ["prompt"],
+            "properties": {
+              "prompt": {
+                "type": "string",
+                "minLength": 1,
+                "description": "The gateway truncates the selected prompt to 2,000 characters."
+              }
+            }
+          }
+        }
+      },
+      "DubniumRequestMetadata": {
+        "type": "object",
+        "additionalProperties": true,
+        "properties": {
+          "actor": { "type": "string" },
+          "workspace": { "type": "string" },
+          "project": { "type": "string" },
+          "session_id": { "type": "string" },
+          "memory_mode": {
+            "type": "string",
+            "enum": ["off", "read-only"],
+            "default": "off",
+            "description": "Other known modes are rejected because they are not implemented."
+          },
+          "context_class": { "type": "string", "default": "project" },
+          "request_id": { "type": "string" },
+          "specialist": {
+            "anyOf": [
+              { "$ref": "#/components/schemas/SpecialistRequest" },
+              { "type": "null" }
+            ]
+          }
+        },
+        "description": "When read-only memory is enabled, actor plus workspace or project are required. The deployment may be configured not to trust request identity metadata."
+      },
+      "ChatCompletionRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["messages"],
+        "properties": {
+          "model": {
+            "type": "string",
+            "description": "Accepted for compatibility; the configured served model is used."
+          },
+          "messages": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/ChatMessage" }
+          },
+          "stream": { "type": "boolean", "default": false },
+          "temperature": { "type": "number" },
+          "top_p": { "type": "number" },
+          "max_tokens": { "type": "integer" },
+          "stop": {
+            "oneOf": [
+              { "type": "string" },
+              { "type": "array", "items": { "type": "string" } }
+            ]
+          },
+          "response_format": {
+            "type": "object",
+            "additionalProperties": true
+          },
+          "tools": {
+            "type": "array",
+            "items": { "type": "object", "additionalProperties": true }
+          },
+          "dubnium": {
+            "anyOf": [
+              { "$ref": "#/components/schemas/DubniumRequestMetadata" },
+              { "type": "null" }
+            ]
+          }
+        }
+      },
+      "Model": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "object", "created", "owned_by"],
+        "properties": {
+          "id": { "type": "string" },
+          "object": { "type": "string", "const": "model" },
+          "created": { "type": "integer", "const": 0 },
+          "owned_by": { "type": "string", "const": "dubnium" }
+        }
+      },
+      "MemoryMetadata": {
+        "type": "object",
+        "additionalProperties": true,
+        "required": ["status", "mode"],
+        "properties": {
+          "status": {
+            "type": "string",
+            "enum": ["disabled", "unavailable", "used", "empty", "reduced"]
+          },
+          "mode": {
+            "type": "string",
+            "enum": ["off", "read-only"]
+          },
+          "event_id": { "type": "string" },
+          "count": { "type": "integer", "minimum": 0 }
+        }
+      },
+      "SpecialistMetadata": {
+        "type": "object",
+        "additionalProperties": true,
+        "required": ["status"],
+        "properties": {
+          "status": {
+            "type": "string",
+            "enum": ["not_requested", "selected", "completed"]
+          },
+          "kind": { "type": "string" },
+          "logicalName": { "type": "string" },
+          "modelClass": { "type": "string" },
+          "providerClass": { "type": "string" },
+          "backend": { "type": "string" }
+        }
+      },
+      "DubniumResponseMetadata": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["memory", "specialist", "authority"],
+        "properties": {
+          "memory": { "$ref": "#/components/schemas/MemoryMetadata" },
+          "specialist": { "$ref": "#/components/schemas/SpecialistMetadata" },
+          "authority": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["model_role", "specialist_integration"],
+            "properties": {
+              "model_role": { "type": "string", "const": "proposal_only" },
+              "specialist_integration": {
+                "type": "string",
+                "const": "deterministic_seam_reserved"
+              }
+            }
+          }
+        }
+      },
+      "ChatCompletionResponse": {
+        "type": "object",
+        "additionalProperties": true,
+        "required": ["model", "dubnium"],
+        "properties": {
+          "id": { "type": "string" },
+          "object": { "type": "string" },
+          "created": { "type": "integer" },
+          "model": { "type": "string" },
+          "choices": {
+            "type": "array",
+            "items": { "type": "object", "additionalProperties": true }
+          },
+          "usage": { "type": "object", "additionalProperties": true },
+          "dubnium": { "$ref": "#/components/schemas/DubniumResponseMetadata" }
+        },
+        "description": "The backend response is preserved, with model rewritten and Dubnium metadata added."
+      }
+    },
+    "responses": {
+      "BadRequest": {
+        "description": "The request is malformed, contains unsupported fields, or violates identity or specialist constraints.",
+        "content": {
+          "application/json": {
+            "schema": { "$ref": "#/components/schemas/Error" }
+          }
+        }
+      },
+      "PayloadTooLarge": {
+        "description": "The request body exceeds 2 MiB.",
+        "content": {
+          "application/json": {
+            "schema": { "$ref": "#/components/schemas/Error" }
+          }
+        }
+      },
+      "UnsupportedMediaType": {
+        "description": "The request is not application/json or a +json media type.",
+        "content": {
+          "application/json": {
+            "schema": { "$ref": "#/components/schemas/Error" }
+          }
+        }
+      },
+      "ServiceUnavailable": {
+        "description": "The model backend, required memory service, specialist catalog, or specialist runner is unavailable.",
+        "content": {
+          "application/json": {
+            "schema": { "$ref": "#/components/schemas/Error" }
+          }
+        }
+      },
+      "NotFound": {
+        "description": "The route does not exist.",
+        "content": {
+          "application/json": {
+            "schema": { "$ref": "#/components/schemas/Error" }
+          }
+        }
+      }
+    }
+  },
+  "x-dubnium-contract-status": "experimental",
+  "x-dubnium-canonical-source": {
+    "repository": "ryjen/dubnium",
+    "commit": "cfc0af808b3cac9e1098f630a187ab9497a80a70",
+    "paths": [
+      "pkgs/supervisor-gateway/src/dubnium_supervisor_gateway/app.py"
+    ]
+  }
+}
