@@ -31,7 +31,7 @@ The repository remains incubating. Presence does not imply a stable compatibilit
 - verify publication no-op behavior and keep generated changes confined to `site/docs/**`;
 - apply and read back the committed `main` protection and squash-only merge policy;
 - establish immutable `contract-v*` tag protection or an equivalent audited administrative control;
-- publish `contract-v0.1.0-alpha.1` only from the current protected `main` commit;
+- publish the tag named by `release/contract-bundle-version.txt` only from the current protected `main` commit;
 - require the post-publication consumer job to verify checksums, provenance, safe extraction, the embedded manifest, and public conformance;
 - record release and protection evidence on the public tracking issues.
 
