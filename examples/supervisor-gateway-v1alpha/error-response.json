@@ -1,0 +1,14 @@
+{
+  "$schema": "../../schemas/v1alpha/supervisor-gateway.schema.json#/$defs/ErrorExample",
+  "response": {
+    "error": {
+      "message": "unknown logical model alias",
+      "type": "invalid_request_error",
+      "code": "unknown_model",
+      "dubnium": {
+        "contract_version": "dubnium.llm-gateway.v1",
+        "retryable": false
+      }
+    }
+  }
+}

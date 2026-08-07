@@ -5,8 +5,8 @@ Content: informative
 Canonical source: this file
 Generated: no
 
-`examples/` contains synthetic demonstrations of public contracts and packages.
+`examples/` contains synthetic request, response, error, stream-event, positive, negative, and adversarial fixtures.
 
-Examples MUST NOT contain real people, repositories, hosts, endpoints, credentials, incidents, logs, evidence, prompts, policies, approvals, performance measurements, or operator configuration. Values should be visibly fictional and unsuitable for deployment.
+Every JSON example MUST identify its canonical bundled schema with `$schema`. Examples MUST NOT contain real identities, repositories, hosts, credentials, incidents, logs, prompts, approvals, or operational measurements.
 
-Examples are informative unless a normative specification explicitly incorporates one.
+For catalogued HTTP contracts, every OpenAPI operation MUST map to at least one positive example. Important error and security boundaries SHOULD have explicit fixtures. Negative examples MUST fail canonical schema validation.

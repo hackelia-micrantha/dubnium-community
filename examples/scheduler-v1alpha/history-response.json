@@ -1,0 +1,11 @@
+{
+  "$schema": "../../schemas/v1alpha/scheduler.schema.json#/$defs/HistoryExample",
+  "response": {
+    "history": [
+      {
+        "MESSAGE": "synthetic entry",
+        "PRIORITY": "6"
+      }
+    ]
+  }
+}

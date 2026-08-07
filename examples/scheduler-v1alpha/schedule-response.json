@@ -1,0 +1,16 @@
+{
+  "$schema": "../../schemas/v1alpha/scheduler.schema.json#/$defs/ScheduleExample",
+  "response": {
+    "id": "example-hourly-report",
+    "kind": "timer",
+    "command": "example-report --dry-run",
+    "on_calendar": "hourly",
+    "executor_boundary": "systemd-user",
+    "mutates_repositories": false,
+    "dispatch": {
+      "backend": null,
+      "target": null,
+      "payload_file": null
+    }
+  }
+}

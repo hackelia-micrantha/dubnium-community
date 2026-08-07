@@ -1,0 +1,349 @@
+{
+  "openapi": "3.1.2",
+  "info": {
+    "title": "Dubnium Memory Service API",
+    "version": "0.1.0",
+    "description": "Experimental HTTP transport binding for authenticated memory storage, retrieval, expiry, and retrieval-event inspection. Storage layout, embeddings, ranking, consolidation, and retention policy remain implementation-defined."
+  },
+  "servers": [
+    {
+      "url": "https://memory.example.invalid",
+      "description": "Illustrative deployment only"
+    }
+  ],
+  "tags": [
+    {
+      "name": "Health"
+    },
+    {
+      "name": "Memory"
+    },
+    {
+      "name": "Operator"
+    }
+  ],
+  "security": [
+    {
+      "bearerAuth": []
+    }
+  ],
+  "paths": {
+    "/healthz": {
+      "get": {
+        "operationId": "getMemoryHealth",
+        "tags": [
+          "Health"
+        ],
+        "summary": "Return process and Redis health",
+        "security": [],
+        "responses": {
+          "200": {
+            "description": "Current bounded health state.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HealthResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/memory/store": {
+      "post": {
+        "operationId": "storeMemory",
+        "tags": [
+          "Memory"
+        ],
+        "summary": "Store one memory",
+        "description": "The bearer credential constrains permitted scope prefixes, sensitivity values, and verified-memory writes.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/StoreMemoryRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/StoreMemoryRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Memory stored.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StoreMemoryResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "413": {
+            "$ref": "#/components/responses/PayloadTooLarge"
+          },
+          "415": {
+            "$ref": "#/components/responses/UnsupportedMediaType"
+          }
+        }
+      }
+    },
+    "/memory/retrieve": {
+      "post": {
+        "operationId": "retrieveMemory",
+        "tags": [
+          "Memory"
+        ],
+        "summary": "Retrieve scoped memory evidence",
+        "description": "The service applies authenticated scope and sensitivity ceilings, optional verification filtering, and service-defined ranking.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RetrieveMemoryRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/RetrieveMemoryRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Retrieved memories and the retrieval audit event.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RetrieveMemoryResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "413": {
+            "$ref": "#/components/responses/PayloadTooLarge"
+          },
+          "415": {
+            "$ref": "#/components/responses/UnsupportedMediaType"
+          }
+        }
+      }
+    },
+    "/memory/expire": {
+      "post": {
+        "operationId": "expireMemory",
+        "tags": [
+          "Operator"
+        ],
+        "summary": "Expire memories due at a supplied timestamp",
+        "x-dubnium-visibility": "operator",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ExpireRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/ExpireRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Expired memory identifiers.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ExpireResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "413": {
+            "$ref": "#/components/responses/PayloadTooLarge"
+          },
+          "415": {
+            "$ref": "#/components/responses/UnsupportedMediaType"
+          }
+        }
+      }
+    },
+    "/memory/retrieval-events": {
+      "get": {
+        "operationId": "listMemoryRetrievalEvents",
+        "tags": [
+          "Operator"
+        ],
+        "summary": "List recorded retrieval events",
+        "x-dubnium-visibility": "operator",
+        "responses": {
+          "200": {
+            "description": "Recorded retrieval events.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RetrievalEventsResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer"
+      }
+    },
+    "schemas": {
+      "HealthResponse": {
+        "$ref": "../../../schemas/v1alpha/memory-service.schema.json#/$defs/HealthResponse"
+      },
+      "Error": {
+        "$ref": "../../../schemas/v1alpha/memory-service.schema.json#/$defs/Error"
+      },
+      "ArtifactRef": {
+        "$ref": "../../../schemas/v1alpha/memory-service.schema.json#/$defs/ArtifactRef"
+      },
+      "Scope": {
+        "$ref": "../../../schemas/v1alpha/memory-service.schema.json#/$defs/Scope"
+      },
+      "Memory": {
+        "$ref": "../../../schemas/v1alpha/memory-service.schema.json#/$defs/Memory"
+      },
+      "StoreMemoryRequest": {
+        "$ref": "../../../schemas/v1alpha/memory-service.schema.json#/$defs/StoreMemoryRequest"
+      },
+      "StoreMemoryResponse": {
+        "$ref": "../../../schemas/v1alpha/memory-service.schema.json#/$defs/StoreMemoryResponse"
+      },
+      "Requester": {
+        "$ref": "../../../schemas/v1alpha/memory-service.schema.json#/$defs/Requester"
+      },
+      "RetrieveMemoryRequest": {
+        "$ref": "../../../schemas/v1alpha/memory-service.schema.json#/$defs/RetrieveMemoryRequest"
+      },
+      "RetrievedMemory": {
+        "$ref": "../../../schemas/v1alpha/memory-service.schema.json#/$defs/RetrievedMemory"
+      },
+      "RetrievalEvent": {
+        "$ref": "../../../schemas/v1alpha/memory-service.schema.json#/$defs/RetrievalEvent"
+      },
+      "RetrieveMemoryResponse": {
+        "$ref": "../../../schemas/v1alpha/memory-service.schema.json#/$defs/RetrieveMemoryResponse"
+      },
+      "ExpireRequest": {
+        "$ref": "../../../schemas/v1alpha/memory-service.schema.json#/$defs/ExpireRequest"
+      },
+      "ExpireResponse": {
+        "$ref": "../../../schemas/v1alpha/memory-service.schema.json#/$defs/ExpireResponse"
+      },
+      "RetrievalEventsResponse": {
+        "$ref": "../../../schemas/v1alpha/memory-service.schema.json#/$defs/RetrievalEventsResponse"
+      }
+    },
+    "responses": {
+      "BadRequest": {
+        "description": "The request body, content length, or field values are invalid.",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            }
+          }
+        }
+      },
+      "Unauthorized": {
+        "description": "Bearer authentication is missing, unavailable, or invalid.",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            }
+          }
+        }
+      },
+      "Forbidden": {
+        "description": "The credential does not permit the requested scope, sensitivity, or validation state.",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            }
+          }
+        }
+      },
+      "PayloadTooLarge": {
+        "description": "The JSON request body exceeds 1 MiB.",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            }
+          }
+        }
+      },
+      "UnsupportedMediaType": {
+        "description": "The request is not application/json or a +json media type.",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            }
+          }
+        }
+      }
+    }
+  },
+  "x-dubnium-contract-status": "experimental",
+  "x-dubnium-canonical-source": {
+    "repository": "ryjen/dubnium",
+    "commit": "cfc0af808b3cac9e1098f630a187ab9497a80a70",
+    "paths": [
+      "pkgs/memory-service/src/dubnium_memory/api.py",
+      "pkgs/memory-service/src/dubnium_memory/models.py",
+      "pkgs/memory-service/src/dubnium_memory/serialization.py"
+    ]
+  }
+}

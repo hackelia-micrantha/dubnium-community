@@ -1,0 +1,29 @@
+{
+  "$schema": "../../schemas/v1alpha/supervisor-gateway.schema.json#/$defs/ChatRequestExample",
+  "request": {
+    "model": "supervisor",
+    "messages": [
+      {
+        "role": "user",
+        "content": "Summarize the fictional deployment plan."
+      }
+    ],
+    "temperature": 0,
+    "dubnium": {
+      "contract_version": "dubnium.llm-gateway.v1",
+      "capabilities": {
+        "streaming": false,
+        "sampling_parameters": [
+          "temperature"
+        ],
+        "topology": "supervisor-specialist",
+        "privacy_class": "local-only",
+        "evidence_level": "resolved-execution"
+      },
+      "actor": "example-user",
+      "project": "example-project",
+      "memory_mode": "read-only",
+      "request_id": "example-request-001"
+    }
+  }
+}

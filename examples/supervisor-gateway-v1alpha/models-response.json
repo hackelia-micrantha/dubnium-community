@@ -1,0 +1,32 @@
+{
+  "$schema": "../../schemas/v1alpha/supervisor-gateway.schema.json#/$defs/ModelListExample",
+  "response": {
+    "object": "list",
+    "data": [
+      {
+        "id": "supervisor",
+        "object": "model",
+        "created": 0,
+        "owned_by": "dubnium",
+        "dubnium": {
+          "contract_version": "dubnium.llm-gateway.v1",
+          "logical_alias": true,
+          "capabilities": {
+            "chat_completions": true,
+            "streaming": true,
+            "tools": false,
+            "structured_output": false,
+            "deterministic_seed": false,
+            "sampling_parameters": [
+              "temperature",
+              "top_p"
+            ],
+            "topology": "supervisor-specialist",
+            "privacy_class": "local-only",
+            "evidence_level": "resolved-execution"
+          }
+        }
+      }
+    ]
+  }
+}

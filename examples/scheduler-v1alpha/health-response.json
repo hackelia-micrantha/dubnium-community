@@ -1,0 +1,6 @@
+{
+  "$schema": "../../schemas/v1alpha/scheduler.schema.json#/$defs/HealthExample",
+  "response": {
+    "status": "ok"
+  }
+}

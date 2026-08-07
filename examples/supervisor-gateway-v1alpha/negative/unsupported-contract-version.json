@@ -1,0 +1,15 @@
+{
+  "$schema": "../../../schemas/v1alpha/supervisor-gateway.schema.json#/$defs/InvalidChatRequestExample",
+  "request": {
+    "model": "supervisor",
+    "messages": [
+      {
+        "role": "user",
+        "content": "Example."
+      }
+    ],
+    "dubnium": {
+      "contract_version": "dubnium.llm-gateway.v2"
+    }
+  }
+}

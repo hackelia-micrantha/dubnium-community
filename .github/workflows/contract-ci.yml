@@ -97,6 +97,9 @@ jobs:
             git diff --name-only "${{ github.event.before }}...${{ github.sha }}"
           fi | python3 scripts/check_contract_tree.py --changed-paths-stdin
 
+      - name: Validate catalogued contract bundles
+        run: python3 -m conformance.contract_bundle conformance/service-bundles.json
+
   tests:
     name: python-tests
     runs-on: ubuntu-latest

@@ -1,0 +1,297 @@
+{
+  "openapi": "3.1.2",
+  "info": {
+    "title": "Dubnium Scheduler API",
+    "version": "0.1.0",
+    "description": "Experimental HTTP transport binding for the current systemd-backed scheduler API. It exposes schedule inspection, recent journal history, and operator controls. The current service does not enforce inbound authentication and must remain behind a trusted administrative boundary."
+  },
+  "servers": [
+    {
+      "url": "https://scheduler.example.invalid",
+      "description": "Illustrative deployment only"
+    }
+  ],
+  "tags": [
+    {
+      "name": "Health"
+    },
+    {
+      "name": "Schedules"
+    },
+    {
+      "name": "Operator"
+    }
+  ],
+  "paths": {
+    "/healthz": {
+      "get": {
+        "operationId": "getSchedulerHealth",
+        "tags": [
+          "Health"
+        ],
+        "summary": "Return process health",
+        "responses": {
+          "200": {
+            "description": "The scheduler API is running.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HealthResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/schedules": {
+      "get": {
+        "operationId": "listSchedules",
+        "tags": [
+          "Schedules"
+        ],
+        "summary": "List configured schedule summaries",
+        "responses": {
+          "200": {
+            "description": "Configured schedules.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ScheduleListResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/schedules/{schedule_id}": {
+      "get": {
+        "operationId": "getSchedule",
+        "tags": [
+          "Schedules"
+        ],
+        "summary": "Get one schedule definition",
+        "parameters": [
+          {
+            "name": "schedule_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Schedule definition.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Schedule"
+                }
+              }
+            }
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          }
+        }
+      }
+    },
+    "/schedules/{schedule_id}/history": {
+      "get": {
+        "operationId": "getScheduleHistory",
+        "tags": [
+          "Operator"
+        ],
+        "summary": "Read up to 20 parsed systemd journal JSON entries for a schedule",
+        "x-dubnium-visibility": "operator",
+        "parameters": [
+          {
+            "name": "schedule_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Up to 20 parsable journalctl JSON records. Fields are passed through and are not stable or redacted by the current implementation.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HistoryResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          }
+        }
+      }
+    },
+    "/schedules/{schedule_id}/trigger": {
+      "post": {
+        "operationId": "triggerSchedule",
+        "tags": [
+          "Operator"
+        ],
+        "summary": "Issue systemctl start for the schedule service",
+        "x-dubnium-visibility": "operator",
+        "parameters": [
+          {
+            "name": "schedule_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The start command was issued; this response does not prove unit success.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ControlResult"
+                }
+              }
+            }
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          }
+        }
+      }
+    },
+    "/schedules/{schedule_id}/pause": {
+      "post": {
+        "operationId": "pauseSchedule",
+        "tags": [
+          "Operator"
+        ],
+        "summary": "Issue systemctl mask for the schedule timer",
+        "x-dubnium-visibility": "operator",
+        "parameters": [
+          {
+            "name": "schedule_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The mask command was issued; this response does not prove unit success.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ControlResult"
+                }
+              }
+            }
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          }
+        }
+      }
+    },
+    "/schedules/{schedule_id}/resume": {
+      "post": {
+        "operationId": "resumeSchedule",
+        "tags": [
+          "Operator"
+        ],
+        "summary": "Issue systemctl unmask for the schedule timer",
+        "x-dubnium-visibility": "operator",
+        "parameters": [
+          {
+            "name": "schedule_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The unmask command was issued; this response does not prove unit success.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ControlResult"
+                }
+              }
+            }
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "HealthResponse": {
+        "$ref": "../../../schemas/v1alpha/scheduler.schema.json#/$defs/HealthResponse"
+      },
+      "Error": {
+        "$ref": "../../../schemas/v1alpha/scheduler.schema.json#/$defs/Error"
+      },
+      "Dispatch": {
+        "$ref": "../../../schemas/v1alpha/scheduler.schema.json#/$defs/Dispatch"
+      },
+      "ScheduleSummary": {
+        "$ref": "../../../schemas/v1alpha/scheduler.schema.json#/$defs/ScheduleSummary"
+      },
+      "Schedule": {
+        "$ref": "../../../schemas/v1alpha/scheduler.schema.json#/$defs/Schedule"
+      },
+      "ScheduleListResponse": {
+        "$ref": "../../../schemas/v1alpha/scheduler.schema.json#/$defs/ScheduleListResponse"
+      },
+      "HistoryResponse": {
+        "$ref": "../../../schemas/v1alpha/scheduler.schema.json#/$defs/HistoryResponse"
+      },
+      "ControlResult": {
+        "$ref": "../../../schemas/v1alpha/scheduler.schema.json#/$defs/ControlResult"
+      }
+    },
+    "responses": {
+      "NotFound": {
+        "description": "The route or schedule does not exist.",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            }
+          }
+        }
+      }
+    }
+  },
+  "x-dubnium-contract-status": "experimental",
+  "x-dubnium-canonical-source": {
+    "repository": "ryjen/dubnium",
+    "commit": "cfc0af808b3cac9e1098f630a187ab9497a80a70",
+    "paths": [
+      "pkgs/scheduler-api/src/dubnium_scheduler_api/api.py",
+      "pkgs/scheduler-api/src/dubnium_scheduler_api/service.py"
+    ]
+  }
+}

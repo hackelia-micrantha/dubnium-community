@@ -1,0 +1,255 @@
+{
+  "openapi": "3.1.2",
+  "info": {
+    "title": "Dubnium Supervisor LLM Gateway API",
+    "version": "0.1.0",
+    "description": "Experimental OpenAI-compatible subset exposed by the packaged Dubnium supervisor gateway. The gateway resolves a logical model alias, negotiates dubnium.llm-gateway.v1 capabilities, attaches scoped read-only memory evidence, performs bounded specialist delegation, and emits gateway-authored execution identity and optional delegation lineage. Model and specialist output remains proposal-only. The current service does not enforce inbound authentication."
+  },
+  "servers": [
+    {
+      "url": "https://supervisor.example.invalid",
+      "description": "Illustrative deployment only"
+    }
+  ],
+  "tags": [
+    {
+      "name": "Health"
+    },
+    {
+      "name": "Models"
+    },
+    {
+      "name": "Chat"
+    }
+  ],
+  "paths": {
+    "/healthz": {
+      "get": {
+        "operationId": "getSupervisorGatewayHealth",
+        "tags": [
+          "Health"
+        ],
+        "summary": "Return process health",
+        "responses": {
+          "200": {
+            "description": "The supervisor gateway is running.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HealthResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/models": {
+      "get": {
+        "operationId": "listSupervisorModels",
+        "tags": [
+          "Models"
+        ],
+        "summary": "List the configured logical alias and capabilities",
+        "responses": {
+          "200": {
+            "description": "Model alias declaration and Dubnium contract capabilities.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ModelListResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/chat/completions": {
+      "post": {
+        "operationId": "createSupervisorChatCompletion",
+        "tags": [
+          "Chat"
+        ],
+        "summary": "Create a contract-negotiated supervisor chat completion",
+        "description": "The model must exactly match the logical alias returned by /v1/models. Unavailable capabilities are rejected before backend dispatch. tools and response_format are not accepted. Non-streaming responses include trusted execution metadata and optional delegation lineage. Streaming responses begin with one gateway-authored metadata event followed by sanitized backend events.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ChatCompletionRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/ChatCompletionRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "JSON completion or Server-Sent Events.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ChatCompletionResponse"
+                }
+              },
+              "text/event-stream": {
+                "schema": {
+                  "type": "string"
+                },
+                "description": "The first data event validates against the referenced canonical metadata-event schema. Subsequent backend events have model names rewritten and backend-authored dubnium metadata removed.",
+                "x-dubnium-first-event-schema": {
+                  "$ref": "#/components/schemas/StreamMetadataEvent"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "413": {
+            "$ref": "#/components/responses/PayloadTooLarge"
+          },
+          "415": {
+            "$ref": "#/components/responses/UnsupportedMediaType"
+          },
+          "503": {
+            "$ref": "#/components/responses/ServiceUnavailable"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "HealthResponse": {
+        "$ref": "../../../schemas/v1alpha/supervisor-gateway.schema.json#/$defs/HealthResponse"
+      },
+      "Error": {
+        "$ref": "../../../schemas/v1alpha/supervisor-gateway.schema.json#/$defs/Error"
+      },
+      "ErrorDubnium": {
+        "$ref": "../../../schemas/v1alpha/supervisor-gateway.schema.json#/$defs/ErrorDubnium"
+      },
+      "ChatMessage": {
+        "$ref": "../../../schemas/v1alpha/supervisor-gateway.schema.json#/$defs/ChatMessage"
+      },
+      "SpecialistRequest": {
+        "$ref": "../../../schemas/v1alpha/supervisor-gateway.schema.json#/$defs/SpecialistRequest"
+      },
+      "CapabilityRequirements": {
+        "$ref": "../../../schemas/v1alpha/supervisor-gateway.schema.json#/$defs/CapabilityRequirements"
+      },
+      "DubniumRequestMetadata": {
+        "$ref": "../../../schemas/v1alpha/supervisor-gateway.schema.json#/$defs/DubniumRequestMetadata"
+      },
+      "ChatCompletionRequest": {
+        "$ref": "../../../schemas/v1alpha/supervisor-gateway.schema.json#/$defs/ChatCompletionRequest"
+      },
+      "AliasCapabilities": {
+        "$ref": "../../../schemas/v1alpha/supervisor-gateway.schema.json#/$defs/AliasCapabilities"
+      },
+      "ModelDubnium": {
+        "$ref": "../../../schemas/v1alpha/supervisor-gateway.schema.json#/$defs/ModelDubnium"
+      },
+      "Model": {
+        "$ref": "../../../schemas/v1alpha/supervisor-gateway.schema.json#/$defs/Model"
+      },
+      "ModelListResponse": {
+        "$ref": "../../../schemas/v1alpha/supervisor-gateway.schema.json#/$defs/ModelListResponse"
+      },
+      "MemoryMetadata": {
+        "$ref": "../../../schemas/v1alpha/supervisor-gateway.schema.json#/$defs/MemoryMetadata"
+      },
+      "SpecialistMetadata": {
+        "$ref": "../../../schemas/v1alpha/supervisor-gateway.schema.json#/$defs/SpecialistMetadata"
+      },
+      "AuthorityMetadata": {
+        "$ref": "../../../schemas/v1alpha/supervisor-gateway.schema.json#/$defs/AuthorityMetadata"
+      },
+      "ResolvedExecution": {
+        "$ref": "../../../schemas/v1alpha/supervisor-gateway.schema.json#/$defs/ResolvedExecution"
+      },
+      "ExecutionStep": {
+        "$ref": "../../../schemas/v1alpha/supervisor-gateway.schema.json#/$defs/ExecutionStep"
+      },
+      "ExecutionIdentity": {
+        "$ref": "../../../schemas/v1alpha/supervisor-gateway.schema.json#/$defs/ExecutionIdentity"
+      },
+      "DelegationLineage": {
+        "$ref": "../../../schemas/v1alpha/supervisor-gateway.schema.json#/$defs/DelegationLineage"
+      },
+      "DubniumResponseMetadata": {
+        "$ref": "../../../schemas/v1alpha/supervisor-gateway.schema.json#/$defs/DubniumResponseMetadata"
+      },
+      "ChatCompletionResponse": {
+        "$ref": "../../../schemas/v1alpha/supervisor-gateway.schema.json#/$defs/ChatCompletionResponse"
+      },
+      "StreamMetadataEvent": {
+        "$ref": "../../../schemas/v1alpha/supervisor-gateway.schema.json#/$defs/StreamMetadataEvent"
+      }
+    },
+    "responses": {
+      "BadRequest": {
+        "description": "The request is malformed, uses an unknown alias, requests unavailable capabilities, or violates identity or specialist constraints.",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            }
+          }
+        }
+      },
+      "PayloadTooLarge": {
+        "description": "The request body exceeds 2 MiB.",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            }
+          }
+        }
+      },
+      "UnsupportedMediaType": {
+        "description": "The request is not application/json or a +json media type.",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            }
+          }
+        }
+      },
+      "ServiceUnavailable": {
+        "description": "The approved model route, required memory service, or configured specialist runner is unavailable.",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            }
+          }
+        }
+      }
+    }
+  },
+  "x-dubnium-contract-status": "experimental",
+  "x-dubnium-contract-version": "dubnium.llm-gateway.v1",
+  "x-dubnium-canonical-source": {
+    "repository": "ryjen/dubnium",
+    "commit": "cfc0af808b3cac9e1098f630a187ab9497a80a70",
+    "console_script": "supervisor-gateway",
+    "entry_point": "dubnium_supervisor_gateway.lineage_app:main",
+    "paths": [
+      "pkgs/supervisor-gateway/pyproject.toml",
+      "pkgs/supervisor-gateway/src/dubnium_supervisor_gateway/lineage_app.py",
+      "pkgs/supervisor-gateway/src/dubnium_supervisor_gateway/contract_app.py",
+      "pkgs/supervisor-gateway/src/dubnium_supervisor_gateway/contract.py",
+      "pkgs/supervisor-gateway/src/dubnium_supervisor_gateway/lineage.py",
+      "pkgs/supervisor-gateway/src/dubnium_supervisor_gateway/app.py"
+    ]
+  }
+}

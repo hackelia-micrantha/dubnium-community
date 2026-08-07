@@ -1,0 +1,352 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.micrantha.com/dubnium/v1alpha/scheduler.schema.json",
+  "title": "Dubnium Scheduler experimental contract bundle",
+  "type": "object",
+  "$defs": {
+    "HealthResponse": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "status"
+      ],
+      "properties": {
+        "status": {
+          "type": "string",
+          "const": "ok"
+        }
+      }
+    },
+    "Error": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "error"
+      ],
+      "properties": {
+        "error": {
+          "type": "string"
+        },
+        "message": {
+          "type": "string"
+        }
+      }
+    },
+    "Dispatch": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "backend",
+        "target",
+        "payload_file"
+      ],
+      "properties": {
+        "backend": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "target": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "payload_file": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      }
+    },
+    "ScheduleSummary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "kind",
+        "executor_boundary",
+        "mutates_repositories",
+        "dispatch"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "kind": {
+          "type": "string"
+        },
+        "executor_boundary": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "mutates_repositories": {
+          "type": "boolean"
+        },
+        "dispatch": {
+          "$ref": "#/$defs/Dispatch"
+        }
+      }
+    },
+    "Schedule": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "kind",
+        "command",
+        "on_calendar",
+        "executor_boundary",
+        "mutates_repositories",
+        "dispatch"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "kind": {
+          "type": "string"
+        },
+        "command": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "on_calendar": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "executor_boundary": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "mutates_repositories": {
+          "type": "boolean"
+        },
+        "dispatch": {
+          "$ref": "#/$defs/Dispatch"
+        }
+      }
+    },
+    "ScheduleListResponse": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schedules"
+      ],
+      "properties": {
+        "schedules": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ScheduleSummary"
+          }
+        }
+      }
+    },
+    "HistoryResponse": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "history"
+      ],
+      "properties": {
+        "history": {
+          "type": "array",
+          "maxItems": 20,
+          "items": {
+            "type": "object",
+            "additionalProperties": true
+          }
+        }
+      }
+    },
+    "ControlResult": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schedule_id",
+        "status"
+      ],
+      "properties": {
+        "schedule_id": {
+          "type": "string"
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "started",
+            "paused",
+            "resumed"
+          ]
+        }
+      }
+    },
+    "HealthExample": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "$schema",
+        "response"
+      ],
+      "properties": {
+        "$schema": {
+          "type": "string"
+        },
+        "response": {
+          "$ref": "#/$defs/HealthResponse"
+        }
+      }
+    },
+    "ScheduleListExample": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "$schema",
+        "response"
+      ],
+      "properties": {
+        "$schema": {
+          "type": "string"
+        },
+        "response": {
+          "$ref": "#/$defs/ScheduleListResponse"
+        }
+      }
+    },
+    "ScheduleExample": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "$schema",
+        "response"
+      ],
+      "properties": {
+        "$schema": {
+          "type": "string"
+        },
+        "response": {
+          "$ref": "#/$defs/Schedule"
+        }
+      }
+    },
+    "HistoryExample": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "$schema",
+        "response"
+      ],
+      "properties": {
+        "$schema": {
+          "type": "string"
+        },
+        "response": {
+          "$ref": "#/$defs/HistoryResponse"
+        }
+      }
+    },
+    "ControlExample": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "$schema",
+        "response"
+      ],
+      "properties": {
+        "$schema": {
+          "type": "string"
+        },
+        "response": {
+          "$ref": "#/$defs/ControlResult"
+        }
+      }
+    },
+    "ErrorExample": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "$schema",
+        "response"
+      ],
+      "properties": {
+        "$schema": {
+          "type": "string"
+        },
+        "response": {
+          "$ref": "#/$defs/Error"
+        }
+      }
+    },
+    "InvalidControlExample": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "$schema",
+        "response"
+      ],
+      "properties": {
+        "$schema": {
+          "type": "string"
+        },
+        "response": {
+          "$ref": "#/$defs/ControlResult"
+        }
+      }
+    },
+    "InvalidHistoryExample": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "$schema",
+        "response"
+      ],
+      "properties": {
+        "$schema": {
+          "type": "string"
+        },
+        "response": {
+          "$ref": "#/$defs/HistoryResponse"
+        }
+      }
+    }
+  }
+}

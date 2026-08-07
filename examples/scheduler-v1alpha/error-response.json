@@ -1,0 +1,7 @@
+{
+  "$schema": "../../schemas/v1alpha/scheduler.schema.json#/$defs/ErrorExample",
+  "response": {
+    "error": "not_found",
+    "message": "unknown schedule: example"
+  }
+}
