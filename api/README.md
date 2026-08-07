@@ -7,7 +7,7 @@ Generated: no
 
 `api/` contains public transport bindings derived from normative contracts, including OpenAPI descriptions when HTTP is applicable.
 
-A binding MUST NOT invent authority, identity, lifecycle, canonicalization, error, or compatibility semantics absent from the normative specification. Generated bindings identify their canonical source version or digest.
+A binding MUST NOT invent authority, identity, lifecycle, canonicalization, error, or compatibility semantics absent from the normative specification.
 
 ## Published bindings
 
@@ -18,13 +18,13 @@ A binding MUST NOT invent authority, identity, lifecycle, canonicalization, erro
 | `supervisor-gateway/v1alpha/openapi.json` | experimental | `spec/supervisor-gateway-v1alpha.md` | `schemas/v1alpha/supervisor-gateway.schema.json` | `examples/supervisor-gateway-v1alpha/` |
 | `scheduler/v1alpha/openapi.json` | experimental | `spec/scheduler-v1alpha.md` | `schemas/v1alpha/scheduler.schema.json` | `examples/scheduler-v1alpha/` |
 
-The three experimental service bindings are enrolled in `conformance/service-bundles.json`. That catalog is data-only and is validated by the generic `conformance.contract_bundle` runner.
+The experimental service bindings are enrolled in `conformance/service-bundles.json`.
 
 ## Boundary rules
 
-- OpenAPI documents describe wire shapes; they do not grant authority or define deployment exposure.
+- OpenAPI describes wire shapes; it does not grant authority or define deployment exposure.
 - `x-dubnium-visibility: operator` marks operations that belong behind a trusted administrative boundary.
-- `x-dubnium-canonical-source` records implementation provenance for review; public specifications and schemas remain independently usable.
-- Alpha bindings intentionally leave private implementation semantics open. In particular, memory storage, embedding, and ranking and scheduler persistence, unit generation, concurrency, retry, and policy behavior are not standardized here.
+- `x-dubnium-canonical-source` records implementation provenance for review.
+- Canonical JSON Schemas own reusable wire shapes. OpenAPI SHOULD reference them directly; declared structural bindings mechanically reject duplicated-schema drift.
 - The supervisor gateway is an OpenAI-compatible subset, not a claim of compatibility with every OpenAI API parameter or endpoint.
-- New API bundles SHOULD add catalog data, schemas, examples, and declarative assertions rather than a contract-specific script.
+- New API bundles SHOULD add catalog data, schemas, examples, and assertions rather than contract-specific scripts.
