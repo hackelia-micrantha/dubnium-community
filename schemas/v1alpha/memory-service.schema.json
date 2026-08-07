@@ -4,6 +4,21 @@
   "title": "Dubnium Memory Service experimental contract bundle",
   "type": "object",
   "$defs": {
+    "HealthResponse": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "redis"],
+      "properties": {
+        "status": {"type": "string", "const": "ok"},
+        "redis": {"type": "string", "enum": ["disabled", "invalid", "unavailable", "ok"]}
+      }
+    },
+    "Error": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["error"],
+      "properties": {"error": {"type": "string"}, "message": {"type": "string"}}
+    },
     "Scope": {
       "type": "string",
       "minLength": 1,
@@ -13,545 +28,151 @@
     "ArtifactRef": {
       "type": "object",
       "additionalProperties": false,
-      "required": [
-        "id",
-        "scope",
-        "sha256",
-        "storage_uri",
-        "artifact_type"
-      ],
+      "required": ["id", "scope", "sha256", "storage_uri", "artifact_type"],
       "properties": {
-        "id": {
-          "type": "string",
-          "format": "uuid"
-        },
-        "scope": {
-          "$ref": "#/$defs/Scope"
-        },
-        "sha256": {
-          "type": "string",
-          "minLength": 1,
-          "maxLength": 128
-        },
-        "storage_uri": {
-          "type": "string",
-          "minLength": 1,
-          "maxLength": 2048
-        },
-        "artifact_type": {
-          "type": "string",
-          "minLength": 1,
-          "maxLength": 64
-        }
+        "id": {"type": "string", "format": "uuid"},
+        "scope": {"$ref": "#/$defs/Scope"},
+        "sha256": {"type": "string", "minLength": 1, "maxLength": 128},
+        "storage_uri": {"type": "string", "minLength": 1, "maxLength": 2048},
+        "artifact_type": {"type": "string", "minLength": 1, "maxLength": 64}
       }
     },
     "Memory": {
       "type": "object",
       "additionalProperties": false,
-      "required": [
-        "id",
-        "memory_type",
-        "summary",
-        "scope",
-        "source",
-        "provenance",
-        "session_id",
-        "importance",
-        "confidence",
-        "sensitivity",
-        "validation_status",
-        "ttl",
-        "artifact_refs"
-      ],
+      "required": ["id", "memory_type", "summary", "scope", "source", "provenance", "session_id", "importance", "confidence", "sensitivity", "validation_status", "ttl", "artifact_refs"],
       "properties": {
-        "id": {
-          "type": "string",
-          "format": "uuid"
-        },
-        "memory_type": {
-          "type": "string",
-          "enum": [
-            "working",
-            "episodic",
-            "semantic"
-          ]
-        },
-        "summary": {
-          "type": "string",
-          "minLength": 1,
-          "maxLength": 8000
-        },
-        "scope": {
-          "$ref": "#/$defs/Scope"
-        },
-        "source": {
-          "type": "string",
-          "minLength": 1,
-          "maxLength": 128
-        },
-        "provenance": {
-          "type": "object",
-          "additionalProperties": true
-        },
-        "session_id": {
-          "anyOf": [
-            {
-              "type": "string",
-              "format": "uuid"
-            },
-            {
-              "type": "null"
-            }
-          ]
-        },
-        "importance": {
-          "type": "number",
-          "minimum": 0,
-          "maximum": 1
-        },
-        "confidence": {
-          "type": "number",
-          "minimum": 0,
-          "maximum": 1
-        },
-        "sensitivity": {
-          "type": "string",
-          "minLength": 1,
-          "maxLength": 64
-        },
-        "validation_status": {
-          "type": "string",
-          "enum": [
-            "unverified",
-            "verified",
-            "rejected"
-          ]
-        },
-        "ttl": {
-          "anyOf": [
-            {
-              "type": "string",
-              "format": "date-time"
-            },
-            {
-              "type": "null"
-            }
-          ]
-        },
-        "artifact_refs": {
-          "type": "array",
-          "items": {
-            "$ref": "#/$defs/ArtifactRef"
-          }
-        }
+        "id": {"type": "string", "format": "uuid"},
+        "memory_type": {"type": "string", "enum": ["working", "episodic", "semantic"]},
+        "summary": {"type": "string", "minLength": 1, "maxLength": 8000},
+        "scope": {"$ref": "#/$defs/Scope"},
+        "source": {"type": "string", "minLength": 1, "maxLength": 128},
+        "provenance": {"type": "object", "additionalProperties": true},
+        "session_id": {"anyOf": [{"type": "string", "format": "uuid"}, {"type": "null"}]},
+        "importance": {"type": "number", "minimum": 0, "maximum": 1},
+        "confidence": {"type": "number", "minimum": 0, "maximum": 1},
+        "sensitivity": {"type": "string", "minLength": 1, "maxLength": 64},
+        "validation_status": {"type": "string", "enum": ["unverified", "verified", "rejected"]},
+        "ttl": {"anyOf": [{"type": "string", "format": "date-time"}, {"type": "null"}]},
+        "artifact_refs": {"type": "array", "items": {"$ref": "#/$defs/ArtifactRef"}}
       }
     },
     "StoreMemoryRequest": {
       "type": "object",
       "additionalProperties": true,
-      "required": [
-        "id",
-        "memory_type",
-        "summary",
-        "scope",
-        "source",
-        "provenance"
-      ],
+      "required": ["id", "memory_type", "summary", "scope", "source", "provenance"],
       "properties": {
-        "id": {
-          "type": "string",
-          "format": "uuid"
-        },
-        "memory_type": {
-          "type": "string",
-          "enum": [
-            "working",
-            "episodic",
-            "semantic"
-          ]
-        },
-        "summary": {
-          "type": "string",
-          "minLength": 1,
-          "maxLength": 8000
-        },
-        "scope": {
-          "$ref": "#/$defs/Scope"
-        },
-        "source": {
-          "type": "string",
-          "minLength": 1,
-          "maxLength": 128
-        },
-        "provenance": {
-          "type": "object",
-          "additionalProperties": true
-        },
-        "session_id": {
-          "anyOf": [
-            {
-              "type": "string",
-              "format": "uuid"
-            },
-            {
-              "type": "null"
-            }
-          ]
-        },
-        "importance": {
-          "type": "number",
-          "minimum": 0,
-          "maximum": 1
-        },
-        "confidence": {
-          "type": "number",
-          "minimum": 0,
-          "maximum": 1
-        },
-        "sensitivity": {
-          "type": "string",
-          "minLength": 1,
-          "maxLength": 64
-        },
-        "validation_status": {
-          "type": "string",
-          "enum": [
-            "unverified",
-            "verified",
-            "rejected"
-          ]
-        },
-        "ttl": {
-          "anyOf": [
-            {
-              "type": "string",
-              "format": "date-time"
-            },
-            {
-              "type": "null"
-            }
-          ]
-        },
-        "artifact_refs": {
-          "type": "array",
-          "items": {
-            "$ref": "#/$defs/ArtifactRef"
-          }
-        }
+        "id": {"type": "string", "format": "uuid"},
+        "memory_type": {"type": "string", "enum": ["working", "episodic", "semantic"]},
+        "summary": {"type": "string", "minLength": 1, "maxLength": 8000},
+        "scope": {"$ref": "#/$defs/Scope"},
+        "source": {"type": "string", "minLength": 1, "maxLength": 128},
+        "provenance": {"type": "object", "additionalProperties": true},
+        "session_id": {"anyOf": [{"type": "string", "format": "uuid"}, {"type": "null"}]},
+        "importance": {"type": "number", "minimum": 0, "maximum": 1},
+        "confidence": {"type": "number", "minimum": 0, "maximum": 1},
+        "sensitivity": {"type": "string", "minLength": 1, "maxLength": 64},
+        "validation_status": {"type": "string", "enum": ["unverified", "verified", "rejected"]},
+        "ttl": {"anyOf": [{"type": "string", "format": "date-time"}, {"type": "null"}]},
+        "artifact_refs": {"type": "array", "items": {"$ref": "#/$defs/ArtifactRef"}}
       }
     },
     "StoreMemoryResponse": {
       "type": "object",
       "additionalProperties": false,
-      "required": [
-        "memory"
-      ],
-      "properties": {
-        "memory": {
-          "$ref": "#/$defs/Memory"
-        }
-      }
+      "required": ["memory"],
+      "properties": {"memory": {"$ref": "#/$defs/Memory"}}
     },
     "Requester": {
       "type": "object",
       "additionalProperties": true,
-      "required": [
-        "actor_type",
-        "actor_id"
-      ],
+      "required": ["actor_type", "actor_id"],
       "properties": {
-        "actor_type": {
-          "type": "string",
-          "enum": [
-            "human",
-            "agent",
-            "system"
-          ]
-        },
-        "actor_id": {
-          "type": "string",
-          "minLength": 1,
-          "maxLength": 256
-        }
+        "actor_type": {"type": "string", "enum": ["human", "agent", "system"]},
+        "actor_id": {"type": "string", "minLength": 1, "maxLength": 256}
       }
     },
     "RetrieveMemoryRequest": {
       "type": "object",
       "additionalProperties": true,
-      "required": [
-        "query",
-        "scope"
-      ],
+      "required": ["query", "scope"],
       "properties": {
-        "query": {
-          "type": "string",
-          "minLength": 1,
-          "maxLength": 4000
-        },
-        "scope": {
-          "$ref": "#/$defs/Scope"
-        },
-        "allowed_sensitivity": {
-          "type": "array",
-          "minItems": 1,
-          "items": {
-            "type": "string",
-            "minLength": 1,
-            "maxLength": 64
-          }
-        },
-        "require_verified": {
-          "type": "boolean"
-        },
-        "limit": {
-          "type": "integer",
-          "minimum": 1,
-          "maximum": 32
-        },
-        "purpose": {
-          "anyOf": [
-            {
-              "type": "string",
-              "enum": [
-                "ask",
-                "plan",
-                "patch",
-                "review",
-                "test"
-              ]
-            },
-            {
-              "type": "null"
-            }
-          ]
-        },
-        "requester": {
-          "anyOf": [
-            {
-              "$ref": "#/$defs/Requester"
-            },
-            {
-              "type": "null"
-            }
-          ]
-        },
-        "envelope_id": {
-          "anyOf": [
-            {
-              "type": "string",
-              "minLength": 1,
-              "maxLength": 256
-            },
-            {
-              "type": "null"
-            }
-          ]
-        }
+        "query": {"type": "string", "minLength": 1, "maxLength": 4000},
+        "scope": {"$ref": "#/$defs/Scope"},
+        "allowed_sensitivity": {"type": "array", "minItems": 1, "items": {"type": "string", "minLength": 1, "maxLength": 64}},
+        "require_verified": {"type": "boolean"},
+        "limit": {"type": "integer", "minimum": 1, "maximum": 32},
+        "purpose": {"anyOf": [{"type": "string", "enum": ["ask", "plan", "patch", "review", "test"]}, {"type": "null"}]},
+        "requester": {"anyOf": [{"$ref": "#/$defs/Requester"}, {"type": "null"}]},
+        "envelope_id": {"anyOf": [{"type": "string", "minLength": 1, "maxLength": 256}, {"type": "null"}]}
       }
     },
     "RetrievedMemory": {
       "type": "object",
       "additionalProperties": false,
-      "required": [
-        "id",
-        "memory_type",
-        "summary",
-        "scope",
-        "source",
-        "sensitivity",
-        "validation_status",
-        "provenance",
-        "artifact_refs"
-      ],
+      "required": ["id", "memory_type", "summary", "scope", "source", "sensitivity", "validation_status", "provenance", "artifact_refs"],
       "properties": {
-        "id": {
-          "type": "string",
-          "format": "uuid"
-        },
-        "memory_type": {
-          "anyOf": [
-            {
-              "type": "string",
-              "enum": [
-                "working",
-                "episodic",
-                "semantic"
-              ]
-            },
-            {
-              "type": "null"
-            }
-          ]
-        },
-        "summary": {
-          "type": "string"
-        },
-        "scope": {
-          "$ref": "#/$defs/Scope"
-        },
-        "source": {
-          "type": "string"
-        },
-        "sensitivity": {
-          "type": "string"
-        },
-        "validation_status": {
-          "type": "string",
-          "enum": [
-            "unverified",
-            "verified",
-            "rejected"
-          ]
-        },
-        "provenance": {
-          "type": "object",
-          "additionalProperties": true
-        },
-        "artifact_refs": {
-          "type": "array",
-          "items": {
-            "$ref": "#/$defs/ArtifactRef"
-          }
-        }
+        "id": {"type": "string", "format": "uuid"},
+        "memory_type": {"anyOf": [{"type": "string", "enum": ["working", "episodic", "semantic"]}, {"type": "null"}]},
+        "summary": {"type": "string"},
+        "scope": {"$ref": "#/$defs/Scope"},
+        "source": {"type": "string"},
+        "sensitivity": {"type": "string"},
+        "validation_status": {"type": "string", "enum": ["unverified", "verified", "rejected"]},
+        "provenance": {"type": "object", "additionalProperties": true},
+        "artifact_refs": {"type": "array", "items": {"$ref": "#/$defs/ArtifactRef"}}
       }
     },
     "RetrievalEvent": {
       "type": "object",
       "additionalProperties": false,
-      "required": [
-        "id",
-        "scope",
-        "query",
-        "returned_memory_ids",
-        "returned_artifact_ids",
-        "metadata"
-      ],
+      "required": ["id", "scope", "query", "returned_memory_ids", "returned_artifact_ids", "metadata"],
       "properties": {
-        "id": {
-          "type": "string",
-          "format": "uuid"
-        },
-        "scope": {
-          "$ref": "#/$defs/Scope"
-        },
-        "query": {
-          "type": "string"
-        },
-        "returned_memory_ids": {
-          "type": "array",
-          "items": {
-            "type": "string",
-            "format": "uuid"
-          }
-        },
-        "returned_artifact_ids": {
-          "type": "array",
-          "items": {
-            "type": "string",
-            "format": "uuid"
-          }
-        },
-        "metadata": {
-          "type": "object",
-          "additionalProperties": true
-        }
+        "id": {"type": "string", "format": "uuid"},
+        "scope": {"$ref": "#/$defs/Scope"},
+        "query": {"type": "string"},
+        "returned_memory_ids": {"type": "array", "items": {"type": "string", "format": "uuid"}},
+        "returned_artifact_ids": {"type": "array", "items": {"type": "string", "format": "uuid"}},
+        "metadata": {"type": "object", "additionalProperties": true}
       }
     },
     "RetrieveMemoryResponse": {
       "type": "object",
       "additionalProperties": false,
-      "required": [
-        "memories",
-        "event"
-      ],
+      "required": ["memories", "event"],
       "properties": {
-        "memories": {
-          "type": "array",
-          "items": {
-            "$ref": "#/$defs/RetrievedMemory"
-          }
-        },
-        "event": {
-          "$ref": "#/$defs/RetrievalEvent"
-        }
+        "memories": {"type": "array", "items": {"$ref": "#/$defs/RetrievedMemory"}},
+        "event": {"$ref": "#/$defs/RetrievalEvent"}
       }
     },
     "ExpireRequest": {
       "type": "object",
       "additionalProperties": true,
-      "required": [
-        "now"
-      ],
-      "properties": {
-        "now": {
-          "type": "string",
-          "format": "date-time"
-        }
-      }
+      "required": ["now"],
+      "properties": {"now": {"type": "string", "format": "date-time"}}
     },
     "ExpireResponse": {
       "type": "object",
       "additionalProperties": false,
-      "required": [
-        "expired_memory_ids"
-      ],
-      "properties": {
-        "expired_memory_ids": {
-          "type": "array",
-          "items": {
-            "type": "string",
-            "format": "uuid"
-          }
-        }
-      }
+      "required": ["expired_memory_ids"],
+      "properties": {"expired_memory_ids": {"type": "array", "items": {"type": "string", "format": "uuid"}}}
     },
-    "StoreRequestExample": {
+    "RetrievalEventsResponse": {
       "type": "object",
       "additionalProperties": false,
-      "required": [
-        "$schema",
-        "request"
-      ],
-      "properties": {
-        "$schema": {
-          "type": "string"
-        },
-        "request": {
-          "$ref": "#/$defs/StoreMemoryRequest"
-        }
-      }
+      "required": ["events"],
+      "properties": {"events": {"type": "array", "items": {"$ref": "#/$defs/RetrievalEvent"}}}
     },
-    "RetrieveResponseExample": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "$schema",
-        "response"
-      ],
-      "properties": {
-        "$schema": {
-          "type": "string"
-        },
-        "response": {
-          "$ref": "#/$defs/RetrieveMemoryResponse"
-        }
-      }
-    },
-    "InvalidStoreRequestExample": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "$schema",
-        "request"
-      ],
-      "properties": {
-        "$schema": {
-          "type": "string"
-        },
-        "request": {
-          "$ref": "#/$defs/StoreMemoryRequest"
-        }
-      }
-    }
+    "HealthExample": {"type": "object", "additionalProperties": false, "required": ["$schema", "response"], "properties": {"$schema": {"type": "string"}, "response": {"$ref": "#/$defs/HealthResponse"}}},
+    "StoreRequestExample": {"type": "object", "additionalProperties": false, "required": ["$schema", "request"], "properties": {"$schema": {"type": "string"}, "request": {"$ref": "#/$defs/StoreMemoryRequest"}}},
+    "StoreResponseExample": {"type": "object", "additionalProperties": false, "required": ["$schema", "response"], "properties": {"$schema": {"type": "string"}, "response": {"$ref": "#/$defs/StoreMemoryResponse"}}},
+    "RetrieveRequestExample": {"type": "object", "additionalProperties": false, "required": ["$schema", "request"], "properties": {"$schema": {"type": "string"}, "request": {"$ref": "#/$defs/RetrieveMemoryRequest"}}},
+    "RetrieveResponseExample": {"type": "object", "additionalProperties": false, "required": ["$schema", "response"], "properties": {"$schema": {"type": "string"}, "response": {"$ref": "#/$defs/RetrieveMemoryResponse"}}},
+    "ExpireRequestExample": {"type": "object", "additionalProperties": false, "required": ["$schema", "request"], "properties": {"$schema": {"type": "string"}, "request": {"$ref": "#/$defs/ExpireRequest"}}},
+    "ExpireResponseExample": {"type": "object", "additionalProperties": false, "required": ["$schema", "response"], "properties": {"$schema": {"type": "string"}, "response": {"$ref": "#/$defs/ExpireResponse"}}},
+    "RetrievalEventsExample": {"type": "object", "additionalProperties": false, "required": ["$schema", "response"], "properties": {"$schema": {"type": "string"}, "response": {"$ref": "#/$defs/RetrievalEventsResponse"}}},
+    "ErrorExample": {"type": "object", "additionalProperties": false, "required": ["$schema", "response"], "properties": {"$schema": {"type": "string"}, "response": {"$ref": "#/$defs/Error"}}},
+    "InvalidStoreRequestExample": {"type": "object", "additionalProperties": false, "required": ["$schema", "request"], "properties": {"$schema": {"type": "string"}, "request": {"$ref": "#/$defs/StoreMemoryRequest"}}},
+    "InvalidRetrieveRequestExample": {"type": "object", "additionalProperties": false, "required": ["$schema", "request"], "properties": {"$schema": {"type": "string"}, "request": {"$ref": "#/$defs/RetrieveMemoryRequest"}}}
   }
 }

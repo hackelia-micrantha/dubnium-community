@@ -5,17 +5,10 @@ Content: informative
 Canonical source: this file
 Generated: no
 
-`schemas/` contains canonical machine-readable schema source.
+`schemas/` contains canonical machine-readable contract shapes.
 
-Each schema has one editable owner, stable `$id` and version metadata, bounded local reference resolution, positive and negative examples, and an explicit relationship to generated types. Generated copies are not independently editable.
+A public wire shape has one editable schema owner. OpenAPI components SHOULD reference the canonical definition directly. When duplication is unavoidable, the bundle catalog MUST declare a structural binding and generic conformance MUST reject drift.
 
-Remote schema resolution is disabled by default.
+Schema documents use JSON Schema 2020-12, local reviewed references, stable `$id` values, bounded files, and no remote resolution.
 
-## Schema lines
-
-- `schemas/v1/` contains the Capability Gateway v1alpha schema set.
-- `schemas/v1alpha/memory-service.schema.json` contains the experimental memory-service example and payload schemas.
-- `schemas/v1alpha/supervisor-gateway.schema.json` contains the experimental supervisor/LLM gateway schemas.
-- `schemas/v1alpha/scheduler.schema.json` contains the experimental scheduler schemas.
-
-Service schemas are validated with their positive and negative examples through the generic bundle catalog in `conformance/service-bundles.json`.
+The experimental memory, supervisor, and scheduler schemas are under `schemas/v1alpha/`.

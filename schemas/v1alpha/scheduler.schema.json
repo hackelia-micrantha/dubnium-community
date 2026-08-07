@@ -4,6 +4,34 @@
   "title": "Dubnium Scheduler experimental contract bundle",
   "type": "object",
   "$defs": {
+    "HealthResponse": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "status"
+      ],
+      "properties": {
+        "status": {
+          "type": "string",
+          "const": "ok"
+        }
+      }
+    },
+    "Error": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "error"
+      ],
+      "properties": {
+        "error": {
+          "type": "string"
+        },
+        "message": {
+          "type": "string"
+        }
+      }
+    },
     "Dispatch": {
       "type": "object",
       "additionalProperties": false,
@@ -154,6 +182,23 @@
         }
       }
     },
+    "HistoryResponse": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "history"
+      ],
+      "properties": {
+        "history": {
+          "type": "array",
+          "maxItems": 20,
+          "items": {
+            "type": "object",
+            "additionalProperties": true
+          }
+        }
+      }
+    },
     "ControlResult": {
       "type": "object",
       "additionalProperties": false,
@@ -172,6 +217,22 @@
             "paused",
             "resumed"
           ]
+        }
+      }
+    },
+    "HealthExample": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "$schema",
+        "response"
+      ],
+      "properties": {
+        "$schema": {
+          "type": "string"
+        },
+        "response": {
+          "$ref": "#/$defs/HealthResponse"
         }
       }
     },
@@ -207,6 +268,22 @@
         }
       }
     },
+    "HistoryExample": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "$schema",
+        "response"
+      ],
+      "properties": {
+        "$schema": {
+          "type": "string"
+        },
+        "response": {
+          "$ref": "#/$defs/HistoryResponse"
+        }
+      }
+    },
     "ControlExample": {
       "type": "object",
       "additionalProperties": false,
@@ -223,6 +300,22 @@
         }
       }
     },
+    "ErrorExample": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "$schema",
+        "response"
+      ],
+      "properties": {
+        "$schema": {
+          "type": "string"
+        },
+        "response": {
+          "$ref": "#/$defs/Error"
+        }
+      }
+    },
     "InvalidControlExample": {
       "type": "object",
       "additionalProperties": false,
@@ -236,6 +329,22 @@
         },
         "response": {
           "$ref": "#/$defs/ControlResult"
+        }
+      }
+    },
+    "InvalidHistoryExample": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "$schema",
+        "response"
+      ],
+      "properties": {
+        "$schema": {
+          "type": "string"
+        },
+        "response": {
+          "$ref": "#/$defs/HistoryResponse"
         }
       }
     }

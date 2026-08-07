@@ -5,16 +5,8 @@ Content: informative
 Canonical source: this file
 Generated: no
 
-`examples/` contains synthetic demonstrations of public contracts and packages.
+`examples/` contains synthetic request, response, error, stream-event, positive, negative, and adversarial fixtures.
 
-Examples MUST NOT contain real people, repositories, hosts, endpoints, credentials, incidents, logs, evidence, prompts, policies, approvals, performance measurements, or operator configuration. Values should be visibly fictional and unsuitable for deployment.
+Every JSON example MUST identify its canonical bundled schema with `$schema`. Examples MUST NOT contain real identities, repositories, hosts, credentials, incidents, logs, prompts, approvals, or operational measurements.
 
-Examples are informative unless a normative specification explicitly incorporates one.
-
-## Service example sets
-
-- `memory-service-v1alpha/` contains a positive store request and an invalid-scope fixture.
-- `supervisor-gateway-v1alpha/` contains positive chat request/response fixtures and an unsupported-tools fixture.
-- `scheduler-v1alpha/` contains a positive schedule response and an invalid-control-status fixture.
-
-Each example declares its canonical bundled schema with `$schema`. Positive and negative behavior is checked by the generic catalog runner rather than per-API scripts.
+For catalogued HTTP contracts, every OpenAPI operation MUST map to at least one positive example. Important error and security boundaries SHOULD have explicit fixtures. Negative examples MUST fail canonical schema validation.

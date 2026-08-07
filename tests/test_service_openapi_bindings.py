@@ -5,7 +5,11 @@ import tempfile
 import unittest
 from pathlib import Path
 
-from conformance.contract_bundle import check_example, validate_catalog
+from conformance.contract_bundle import (
+    check_example,
+    lint_schema_node,
+    validate_catalog,
+)
 
 
 ROOT = Path(__file__).parents[1]
@@ -32,9 +36,29 @@ class ContractBundleTests(unittest.TestCase):
             self.assertTrue(bundle["schemas"])
             self.assertTrue(bundle["examples"]["positive"])
             self.assertTrue(bundle["examples"]["negative"])
+            self.assertTrue(bundle["operations"])
+            self.assertTrue(bundle["schema_bindings"])
+            self.assertTrue(bundle["required_schema_defs"])
             self.assertNotIn("script", bundle)
             self.assertNotIn("runner", bundle)
             self.assertNotIn("hook", bundle)
+
+    def test_every_openapi_operation_has_positive_examples(self) -> None:
+        catalog = json.loads(CATALOG.read_text(encoding="utf-8"))
+        for bundle in catalog["bundles"]:
+            document = json.loads((ROOT / bundle["openapi"]).read_text(encoding="utf-8"))
+            operation_ids = {
+                operation["operationId"]
+                for path_item in document["paths"].values()
+                for method, operation in path_item.items()
+                if method.lower()
+                in {"get", "put", "post", "delete", "options", "head", "patch", "trace"}
+            }
+            self.assertEqual(operation_ids, set(bundle["operations"]))
+            positive = set(bundle["examples"]["positive"])
+            for paths in bundle["operations"].values():
+                self.assertTrue(paths)
+                self.assertTrue(set(paths).issubset(positive))
 
     def test_negative_examples_fail_when_treated_as_positive(self) -> None:
         catalog = json.loads(CATALOG.read_text(encoding="utf-8"))
@@ -61,6 +85,43 @@ class ContractBundleTests(unittest.TestCase):
         self.assertTrue(
             any("code hooks" in error and "prohibited" in error for error in errors)
         )
+
+    def test_schema_keyword_validation_fails_closed(self) -> None:
+        errors = lint_schema_node(
+            {
+                "type": "string",
+                "maxBytez": 32,
+            }
+        )
+        self.assertTrue(any("unsupported schema keywords" in error for error in errors))
+
+    def test_supervisor_prompt_schema_matches_truncation_behavior(self) -> None:
+        schema = json.loads(
+            (
+                ROOT / "schemas/v1alpha/supervisor-gateway.schema.json"
+            ).read_text(encoding="utf-8")
+        )
+        prompt = schema["$defs"]["SpecialistRequest"]["properties"]["input"][
+            "properties"
+        ]["prompt"]
+        self.assertNotIn("maxLength", prompt)
+        self.assertIn("truncates", prompt["description"])
+
+    def test_scheduler_history_is_bounded_and_classified(self) -> None:
+        schema = json.loads(
+            (ROOT / "schemas/v1alpha/scheduler.schema.json").read_text(
+                encoding="utf-8"
+            )
+        )
+        self.assertEqual(
+            20,
+            schema["$defs"]["HistoryResponse"]["properties"]["history"]["maxItems"],
+        )
+        specification = (ROOT / "spec/scheduler-v1alpha.md").read_text(
+            encoding="utf-8"
+        )
+        self.assertIn("does not redact", specification)
+        self.assertIn("does not attest", specification)
 
     def test_new_service_bundles_add_no_per_api_python_entrypoints(self) -> None:
         prohibited_prefixes = (

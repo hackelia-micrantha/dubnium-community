@@ -1,91 +1,84 @@
 # Publish Experimental Service Contract Bundles
 
+Status: experimental
+Content: informative
+Canonical source: this file
+Generated: no
+
 Date: 2026-08-06
 
 ## Summary
 
 Publish complete experimental contract bundles for the current Dubnium memory service, packaged supervisor/LLM gateway, and scheduler API.
 
-The bundles include normative specifications, canonical JSON Schemas, synthetic positive and negative examples, OpenAPI bindings, generic conformance enrollment, regression tests, and this change record.
+Each bundle includes a normative specification, canonical JSON Schema, OpenAPI 3.1.2 transport binding, synthetic positive and negative examples, operation coverage, schema-to-OpenAPI consistency checks, and generic conformance enrollment.
 
 ## Scope
 
 ### Memory service
 
-- Added `spec/memory-service-v1alpha.md`.
-- Added `schemas/v1alpha/memory-service.schema.json`.
-- Added a synthetic store request and an invalid-scope negative fixture.
-- Enrolled health, store, retrieve, expire, and retrieval-event operations in the generic contract-bundle catalog.
-- Preserved bearer authentication, bounded scopes, operator visibility, and private ranking/storage semantics.
+- Publish health, store, retrieve, expire, retrieval-event, and error wire shapes.
+- Preserve bearer authentication, credential scope and sensitivity ceilings, operator visibility, and private ranking and storage semantics.
+- Add positive examples for every operation and negative examples for invalid scope and retrieval limits.
 
 ### Supervisor / LLM gateway
 
-- Added `spec/supervisor-gateway-v1alpha.md`.
-- Added `schemas/v1alpha/supervisor-gateway.schema.json`.
-- Added synthetic chat request/response examples and an unsupported-tools negative fixture.
-- Kept the OpenAPI binding aligned to the packaged `dubnium_supervisor_gateway.lineage_app:main` executable.
-- Enrolled alias negotiation, capabilities, trusted execution identity, normalized errors, streaming sanitization, and delegation lineage in declarative conformance assertions.
+- Align the public contract to `dubnium_supervisor_gateway.lineage_app:main`.
+- Publish logical alias negotiation, capabilities, trusted execution identity, normalized errors, streaming metadata, and delegation lineage.
+- Model specialist prompt behavior as truncation to 2,000 characters rather than request rejection.
+- Add positive examples for health, model declaration, chat JSON, streaming metadata, and errors plus negative capability, version, and alias fixtures.
 
 ### Scheduler
 
-- Added `spec/scheduler-v1alpha.md`.
-- Added `schemas/v1alpha/scheduler.schema.json`.
-- Added a synthetic schedule-detail response and an invalid-control-status negative fixture.
-- Enrolled inspection, journal history, trigger, pause, and resume operations in the generic contract-bundle catalog.
-- Preserved declarative schedule ownership and trusted administrative-boundary requirements.
+- Publish process health, schedule list/detail, recent history, control, and error wire shapes.
+- Describe current history behavior accurately: up to 20 parsed journal JSON records, no field redaction, and no separate response-byte bound.
+- Describe control responses as commands issued rather than proof of successful systemd state transitions.
+- Add positive examples for every operation and negative history/control fixtures.
 
 ## Generic conformance architecture
 
-Added:
+`conformance/service-bundles.json` remains data-only. It declares:
 
-- `conformance/service-bundles.json`, a data-only catalog;
-- `conformance/contract_bundle.py`, one bounded generic runner for all enrolled HTTP service contracts;
-- generic regression coverage in `tests/test_service_openapi_bindings.py`.
+- canonical specifications, schemas, OpenAPI bindings, and examples;
+- exact operation-to-example coverage;
+- required canonical schema definitions;
+- schema-to-OpenAPI bindings;
+- declarative OpenAPI assertions.
 
-The runner validates:
+`conformance/contract_bundle.py` is the single generic validator. It:
 
-- normative specification markers and BCP 14 requirements;
-- OpenAPI 3.1.2 documents, local references, unique operation IDs, expected paths, and expected components;
-- declarative JSON-pointer assertions;
-- canonical schema metadata;
-- positive and negative example documents through a bounded JSON Schema 2020-12 subset;
-- catalog completeness and the prohibition on contract-specific code hooks.
+- rejects unknown catalog keys and contract-specific code hooks;
+- rejects unknown JSON Schema keywords and unsupported formats instead of silently ignoring them;
+- enforces file-size, nesting, collection-size, duplicate-key, and local-reference boundaries;
+- validates positive and negative examples;
+- requires every OpenAPI operation to have examples;
+- resolves and structurally compares canonical schemas with their OpenAPI representations;
+- verifies declared paths, components, and contract-specific assertions.
 
-New HTTP APIs should normally add catalog data and artifacts rather than per-API scripts. Existing specialized conformance remains limited to semantics that are not adequately expressible as schemas and declarative fixtures.
-
-## Repository guidance
-
-Updated API, conformance, contribution, and repository-layout guidance to establish:
-
-- `scripts/` as repository-wide operational entry points;
-- reusable validators as modules or packages;
-- API variation as data, schemas, examples, and assertions;
-- explicit justification for any irreducibly contract-specific executable.
+No memory-, supervisor-, or scheduler-specific executable was added.
 
 ## Compatibility
 
-These changes are additive and experimental. They do not promote the services to stable public contracts.
+These changes remain experimental and additive. They do not promote the services to stable public contracts.
 
 The bundles intentionally do not standardize:
 
-- memory storage layout, embedding implementation, ranking weights, token interpretation, consolidation, or retention policy;
-- scheduler persistence, systemd unit generation, concurrency, retry, or policy semantics;
+- memory storage layout, embeddings, ranking, consolidation, or retention;
+- scheduler persistence, unit generation, retry, command-success attestation, or host policy;
 - a complete OpenAI API surface;
-- deployment authority, listener exposure, or private authentication and routing configuration.
-
-Operator operations remain suitable only for trusted administrative boundaries and may change incompatibly while the release line remains experimental.
+- deployment authority, listener exposure, private authentication, or routing configuration.
 
 ## Security
 
-- All examples are synthetic and unsuitable for deployment.
-- Remote schema references and contract-specific catalog hooks are prohibited.
-- The generic validator applies bounded file-size and nesting limits.
-- The supervisor contract excludes private backend identifiers and unsupported tool or structured-output capabilities.
-- The memory and scheduler contracts preserve credential, scope, and administrative-boundary requirements.
+- All examples are synthetic.
+- Remote schema references and repository escapes are prohibited.
+- Scheduler history is explicitly classified as sensitive unredacted administrative output.
+- Supervisor backend-authored metadata is not treated as trusted execution or lineage.
+- Memory content remains evidence and does not grant execution authority.
 
 ## Provenance
 
-The transport bindings were reviewed against `ryjen/dubnium` commit `cfc0af808b3cac9e1098f630a187ab9497a80a70`.
+The transport behavior was reviewed against `ryjen/dubnium` commit `cfc0af808b3cac9e1098f630a187ab9497a80a70`.
 
 The public specifications, schemas, examples, and conformance catalog are independently reviewable from this repository and do not require private source access.
 

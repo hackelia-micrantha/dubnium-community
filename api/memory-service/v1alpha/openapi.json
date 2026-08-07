@@ -3,7 +3,7 @@
   "info": {
     "title": "Dubnium Memory Service API",
     "version": "0.1.0",
-    "description": "Experimental HTTP transport binding for the current Dubnium memory service. It describes authenticated storage, retrieval, expiry, and retrieval-event inspection without standardizing storage layout, embedding implementation, ranking weights, or deployment authority. Returned ordering is service-defined. Retrieval events and expiry are operator-facing operations."
+    "description": "Experimental HTTP transport binding for authenticated memory storage, retrieval, expiry, and retrieval-event inspection. Storage layout, embeddings, ranking, consolidation, and retention policy remain implementation-defined."
   },
   "servers": [
     {
@@ -12,18 +12,28 @@
     }
   ],
   "tags": [
-    { "name": "Health" },
-    { "name": "Memory" },
-    { "name": "Operator" }
+    {
+      "name": "Health"
+    },
+    {
+      "name": "Memory"
+    },
+    {
+      "name": "Operator"
+    }
   ],
   "security": [
-    { "bearerAuth": [] }
+    {
+      "bearerAuth": []
+    }
   ],
   "paths": {
     "/healthz": {
       "get": {
         "operationId": "getMemoryHealth",
-        "tags": ["Health"],
+        "tags": [
+          "Health"
+        ],
         "summary": "Return process and Redis health",
         "security": [],
         "responses": {
@@ -32,16 +42,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "additionalProperties": false,
-                  "required": ["status", "redis"],
-                  "properties": {
-                    "status": { "type": "string", "const": "ok" },
-                    "redis": {
-                      "type": "string",
-                      "enum": ["disabled", "invalid", "unavailable", "ok"]
-                    }
-                  }
+                  "$ref": "#/components/schemas/HealthResponse"
                 }
               }
             }
@@ -52,17 +53,23 @@
     "/memory/store": {
       "post": {
         "operationId": "storeMemory",
-        "tags": ["Memory"],
+        "tags": [
+          "Memory"
+        ],
         "summary": "Store one memory",
-        "description": "The credential constrains permitted scope prefixes, sensitivity values, and whether verified memories may be written.",
+        "description": "The bearer credential constrains permitted scope prefixes, sensitivity values, and verified-memory writes.",
         "requestBody": {
           "required": true,
           "content": {
             "application/json": {
-              "schema": { "$ref": "#/components/schemas/StoreMemoryRequest" }
+              "schema": {
+                "$ref": "#/components/schemas/StoreMemoryRequest"
+              }
             },
             "application/*+json": {
-              "schema": { "$ref": "#/components/schemas/StoreMemoryRequest" }
+              "schema": {
+                "$ref": "#/components/schemas/StoreMemoryRequest"
+              }
             }
           }
         },
@@ -72,83 +79,101 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "additionalProperties": false,
-                  "required": ["memory"],
-                  "properties": {
-                    "memory": { "$ref": "#/components/schemas/Memory" }
-                  }
+                  "$ref": "#/components/schemas/StoreMemoryResponse"
                 }
               }
             }
           },
-          "400": { "$ref": "#/components/responses/BadRequest" },
-          "401": { "$ref": "#/components/responses/Unauthorized" },
-          "403": { "$ref": "#/components/responses/Forbidden" },
-          "413": { "$ref": "#/components/responses/PayloadTooLarge" },
-          "415": { "$ref": "#/components/responses/UnsupportedMediaType" }
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "413": {
+            "$ref": "#/components/responses/PayloadTooLarge"
+          },
+          "415": {
+            "$ref": "#/components/responses/UnsupportedMediaType"
+          }
         }
       }
     },
     "/memory/retrieve": {
       "post": {
         "operationId": "retrieveMemory",
-        "tags": ["Memory"],
+        "tags": [
+          "Memory"
+        ],
         "summary": "Retrieve scoped memory evidence",
-        "description": "The service applies the authenticated principal, scope and sensitivity ceilings, an optional verification filter, and a service-defined ranking strategy. Ranking weights are not part of this binding.",
+        "description": "The service applies authenticated scope and sensitivity ceilings, optional verification filtering, and service-defined ranking.",
         "requestBody": {
           "required": true,
           "content": {
             "application/json": {
-              "schema": { "$ref": "#/components/schemas/RetrieveMemoryRequest" }
+              "schema": {
+                "$ref": "#/components/schemas/RetrieveMemoryRequest"
+              }
             },
             "application/*+json": {
-              "schema": { "$ref": "#/components/schemas/RetrieveMemoryRequest" }
+              "schema": {
+                "$ref": "#/components/schemas/RetrieveMemoryRequest"
+              }
             }
           }
         },
         "responses": {
           "200": {
-            "description": "Retrieved memories and the audit event for this retrieval.",
+            "description": "Retrieved memories and the retrieval audit event.",
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "additionalProperties": false,
-                  "required": ["memories", "event"],
-                  "properties": {
-                    "memories": {
-                      "type": "array",
-                      "items": { "$ref": "#/components/schemas/RetrievedMemory" }
-                    },
-                    "event": { "$ref": "#/components/schemas/RetrievalEvent" }
-                  }
+                  "$ref": "#/components/schemas/RetrieveMemoryResponse"
                 }
               }
             }
           },
-          "400": { "$ref": "#/components/responses/BadRequest" },
-          "401": { "$ref": "#/components/responses/Unauthorized" },
-          "403": { "$ref": "#/components/responses/Forbidden" },
-          "413": { "$ref": "#/components/responses/PayloadTooLarge" },
-          "415": { "$ref": "#/components/responses/UnsupportedMediaType" }
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "413": {
+            "$ref": "#/components/responses/PayloadTooLarge"
+          },
+          "415": {
+            "$ref": "#/components/responses/UnsupportedMediaType"
+          }
         }
       }
     },
     "/memory/expire": {
       "post": {
         "operationId": "expireMemory",
-        "tags": ["Operator"],
+        "tags": [
+          "Operator"
+        ],
         "summary": "Expire memories due at a supplied timestamp",
         "x-dubnium-visibility": "operator",
         "requestBody": {
           "required": true,
           "content": {
             "application/json": {
-              "schema": { "$ref": "#/components/schemas/ExpireRequest" }
+              "schema": {
+                "$ref": "#/components/schemas/ExpireRequest"
+              }
             },
             "application/*+json": {
-              "schema": { "$ref": "#/components/schemas/ExpireRequest" }
+              "schema": {
+                "$ref": "#/components/schemas/ExpireRequest"
+              }
             }
           }
         },
@@ -158,30 +183,32 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "additionalProperties": false,
-                  "required": ["expired_memory_ids"],
-                  "properties": {
-                    "expired_memory_ids": {
-                      "type": "array",
-                      "items": { "type": "string", "format": "uuid" }
-                    }
-                  }
+                  "$ref": "#/components/schemas/ExpireResponse"
                 }
               }
             }
           },
-          "400": { "$ref": "#/components/responses/BadRequest" },
-          "401": { "$ref": "#/components/responses/Unauthorized" },
-          "413": { "$ref": "#/components/responses/PayloadTooLarge" },
-          "415": { "$ref": "#/components/responses/UnsupportedMediaType" }
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "413": {
+            "$ref": "#/components/responses/PayloadTooLarge"
+          },
+          "415": {
+            "$ref": "#/components/responses/UnsupportedMediaType"
+          }
         }
       }
     },
     "/memory/retrieval-events": {
       "get": {
         "operationId": "listMemoryRetrievalEvents",
-        "tags": ["Operator"],
+        "tags": [
+          "Operator"
+        ],
         "summary": "List recorded retrieval events",
         "x-dubnium-visibility": "operator",
         "responses": {
@@ -190,20 +217,14 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "additionalProperties": false,
-                  "required": ["events"],
-                  "properties": {
-                    "events": {
-                      "type": "array",
-                      "items": { "$ref": "#/components/schemas/RetrievalEvent" }
-                    }
-                  }
+                  "$ref": "#/components/schemas/RetrievalEventsResponse"
                 }
               }
             }
           },
-          "401": { "$ref": "#/components/responses/Unauthorized" }
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          }
         }
       }
     }
@@ -216,345 +237,50 @@
       }
     },
     "schemas": {
+      "HealthResponse": {
+        "$ref": "../../../schemas/v1alpha/memory-service.schema.json#/$defs/HealthResponse"
+      },
       "Error": {
-        "type": "object",
-        "additionalProperties": false,
-        "required": ["error"],
-        "properties": {
-          "error": { "type": "string" },
-          "message": { "type": "string" }
-        }
+        "$ref": "../../../schemas/v1alpha/memory-service.schema.json#/$defs/Error"
       },
       "ArtifactRef": {
-        "type": "object",
-        "additionalProperties": false,
-        "required": ["id", "scope", "sha256", "storage_uri", "artifact_type"],
-        "properties": {
-          "id": { "type": "string", "format": "uuid" },
-          "scope": { "$ref": "#/components/schemas/Scope" },
-          "sha256": {
-            "type": "string",
-            "minLength": 1,
-            "maxLength": 128
-          },
-          "storage_uri": {
-            "type": "string",
-            "minLength": 1,
-            "maxLength": 2048
-          },
-          "artifact_type": {
-            "type": "string",
-            "minLength": 1,
-            "maxLength": 64
-          }
-        }
+        "$ref": "../../../schemas/v1alpha/memory-service.schema.json#/$defs/ArtifactRef"
       },
       "Scope": {
-        "type": "string",
-        "minLength": 1,
-        "maxLength": 256,
-        "pattern": "^(personal|project|session|agent|workflow):.+$",
-        "description": "Scope with one of the service-supported prefixes."
+        "$ref": "../../../schemas/v1alpha/memory-service.schema.json#/$defs/Scope"
       },
       "Memory": {
-        "type": "object",
-        "additionalProperties": false,
-        "required": [
-          "id",
-          "memory_type",
-          "summary",
-          "scope",
-          "source",
-          "provenance",
-          "session_id",
-          "importance",
-          "confidence",
-          "sensitivity",
-          "validation_status",
-          "ttl",
-          "artifact_refs"
-        ],
-        "properties": {
-          "id": { "type": "string", "format": "uuid" },
-          "memory_type": {
-            "type": "string",
-            "enum": ["working", "episodic", "semantic"]
-          },
-          "summary": {
-            "type": "string",
-            "minLength": 1,
-            "maxLength": 8000
-          },
-          "scope": { "$ref": "#/components/schemas/Scope" },
-          "source": {
-            "type": "string",
-            "minLength": 1,
-            "maxLength": 128
-          },
-          "provenance": {
-            "type": "object",
-            "additionalProperties": true
-          },
-          "session_id": {
-            "anyOf": [
-              { "type": "string", "format": "uuid" },
-              { "type": "null" }
-            ]
-          },
-          "importance": {
-            "type": "number",
-            "minimum": 0,
-            "maximum": 1
-          },
-          "confidence": {
-            "type": "number",
-            "minimum": 0,
-            "maximum": 1
-          },
-          "sensitivity": {
-            "type": "string",
-            "minLength": 1,
-            "maxLength": 64
-          },
-          "validation_status": {
-            "type": "string",
-            "enum": ["unverified", "verified", "rejected"]
-          },
-          "ttl": {
-            "anyOf": [
-              { "type": "string", "format": "date-time" },
-              { "type": "null" }
-            ]
-          },
-          "artifact_refs": {
-            "type": "array",
-            "items": { "$ref": "#/components/schemas/ArtifactRef" },
-            "description": "Every artifact reference must use the same scope as the memory."
-          }
-        }
+        "$ref": "../../../schemas/v1alpha/memory-service.schema.json#/$defs/Memory"
       },
       "StoreMemoryRequest": {
-        "type": "object",
-        "additionalProperties": true,
-        "required": ["id", "memory_type", "summary", "scope", "source", "provenance"],
-        "properties": {
-          "id": { "type": "string", "format": "uuid" },
-          "memory_type": {
-            "type": "string",
-            "enum": ["working", "episodic", "semantic"]
-          },
-          "summary": {
-            "type": "string",
-            "minLength": 1,
-            "maxLength": 8000
-          },
-          "scope": { "$ref": "#/components/schemas/Scope" },
-          "source": {
-            "type": "string",
-            "minLength": 1,
-            "maxLength": 128
-          },
-          "provenance": {
-            "type": "object",
-            "additionalProperties": true
-          },
-          "session_id": {
-            "anyOf": [
-              { "type": "string", "format": "uuid" },
-              { "type": "null" }
-            ]
-          },
-          "importance": {
-            "type": "number",
-            "minimum": 0,
-            "maximum": 1,
-            "default": 0
-          },
-          "confidence": {
-            "type": "number",
-            "minimum": 0,
-            "maximum": 1,
-            "default": 0
-          },
-          "sensitivity": {
-            "type": "string",
-            "minLength": 1,
-            "maxLength": 64,
-            "default": "internal"
-          },
-          "validation_status": {
-            "type": "string",
-            "enum": ["unverified", "verified", "rejected"],
-            "default": "unverified"
-          },
-          "ttl": {
-            "anyOf": [
-              { "type": "string", "format": "date-time" },
-              { "type": "null" }
-            ]
-          },
-          "artifact_refs": {
-            "type": "array",
-            "items": { "$ref": "#/components/schemas/ArtifactRef" },
-            "default": [],
-            "description": "Every artifact reference must use the same scope as the memory."
-          }
-        }
+        "$ref": "../../../schemas/v1alpha/memory-service.schema.json#/$defs/StoreMemoryRequest"
+      },
+      "StoreMemoryResponse": {
+        "$ref": "../../../schemas/v1alpha/memory-service.schema.json#/$defs/StoreMemoryResponse"
       },
       "Requester": {
-        "type": "object",
-        "additionalProperties": true,
-        "required": ["actor_type", "actor_id"],
-        "properties": {
-          "actor_type": {
-            "type": "string",
-            "enum": ["human", "agent", "system"]
-          },
-          "actor_id": {
-            "type": "string",
-            "minLength": 1,
-            "maxLength": 256
-          }
-        },
-        "description": "Accepted for wire compatibility, but the service replaces this value with the authenticated principal before retrieval."
+        "$ref": "../../../schemas/v1alpha/memory-service.schema.json#/$defs/Requester"
       },
       "RetrieveMemoryRequest": {
-        "type": "object",
-        "additionalProperties": true,
-        "required": ["query", "scope"],
-        "properties": {
-          "query": {
-            "type": "string",
-            "minLength": 1,
-            "maxLength": 4000
-          },
-          "scope": { "$ref": "#/components/schemas/Scope" },
-          "allowed_sensitivity": {
-            "type": "array",
-            "minItems": 1,
-            "items": {
-              "type": "string",
-              "minLength": 1,
-              "maxLength": 64
-            },
-            "default": ["internal"]
-          },
-          "require_verified": {
-            "type": "boolean",
-            "default": false
-          },
-          "limit": {
-            "type": "integer",
-            "minimum": 1,
-            "maximum": 32,
-            "default": 8
-          },
-          "purpose": {
-            "anyOf": [
-              {
-                "type": "string",
-                "enum": ["ask", "plan", "patch", "review", "test"]
-              },
-              { "type": "null" }
-            ]
-          },
-          "requester": {
-            "anyOf": [
-              { "$ref": "#/components/schemas/Requester" },
-              { "type": "null" }
-            ]
-          },
-          "envelope_id": {
-            "anyOf": [
-              {
-                "type": "string",
-                "minLength": 1,
-                "maxLength": 256
-              },
-              { "type": "null" }
-            ]
-          }
-        }
+        "$ref": "../../../schemas/v1alpha/memory-service.schema.json#/$defs/RetrieveMemoryRequest"
       },
       "RetrievedMemory": {
-        "type": "object",
-        "additionalProperties": false,
-        "required": [
-          "id",
-          "memory_type",
-          "summary",
-          "scope",
-          "source",
-          "sensitivity",
-          "validation_status",
-          "provenance",
-          "artifact_refs"
-        ],
-        "properties": {
-          "id": { "type": "string", "format": "uuid" },
-          "memory_type": {
-            "anyOf": [
-              {
-                "type": "string",
-                "enum": ["working", "episodic", "semantic"]
-              },
-              { "type": "null" }
-            ]
-          },
-          "summary": { "type": "string" },
-          "scope": { "$ref": "#/components/schemas/Scope" },
-          "source": { "type": "string" },
-          "sensitivity": { "type": "string" },
-          "validation_status": {
-            "type": "string",
-            "enum": ["unverified", "verified", "rejected"]
-          },
-          "provenance": {
-            "type": "object",
-            "additionalProperties": true
-          },
-          "artifact_refs": {
-            "type": "array",
-            "items": { "$ref": "#/components/schemas/ArtifactRef" }
-          }
-        }
+        "$ref": "../../../schemas/v1alpha/memory-service.schema.json#/$defs/RetrievedMemory"
       },
       "RetrievalEvent": {
-        "type": "object",
-        "additionalProperties": false,
-        "required": [
-          "id",
-          "scope",
-          "query",
-          "returned_memory_ids",
-          "returned_artifact_ids",
-          "metadata"
-        ],
-        "properties": {
-          "id": { "type": "string", "format": "uuid" },
-          "scope": { "$ref": "#/components/schemas/Scope" },
-          "query": { "type": "string" },
-          "returned_memory_ids": {
-            "type": "array",
-            "items": { "type": "string", "format": "uuid" }
-          },
-          "returned_artifact_ids": {
-            "type": "array",
-            "items": { "type": "string", "format": "uuid" }
-          },
-          "metadata": {
-            "type": "object",
-            "additionalProperties": true
-          }
-        }
+        "$ref": "../../../schemas/v1alpha/memory-service.schema.json#/$defs/RetrievalEvent"
+      },
+      "RetrieveMemoryResponse": {
+        "$ref": "../../../schemas/v1alpha/memory-service.schema.json#/$defs/RetrieveMemoryResponse"
       },
       "ExpireRequest": {
-        "type": "object",
-        "additionalProperties": true,
-        "required": ["now"],
-        "properties": {
-          "now": { "type": "string", "format": "date-time" }
-        }
+        "$ref": "../../../schemas/v1alpha/memory-service.schema.json#/$defs/ExpireRequest"
+      },
+      "ExpireResponse": {
+        "$ref": "../../../schemas/v1alpha/memory-service.schema.json#/$defs/ExpireResponse"
+      },
+      "RetrievalEventsResponse": {
+        "$ref": "../../../schemas/v1alpha/memory-service.schema.json#/$defs/RetrievalEventsResponse"
       }
     },
     "responses": {
@@ -562,7 +288,9 @@
         "description": "The request body, content length, or field values are invalid.",
         "content": {
           "application/json": {
-            "schema": { "$ref": "#/components/schemas/Error" }
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            }
           }
         }
       },
@@ -570,7 +298,9 @@
         "description": "Bearer authentication is missing, unavailable, or invalid.",
         "content": {
           "application/json": {
-            "schema": { "$ref": "#/components/schemas/Error" }
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            }
           }
         }
       },
@@ -578,7 +308,9 @@
         "description": "The credential does not permit the requested scope, sensitivity, or validation state.",
         "content": {
           "application/json": {
-            "schema": { "$ref": "#/components/schemas/Error" }
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            }
           }
         }
       },
@@ -586,7 +318,9 @@
         "description": "The JSON request body exceeds 1 MiB.",
         "content": {
           "application/json": {
-            "schema": { "$ref": "#/components/schemas/Error" }
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            }
           }
         }
       },
@@ -594,7 +328,9 @@
         "description": "The request is not application/json or a +json media type.",
         "content": {
           "application/json": {
-            "schema": { "$ref": "#/components/schemas/Error" }
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            }
           }
         }
       }

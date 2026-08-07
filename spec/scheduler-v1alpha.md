@@ -9,7 +9,7 @@ Generated: no
 
 This specification defines the public HTTP contract for inspecting and operating the current systemd-backed Dubnium scheduler.
 
-The API exposes schedule summaries, schedule detail, recent journal history, immediate trigger, pause, resume, and health.
+The API exposes schedule summaries, schedule detail, recent journal history, immediate trigger, pause, resume, and process health.
 
 It does not define durable schedule authoring, Nix configuration, systemd unit generation, concurrency, retry policy, workflow orchestration, deployment authority, or repository mutation policy.
 
@@ -24,78 +24,62 @@ The canonical machine-readable artifacts are:
 
 The current service does not enforce inbound authentication. A deployment MUST keep it on a trusted administrative boundary.
 
-History and control routes MUST be treated as operator operations. They MUST NOT be exposed directly to untrusted networks.
+History and control routes MUST NOT be exposed directly to untrusted networks.
 
-The API MUST NOT accept arbitrary commands, unit names, file paths, shell fragments, calendar expressions, or repository coordinates from control requests.
+The API accepts schedule identifiers only through routes and resolves them against the configured schedule catalog before issuing systemd or journal commands.
 
 ## 3. Durable ownership
 
 Durable schedules remain declarative system configuration.
 
-The API MUST NOT create, edit, or delete durable schedule definitions. Trigger, pause, and resume operate only on schedules already present in the service catalog.
+The API does not create, edit, or delete durable definitions. Trigger, pause, and resume operate only on schedules already present in the service catalog.
 
-A conforming implementation MUST resolve schedule identifiers through its catalog before invoking systemd.
+## 4. Inspection
 
-## 4. Health and inspection
+`GET /healthz` returns bounded process health.
 
-`GET /healthz` MUST report only bounded process health.
+`GET /schedules` returns normalized schedule summaries.
 
-`GET /schedules` MUST return normalized schedule summaries.
+`GET /schedules/{schedule_id}` returns one normalized schedule definition or `404` when the identifier is unknown.
 
-`GET /schedules/{schedule_id}` MUST return one normalized schedule definition or `404` when the identifier is unknown.
-
-Inspection responses MUST NOT expose credentials, environment variables, private host topology, unrelated unit configuration, or unbounded command output.
+Schedule responses may include descriptive dispatch metadata. These fields do not grant authority and are not accepted as caller-controlled control input.
 
 ## 5. History
 
-`GET /schedules/{schedule_id}/history` returns recent journal entries for the schedule.
+`GET /schedules/{schedule_id}/history` invokes `journalctl` for the catalogued service unit with a line limit of 20.
 
-Journal entry fields are implementation-defined and MAY change. The response MUST remain bounded in count and size.
+The current implementation returns up to 20 parsable JSON records from command standard output. Journal fields are implementation-defined and MAY change.
 
-The service MUST filter history by the catalogued schedule unit and MUST NOT accept a caller-provided journal selector.
+The current implementation does not redact returned journal fields and does not impose a separate response-byte limit. Deployments therefore MUST treat this endpoint as sensitive administrative output and control upstream logging accordingly.
 
-History output SHOULD remove credentials and secrets when upstream units accidentally emit them.
+Malformed journal lines are skipped. The current response does not attest that the journal command succeeded.
 
-## 6. Trigger
+## 6. Controls
 
-`POST /schedules/{schedule_id}/trigger` starts the catalogued schedule service immediately.
+`POST /schedules/{schedule_id}/trigger` issues `systemctl start` for the catalogued service and returns status `started`.
 
-The service MUST resolve the identifier before invoking systemd and MUST NOT derive a unit name by concatenating unvalidated caller text.
+`POST /schedules/{schedule_id}/pause` issues `systemctl mask` for the catalogued timer and returns status `paused`.
 
-A successful trigger MUST return status `started`.
+`POST /schedules/{schedule_id}/resume` issues `systemctl unmask` for the catalogued timer and returns status `resumed`.
 
-## 7. Pause and resume
+These responses report that the command was issued by the current service. They do not attest that systemd completed the requested state transition successfully.
 
-`POST /schedules/{schedule_id}/pause` masks the catalogued schedule timer and MUST return status `paused`.
+Pause and resume do not alter the declarative schedule source. A subsequent system rebuild MAY restore declarative state.
 
-`POST /schedules/{schedule_id}/resume` unmasks the catalogued schedule timer and MUST return status `resumed`.
+## 7. Errors
 
-Pause and resume do not alter the declarative schedule source. A subsequent system rebuild MAY restore the declarative state.
+Unknown schedules return `404`.
 
-## 8. Dispatch metadata
+This profile does not standardize every operational failure code. The current implementation may return a successful control envelope even when the underlying systemd command exits unsuccessfully; consumers MUST NOT treat the envelope as proof of unit state.
 
-Schedule responses MAY include bounded dispatch metadata identifying a backend class, target, and payload file.
-
-These fields are descriptive. They MUST NOT grant authority and MUST NOT be accepted as caller-controlled control input.
-
-Private credentials, tokens, and unrestricted filesystem paths MUST NOT be published through dispatch metadata.
-
-## 9. Errors
-
-Unknown schedules MUST return `404`.
-
-Systemd or journal failures SHOULD use bounded service errors and MUST NOT expose unrestricted stderr, environment variables, or private unit contents.
-
-This profile does not standardize every operational failure code. Implementations MAY add bounded `5xx` responses while the contract remains experimental.
-
-## 10. Compatibility
+## 8. Compatibility
 
 Schedule identifiers are opaque public identifiers. Consumers MUST NOT infer systemd unit names from them.
 
-Additive response fields MAY appear where schemas allow them. Changes to identifier interpretation, control meaning, or durable ownership are incompatible and require a reviewed contract revision.
+Changes to identifier interpretation, control meaning, or durable ownership are incompatible and require a reviewed contract revision.
 
-## 11. Threat assumptions
+## 9. Threat assumptions
 
-Implementers MUST account for schedule-ID injection, unit-name traversal, arbitrary command execution, journal disclosure, unbounded output, unauthorized trigger, denial of service, and confusion between temporary control and declarative state.
+Implementers MUST account for schedule-ID injection, unit-name traversal, arbitrary command execution, journal disclosure, unbounded log fields, unauthorized trigger, denial of service, and confusion between issued commands and confirmed state.
 
 Conformance demonstrates contract behavior only; it does not validate the private scheduler catalog, systemd hardening, or host policy.
