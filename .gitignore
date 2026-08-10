@@ -2,6 +2,8 @@
 result
 result-*
 
+__pycache__
+
 # Ignore automatically generated direnv output
 .direnv
 
