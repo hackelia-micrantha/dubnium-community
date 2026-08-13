@@ -129,19 +129,19 @@ class PublicationValidationTests(unittest.TestCase):
             errors = MODULE.validate(root)
             self.assertTrue(any("exceeds" in error and "oversized.js" in error for error in errors))
 
-    def test_rejects_private_repository_link(self) -> None:
+    def test_rejects_private_owner_repository_link(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
-            self.make_book(root, '<a href="https://github.com/ryjen/dubnium/edit/main/docs/external/README.md">edit</a>')
+            self.make_book(root, '<a href="https://github.com/ryjen/private-source/edit/main/docs/README.md">edit</a>')
             errors = MODULE.validate(root)
-            self.assertTrue(any("private repository URL" in error for error in errors))
+            self.assertTrue(any("private producer repository URL" in error for error in errors))
 
-    def test_rejects_private_issue_reference(self) -> None:
+    def test_rejects_private_owner_issue_reference(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
-            self.make_book(root, "Tracked by ryjen/dubnium#403")
+            self.make_book(root, "Tracked by ryjen/private-source#403")
             errors = MODULE.validate(root)
-            self.assertTrue(any("private issue reference" in error for error in errors))
+            self.assertTrue(any("private producer issue reference" in error for error in errors))
 
     def test_rejects_internal_path(self) -> None:
         with tempfile.TemporaryDirectory() as directory:

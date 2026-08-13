@@ -69,16 +69,21 @@ MARKED_POLICY_FILES = {
     "docs/release-integrity.md",
 }
 
+PRIVATE_OWNER_REPOSITORY_PATTERN = re.compile(
+    r"github\.com/ryjen/[A-Za-z0-9_.-]+(?:\.git)?(?:/|$)", re.I
+)
+PRIVATE_OWNER_ISSUE_PATTERN = re.compile(r"\bryjen/[A-Za-z0-9_.-]+#\d+\b", re.I)
+
 PROHIBITED_PUBLIC_PATTERNS: tuple[tuple[str, re.Pattern[str]], ...] = (
     ("SSH Git dependency", re.compile(r"(?:git\+ssh://|ssh://git@|git@[^\s:]+:)", re.I)),
     ("local file dependency", re.compile(r"(?:file://|file:\.\.?/|path\s*=\s*[\"']?/)", re.I)),
     ("local home path", re.compile(r"(?:/home/|/Users/|[A-Z]:\\\\Users\\\\)", re.I)),
     ("loopback endpoint", re.compile(r"(?:localhost|127\.0\.0\.1|\[::1\])", re.I)),
     ("private IPv4 endpoint", re.compile(r"(?:10\.(?:\d{1,3}\.){2}\d{1,3}|192\.168\.(?:\d{1,3}\.)\d{1,3}|172\.(?:1[6-9]|2\d|3[01])\.(?:\d{1,3}\.)\d{1,3})")),
-    ("private Dubnium repository coordinate", re.compile(r"github\.com/ryjen/dubnium(?:\.git)?", re.I)),
+    ("private-owner repository coordinate", PRIVATE_OWNER_REPOSITORY_PATTERN),
+    ("private-owner issue coordinate", PRIVATE_OWNER_ISSUE_PATTERN),
 )
 
-PRIVATE_COORDINATE_PATTERN = re.compile(r"github\.com/ryjen/dubnium(?:\.git)?", re.I)
 MARKER_PATTERN = re.compile(
     r"^Status: (?:experimental|v1alpha|v1beta|stable)$.*?"
     r"^Content: (?:normative|informative)$.*?"
@@ -176,8 +181,10 @@ def check_private_coordinate_leakage(errors: list[str]) -> None:
         paths = [base] if base.is_file() else list(base.rglob("*.md"))
         for path in paths:
             text = path.read_text(encoding="utf-8")
-            if PRIVATE_COORDINATE_PATTERN.search(text):
-                errors.append(f"private repository coordinate in public documentation: {relative(path)}")
+            if PRIVATE_OWNER_REPOSITORY_PATTERN.search(text):
+                errors.append(f"private-owner repository coordinate in public documentation: {relative(path)}")
+            if PRIVATE_OWNER_ISSUE_PATTERN.search(text):
+                errors.append(f"private-owner issue coordinate in public documentation: {relative(path)}")
 
 
 def main() -> int:

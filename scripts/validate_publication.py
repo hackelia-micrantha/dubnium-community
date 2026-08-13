@@ -32,9 +32,12 @@ PRIVATE_METADATA_FIELDS = {
     "job_id",
 }
 PRIVATE_PATTERNS = {
-    "private repository URL": re.compile(r"github\.com/ryjen/dubnium(?:/|$)", re.I),
-    "private edit link": re.compile(r"github\.com/ryjen/dubnium/edit/", re.I),
-    "private issue reference": re.compile(r"\bryjen/dubnium#\d+\b", re.I),
+    "private producer repository URL": re.compile(
+        r"github\.com/ryjen/[A-Za-z0-9_.-]+(?:/|$)", re.I
+    ),
+    "private producer issue reference": re.compile(
+        r"\bryjen/[A-Za-z0-9_.-]+#\d+\b", re.I
+    ),
     "internal documentation path": re.compile(r"docs/internal|/internal/", re.I),
     "private IPv4 address": re.compile(
         r"\b(?:10\.\d{1,3}\.\d{1,3}\.\d{1,3}|192\.168\.\d{1,3}\.\d{1,3}|172\.(?:1[6-9]|2\d|3[01])\.\d{1,3}\.\d{1,3})\b"
