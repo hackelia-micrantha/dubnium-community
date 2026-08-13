@@ -55,6 +55,8 @@ Private by default:
 
 Anthesis remains authoritative for governance decision and approval semantics where those contracts are referenced. Dubnium transports and enforces bounded decisions; it does not redefine Anthesis policy authority here.
 
+The relationship between independently useful community assets and possible supported/commercial offerings is documented in [COMMUNITY_COMMERCIAL_BOUNDARY.md](COMMUNITY_COMMERCIAL_BOUNDARY.md). Commercial activity does not change the public interoperability role of this repository or imply that private implementation details will be published.
+
 ## Monorepo layout
 
 | Path | Purpose |
