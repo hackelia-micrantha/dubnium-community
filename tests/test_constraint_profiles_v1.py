@@ -178,6 +178,31 @@ class ConstraintProfilesV1Tests(unittest.TestCase):
             )
         self.assertEqual(caught.exception.code, "constraint.resource_fields")
 
+    def test_idempotency_registry_uses_the_same_profile_set(self):
+        request = self.resource_request()
+        registry = contract.BoundedRequestRegistry(constraint_profiles=self.registry)
+        self.assertEqual(registry.bind(request), "new")
+        self.assertEqual(registry.bind(request), "existing")
+        changed = deepcopy(request)
+        changed["requested_constraints"]["max_cpu"] = 3
+        with self.assertRaises(contract.ContractError) as caught:
+            registry.bind(changed)
+        self.assertEqual(caught.exception.code, "request.id_conflict")
+
+    def test_profile_output_is_revalidated_against_json_profile(self):
+        profile = contract.ConstraintProfile(
+            normalize_requested=lambda value: {"bad": 1.5},
+            normalize_granted=lambda value, requested: value,
+        )
+        registry = contract.DEFAULT_CONSTRAINT_PROFILES.extend(
+            {("example.bad-profile", 1): profile}
+        )
+        request = self.resource_request()
+        request["capability"] = {"name": "example.bad-profile", "schema_version": 1}
+        with self.assertRaises(contract.ContractError) as caught:
+            contract.normalize_request(request, constraint_profiles=registry)
+        self.assertEqual(caught.exception.code, "json.float_prohibited")
+
     def test_builtin_profile_cannot_be_overridden_by_extension(self):
         with self.assertRaises(ValueError):
             contract.DEFAULT_CONSTRAINT_PROFILES.extend(
