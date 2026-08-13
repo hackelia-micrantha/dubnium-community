@@ -5,6 +5,11 @@ from __future__ import annotations
 from datetime import datetime, timezone
 from typing import Any
 
+from .constraint_profiles_v1 import (
+    DEFAULT_CONSTRAINT_PROFILES,
+    ConstraintProfileRegistry,
+    normalize_granted_constraints,
+)
 from .contract_primitives_v1 import (
     ContractError,
     _expect_digest,
@@ -72,20 +77,17 @@ def _validate_granted_constraints(
     value: Any,
     requested: dict[str, Any],
     capability_name: str,
+    schema_version: int = 1,
+    *,
+    constraint_profiles: ConstraintProfileRegistry = DEFAULT_CONSTRAINT_PROFILES,
 ) -> dict[str, Any]:
-    granted = _expect_object(value, "granted_constraints")
-    if capability_name == "example.noop":
-        _expect_fields(granted, {"max_result_bytes"}, "granted_constraints")
-        maximum = _require(granted, "max_result_bytes", "granted_constraints")
-        if not isinstance(maximum, int) or isinstance(maximum, bool) or maximum < 1:
-            raise ContractError("constraint.max_result_bytes", "granted max_result_bytes must be a positive integer")
-        requested_maximum = requested.get("max_result_bytes")
-        if not isinstance(requested_maximum, int) or maximum > requested_maximum:
-            raise ContractError("manifest.constraint_widening", "granted constraints widen the normalized request")
-        return {"max_result_bytes": maximum}
-    if granted:
-        raise ContractError("manifest.constraint_widening", "granted constraints are unsupported for this capability")
-    return {}
+    return normalize_granted_constraints(
+        value,
+        capability_name=capability_name,
+        schema_version=schema_version,
+        requested=requested,
+        profiles=constraint_profiles,
+    )
 
 
 def validate_manifest(
@@ -93,9 +95,10 @@ def validate_manifest(
     manifest_document: Any,
     *,
     now: datetime | None = None,
+    constraint_profiles: ConstraintProfileRegistry = DEFAULT_CONSTRAINT_PROFILES,
 ) -> dict[str, Any]:
-    request = normalize_request(request_document)
-    expected_digest = request_digest(request)
+    request = normalize_request(request_document, constraint_profiles=constraint_profiles)
+    expected_digest = request_digest(request, constraint_profiles=constraint_profiles)
     manifest = _expect_object(normalize_json(manifest_document), "authorized manifest")
     _expect_fields(manifest, MANIFEST_FIELDS, "authorized manifest")
     if _require(manifest, "contract_version", "authorized manifest") != "1.0":
@@ -128,6 +131,8 @@ def validate_manifest(
         _require(manifest, "granted_constraints", "authorized manifest"),
         request["requested_constraints"],
         capability["name"],
+        capability["schema_version"],
+        constraint_profiles=constraint_profiles,
     )
     requirements = _expect_object(
         _require(manifest, "evidence_requirements", "authorized manifest"),

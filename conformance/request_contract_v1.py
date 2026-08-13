@@ -4,6 +4,11 @@ from __future__ import annotations
 
 from typing import Any
 
+from .constraint_profiles_v1 import (
+    DEFAULT_CONSTRAINT_PROFILES,
+    ConstraintProfileRegistry,
+    normalize_requested_constraints,
+)
 from .contract_primitives_v1 import (
     CAPABILITY_NAME,
     REQUEST_ID,
@@ -56,23 +61,26 @@ def validate_noop_payload(value: Any) -> dict[str, Any]:
     return {"message": message, "repeat": repeat}
 
 
-def validate_requested_constraints(value: Any, capability_name: str) -> dict[str, Any]:
-    constraints = _expect_object(value, "requested_constraints")
-    if capability_name == "example.noop":
-        _expect_fields(constraints, {"max_result_bytes"}, "requested_constraints")
-        maximum = _require(constraints, "max_result_bytes", "requested_constraints")
-        if not isinstance(maximum, int) or isinstance(maximum, bool) or not 64 <= maximum <= 4096:
-            raise ContractError(
-                "constraint.max_result_bytes",
-                "requested_constraints.max_result_bytes must be an integer from 64 through 4096",
-            )
-        return {"max_result_bytes": maximum}
-    if constraints:
-        raise ContractError("constraint.unsupported", "this capability does not define requested constraints")
-    return {}
+def validate_requested_constraints(
+    value: Any,
+    capability_name: str,
+    schema_version: int = 1,
+    *,
+    constraint_profiles: ConstraintProfileRegistry = DEFAULT_CONSTRAINT_PROFILES,
+) -> dict[str, Any]:
+    return normalize_requested_constraints(
+        value,
+        capability_name=capability_name,
+        schema_version=schema_version,
+        profiles=constraint_profiles,
+    )
 
 
-def normalize_request(document: Any) -> dict[str, Any]:
+def normalize_request(
+    document: Any,
+    *,
+    constraint_profiles: ConstraintProfileRegistry = DEFAULT_CONSTRAINT_PROFILES,
+) -> dict[str, Any]:
     request = _expect_object(normalize_json(document), "capability request")
     _expect_fields(request, REQUEST_FIELDS, "capability request")
     if _require(request, "contract_version", "capability request") != "1.0":
@@ -84,7 +92,12 @@ def normalize_request(document: Any) -> dict[str, Any]:
     target_ref = _expect_reference(_require(request, "target_ref", "capability request"), "target_ref")
     raw_payload = _require(request, "payload", "capability request")
     payload = validate_noop_payload(raw_payload) if capability["name"] == "example.noop" else _expect_object(raw_payload, "payload")
-    requested_constraints = validate_requested_constraints(request.get("requested_constraints", {}), capability["name"])
+    requested_constraints = validate_requested_constraints(
+        request.get("requested_constraints", {}),
+        capability["name"],
+        capability["schema_version"],
+        constraint_profiles=constraint_profiles,
+    )
     evidence_refs = _expect_reference_list(request.get("evidence_refs", []), "evidence_refs")
     requested_at = _expect_timestamp(_require(request, "requested_at", "capability request"), "requested_at")
     normalized: dict[str, Any] = {
@@ -105,5 +118,12 @@ def normalize_request(document: Any) -> dict[str, Any]:
     return normalized
 
 
-def request_digest(document: Any) -> str:
-    return digest_value(normalize_request(document), domain=REQUEST_DIGEST_DOMAIN)
+def request_digest(
+    document: Any,
+    *,
+    constraint_profiles: ConstraintProfileRegistry = DEFAULT_CONSTRAINT_PROFILES,
+) -> str:
+    return digest_value(
+        normalize_request(document, constraint_profiles=constraint_profiles),
+        domain=REQUEST_DIGEST_DOMAIN,
+    )

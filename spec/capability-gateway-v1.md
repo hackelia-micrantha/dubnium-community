@@ -40,6 +40,31 @@ Before digesting or applying idempotency, an implementation MUST:
 
 Optional fields are absent or present; `null` is not equivalent to absence.
 
+## Capability-specific constraint profiles
+
+`requested_constraints` and `granted_constraints` are capability-specific typed objects. Their semantics are keyed by the exact pair:
+
+```text
+(capability.name, capability.schema_version)
+```
+
+The portable JSON schemas intentionally bound these fields as JSON objects without defining every production capability's constraint vocabulary. A conformance/runtime implementation MAY supply a trusted deterministic constraint profile registry for additional capability/schema identities.
+
+A constraint profile MUST define both:
+
+1. normalization and validation of caller-requested constraints; and
+2. normalization and validation of granted constraints, including proof that the grant is equal to or narrower than the normalized request according to that profile's semantics.
+
+The profile registry is runtime/conformance configuration, not request data. A request MUST NOT select a validator, schema URL, module, executable, or profile implementation. Implementations MUST NOT dynamically load code or resolve arbitrary remote schemas because a capability request names them.
+
+If no trusted profile is configured for a capability/schema identity, non-empty requested or granted constraints MUST fail closed. Empty constraint objects retain the existing generic behavior. A profile for one capability/schema identity MUST NOT be reused for another identity.
+
+The canonical public conformance package includes only the `example.noop` profile by default. Additional private or external profiles may be supplied explicitly by a consumer without publishing provider implementation, policy thresholds, host topology, or privileged semantics in this repository.
+
+Requested constraints remain part of the normalized request and therefore participate in the canonical request digest. A runtime MUST use the same exact constraint-profile configuration when normalizing the request, computing its digest, and validating the corresponding authorized manifest.
+
+Registration of a constraint profile does not register or authorize a provider, allocate a public capability name, establish transport admission, or grant policy authority. The runtime and governance layers remain responsible for those separate decisions.
+
 ## Canonical JSON
 
 Canonical bytes MUST follow RFC 8785 JSON Canonicalization Scheme within the restricted value profile above:
@@ -112,6 +137,8 @@ An `AuthorizedCapabilityManifest` is immutable provider input produced by the ru
 
 The manifest MUST NOT widen capability, target, payload, constraints, expiry, or evidence authority. Its decision digest MUST equal the request digest. Only a final `allow` outcome is executable. A provider MUST independently verify the manifest before execution.
 
+When a capability-specific constraint profile is configured, manifest validation MUST use the same exact profile identity and semantics used to normalize the corresponding request. A missing, substituted, or mismatched profile MUST fail closed rather than reinterpret the grant.
+
 ## No-effect reference
 
 `example.noop` v1 accepts a small message/repeat payload and returns a deterministic bounded result. It performs no filesystem, network, process, repository, service, credential, or host mutation. The reference implementation is a conformance example, not a production gateway or policy engine.
@@ -127,7 +154,10 @@ This contract is experimental v1alpha.
 - Unknown fields fail closed.
 - Changing canonicalization, digest domains or participation, required fields, identifier grammar, state meaning, or narrowing semantics requires a new contract version.
 - New capability payload schemas MAY be added when their namespace and schema version are distinct.
+- Additional constraint profiles MAY be supplied explicitly by a runtime/conformance consumer when keyed to an exact capability/schema identity and when default behavior for unconfigured identities remains fail closed.
 - Consumers MUST reject unsupported versions rather than guess or silently downgrade.
+
+Adding an explicitly configured profile is an implementation/conformance extension for that consumer; it does not silently make previously invalid requests valid for consumers using the default registry and does not allocate a public capability name.
 
 ## Conformance
 
@@ -138,3 +168,5 @@ python3 -m conformance.capability_gateway_v1 run-fixtures conformance/fixtures/v
 ```
 
 The fixture suite includes fixed canonical bytes and request/payload digests, Unicode ordering and no-normalization vectors, request-ID conflicts, expiry and constraint narrowing, payload substitution, bounded state, portable envelopes, and synthetic `deployment.apply` data. It requires no network, credentials, private source, policy service, system service manager, NixOS, or privileged access.
+
+The Python conformance API additionally exposes an immutable trusted `ConstraintProfileRegistry`. Tests for capability-specific profiles MUST prove exact capability/schema binding, requested-constraint digest participation, equal/narrow grant acceptance, widening rejection, unknown-field rejection, and fail-closed behavior when a profile is absent.

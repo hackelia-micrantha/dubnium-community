@@ -56,6 +56,10 @@ Ignoring unknown authorization, identity, effect, constraint, canonicalization, 
 
 Extensions use a documented namespace and cannot weaken public requirements or claim public conformance for behavior outside the public contract. Private extensions remain behind adapters and are not added to canonical public schemas solely to accommodate a private implementation.
 
+A capability-specific constraint profile is an explicit consumer/runtime conformance extension keyed to the exact `(capability.name, capability.schema_version)` pair. Adding such a profile is compatible only when consumers that do not configure it retain their prior fail-closed behavior. A profile must not be selected by request data, reused for another capability identity, override a built-in profile silently, or change canonicalization/digest rules.
+
+Profile registration is not capability namespace allocation, provider admission, transport admission, authorization, or policy installation. Any of those changes follow their own compatibility and governance rules.
+
 ## Deprecation
 
 A deprecation notice identifies:
@@ -71,5 +75,7 @@ Experimental and alpha content may be removed without a formal window, but relea
 ## Conformance
 
 Conformance is version-specific and profile-specific. A claim must identify the contract version, conformance suite version, stability level, extensions, deviations, and test environment.
+
+For Capability Gateway v1alpha, a conformance claim using additional constraint profiles must identify the exact capability/schema profile set used for request normalization, digesting, and manifest validation. A consumer cannot claim default-profile equivalence if it accepts additional non-empty constraint vocabularies.
 
 Passing conformance tests does not establish security, performance, production suitability, endorsement, or certification.

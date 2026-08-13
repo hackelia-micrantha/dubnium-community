@@ -9,6 +9,11 @@ import sys
 if __package__ in {None, ""}:
     sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
+from conformance.constraint_profiles_v1 import (
+    DEFAULT_CONSTRAINT_PROFILES,
+    ConstraintProfile,
+    ConstraintProfileRegistry,
+)
 from conformance.contract_primitives_v1 import ContractError
 from conformance.fixture_suite_v1 import main, run_fixture_suite
 from conformance.jcs_v1 import (
@@ -26,7 +31,10 @@ from conformance.request_contract_v1 import normalize_request, request_digest
 
 __all__ = [
     "BoundedRequestRegistry",
+    "ConstraintProfile",
+    "ConstraintProfileRegistry",
     "ContractError",
+    "DEFAULT_CONSTRAINT_PROFILES",
     "PAYLOAD_DIGEST_DOMAIN",
     "REQUEST_DIGEST_DOMAIN",
     "canonical_json_bytes",
