@@ -109,6 +109,13 @@ Code, specifications, schemas, documentation, and generated public artifacts are
 
 The source license does not grant rights to imply endorsement, certification, or official compatibility. See [TRADEMARKS.md](TRADEMARKS.md).
 
+## Community and design-partner guidance
+
+- [COMMUNITY_COMMERCIAL_BOUNDARY.md](COMMUNITY_COMMERCIAL_BOUNDARY.md) — independently useful community surface versus possible supported/commercial value.
+- [COMMUNITY_ENGAGEMENT.md](COMMUNITY_ENGAGEMENT.md) — technically useful outreach, talk/workshop candidates, and a bounded twelve-month cadence.
+- [DESIGN_PARTNER_GUIDE.md](DESIGN_PARTNER_GUIDE.md) — safe intake topics, feedback goals, confidentiality, and public issue extraction.
+- [PUBLICATION_REVIEW_CHECKLIST.md](PUBLICATION_REVIEW_CHECKLIST.md) — compact disclosure/provenance review for public artifacts.
+
 ## Contributing and security
 
 - [CONTRIBUTING.md](CONTRIBUTING.md) — contribution, provenance, contract-change, and sign-off requirements.
