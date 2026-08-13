@@ -1,8 +1,14 @@
 # Capability-specific constraint profiles
 
-Status: v1alpha  
-Compatibility: compatible  
-Contracts: `spec/capability-gateway-v1.md`, Capability Gateway v1alpha conformance API
+Status: v1alpha
+Content: informative
+Canonical source: this file
+Generated: no
+Compatibility: compatible
+Contracts:
+
+- `spec/capability-gateway-v1.md`
+- Capability Gateway v1alpha conformance API
 
 ## Behavior
 
