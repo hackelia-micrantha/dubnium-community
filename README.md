@@ -2,7 +2,7 @@
 
 **Public contracts, conformance assets, developer tooling, documentation, and safe reference implementations for the Dubnium capability ecosystem.**
 
-Dubnium is a reproducible, local-first agentic development and operations environment. This repository is its public community and interoperability boundary. It is not a mirror of any private production runtime.
+Dubnium is a reproducible, observable, governed engineering environment for developer workstations, smaller client environments, build and compute nodes, and AI-assisted automation. This repository is its public community and interoperability boundary. It is not a mirror of any private production runtime.
 
 ## Repository role
 
@@ -19,6 +19,12 @@ This monorepo is authoritative for public Dubnium-owned:
 
 Private or external implementations may consume these contracts, but public artifacts must build and validate without private source, private services, credentials, host configuration, operator data, or production policy.
 
+## Public architecture direction
+
+The public design treats Dubnium as an engineering-environment platform rather than one mandatory machine shape. Public concepts include replaceable client environments, richer workstations, bounded build/compute capacity, remote managed environments for stronger trust requirements, reproducible project tooling, local-first observability, and governed automation.
+
+These concepts are directional architecture, not a claim that every deployment form or fleet capability is currently available. The public guide intentionally describes responsibilities and trust boundaries without revealing production topology or implementation policy.
+
 ## Public website ownership
 
 This repository is the sole authority for the public web surface:
@@ -30,7 +36,7 @@ This repository is the sole authority for the public web surface:
 | `.github/workflows/pages.yml` | Independent validation and GitHub Pages deployment |
 | `scripts/validate_publication.py` | Destination-side disclosure, metadata, size, and path guard |
 
-The generated book is a conceptual overview. It must not contain production topology, policy internals, prompts, memory behavior, privileged providers, host configuration, credentials, operational evidence, private repository coordinates, private commits, workflow identifiers, or private issue links.
+The generated book is a curated conceptual overview. Its producer uses an explicit source-file allowlist; unlinked source pages are not a publication mechanism. The generated artifact must not contain production topology, policy internals, prompts, memory behavior, privileged providers, host configuration, credentials, operational evidence, private repository coordinates, private commits, workflow identifiers, or private issue links.
 
 See [PUBLICATION_BOUNDARY.md](PUBLICATION_BOUNDARY.md) for the complete ownership and metadata contract.
 
@@ -44,7 +50,7 @@ Private by default:
 - production policy, approvals, risk thresholds, and trusted identities;
 - memory ranking, consolidation, retention, trust scoring, and stored data;
 - privileged capability providers, deployment workers, and recovery behavior;
-- host topology, runner mappings, credentials, local paths, and runbooks;
+- host or fleet topology, runner mappings, credentials, local paths, and runbooks;
 - real logs, incidents, traces, evidence, and operational measurements.
 
 Anthesis remains authoritative for governance decision and approval semantics where those contracts are referenced. Dubnium transports and enforces bounded decisions; it does not redefine Anthesis policy authority here.

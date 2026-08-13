@@ -4,7 +4,7 @@ Status: experimental
 Content: normative
 Canonical source: this file
 Generated: no
-Reviewed: 2026-08-05
+Reviewed: 2026-08-12
 
 ## Authority
 
@@ -21,10 +21,15 @@ No private implementation repository is a public website host or public document
 
 A generated-book pull request may change only `site/docs/**`. It must pass repository tests and destination-side publication validation before merge or deployment.
 
+The producer must construct the book from an explicit reviewed source-file allowlist. Book navigation alone is not an acceptable disclosure boundary because a documentation generator may emit source pages that are not linked from its table of contents. Unlinked or otherwise unreviewed source files must fail closed before generation.
+
 The book is an overview. It may describe:
 
-- project purpose and principles;
-- conceptual components and trust boundaries;
+- project purpose, principles, and directional deployment forms;
+- conceptual components, source-of-truth boundaries, and trust boundaries;
+- reproducible-development and supply-chain concepts;
+- local, organizational, and personal observability at a conceptual level;
+- AI and automation boundaries without private routing or prompt behavior;
 - observable public contracts and compatibility rules;
 - governance and safety posture;
 - bounded public status and roadmap themes;
@@ -34,8 +39,8 @@ It must not disclose:
 
 - production topology, services, hosts, networks, ports, or resource assignments;
 - prompts, routing heuristics, retry or fallback behavior;
-- policy thresholds, allowlists, approvals, or trusted identities;
-- memory schemas, ranking, retention, retrieval, or stored data;
+- policy thresholds, operational allowlists, approvals, or trusted identities;
+- private data schemas, ranking, retention, retrieval, or stored content;
 - privileged providers, deployment workers, recovery procedures, or credentials;
 - real logs, incidents, traces, evidence, or operational measurements;
 - private repository names, source commits, branches, paths, issues, pull requests, workflow runs, jobs, or runner identities.
@@ -67,6 +72,8 @@ The landing page and generated book have separate update paths:
 - hand-authored website changes may modify `site/index.html` and site assets through normal review;
 - generated-book publication changes are confined to `site/docs/**`;
 - a generated-book publication cannot modify the landing page, workflow, validator, or repository policy in the same automated change.
+
+A regenerated book replaces the complete `site/docs/**` artifact. Stale generated content must not survive merely because a source page was removed.
 
 ## Failure posture
 

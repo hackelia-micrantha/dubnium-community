@@ -4,7 +4,7 @@ Status: experimental
 Content: informative
 Canonical source: this file
 Generated: no
-Reviewed: 2026-08-06
+Reviewed: 2026-08-12
 
 This roadmap describes intended public work. It is not a compatibility promise, a private implementation plan, or a commitment to publish production internals.
 
@@ -26,9 +26,24 @@ The public foundation is in place:
 
 The repository remains incubating. Presence does not imply a stable compatibility commitment. No protected `contract-v*` release has yet been accepted as consumer identity.
 
-## Now — complete activation gates
+## Public architecture direction
 
-- complete the first generated `site/docs/**` publication pull request and verify Pages deployment at `/docs/`;
+Dubnium's public architecture now describes a broader engineering-environment model:
+
+- replaceable client environments alongside richer workstations and bounded build/compute capacity;
+- reproducible project tooling with supply-chain trust treated separately from reproducibility;
+- local-first diagnostics and observable runtime behavior;
+- bounded organizational posture without requiring indiscriminate workstation log collection;
+- personal reports and journaling as a separate user-owned observability plane;
+- AI and automation that propose work without inheriting ambient effect authority;
+- recovery based on declared configuration plus explicitly classified mutable state.
+
+These are directional concepts. They do not imply a production fleet service, endpoint enrollment system, or publication of private implementation.
+
+## Now — complete activation and publication gates
+
+- maintain the public-book source as an explicit reviewed file allowlist rather than relying on navigation alone;
+- verify regenerated `site/docs/**` replaces stale generated pages and remains independently validated before deployment;
 - verify publication no-op behavior and keep generated changes confined to `site/docs/**`;
 - apply and read back the committed `main` protection and squash-only merge policy;
 - establish immutable `contract-v*` tag protection or an equivalent audited administrative control;
@@ -47,6 +62,7 @@ The repository remains incubating. Presence does not imply a stable compatibilit
 - keep transport error documentation and OpenAPI response sets aligned as #29 is resolved;
 - refine compatibility, deprecation, and migration guidance from actual consumer feedback;
 - expand public threat models without disclosing production policy or topology;
+- document additional public API families only when interoperability value and disclosure review justify them;
 - complete one supersession or maintenance exercise without replacing published artifacts.
 
 ## Later — evidence-driven expansion
@@ -56,6 +72,7 @@ After at least one real release and maintenance cycle, maintainers may consider:
 - thin public validation or conformance commands;
 - additional adapters or language bindings justified by real consumers;
 - a stabilized model-gateway compatibility profile when interoperability evidence supports it;
+- public fleet or endpoint contracts where they can remain useful without exposing topology, identity, or policy;
 - additional contract slices with clear ownership and disclosure value;
 - repository splits only when independent ownership or release cadence makes the monorepo harmful.
 
@@ -69,7 +86,7 @@ The following are not part of the public roadmap unless a separate disclosure re
 - memory implementation, ranking, retention, or stored data;
 - scheduler ownership and exact state;
 - deployment providers and privileged workers;
-- host topology, runner configuration, credentials, and runbooks;
+- host or fleet topology, runner configuration, credentials, and runbooks;
 - real operational evidence or measurements;
 - broad multi-language SDK matrices.
 
