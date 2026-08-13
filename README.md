@@ -36,7 +36,7 @@ This repository is the sole authority for the public web surface:
 | `.github/workflows/pages.yml` | Independent validation and GitHub Pages deployment |
 | `scripts/validate_publication.py` | Destination-side disclosure, metadata, size, and path guard |
 
-The generated book is a curated conceptual overview. Its producer uses an explicit source-file allowlist; unlinked source pages are not a publication mechanism. The generated artifact must not contain production topology, policy internals, prompts, private data behavior, privileged providers, host configuration, credentials, operational evidence, private repository coordinates, private commits, workflow identifiers, or private issue links.
+The generated book is a curated conceptual overview. Its producer uses an explicit source-file allowlist; unlinked source pages are not a publication mechanism. The generated artifact must not contain production topology, policy internals, prompts, memory behavior, privileged providers, host configuration, credentials, operational evidence, private repository coordinates, private commits, workflow identifiers, or private issue links.
 
 See [PUBLICATION_BOUNDARY.md](PUBLICATION_BOUNDARY.md) for the complete ownership and metadata contract.
 
@@ -48,7 +48,7 @@ Private by default:
 
 - supervisor planning, routing, prompts, retries, fallbacks, and specialist selection;
 - production policy, approvals, risk thresholds, and trusted identities;
-- private data ranking, consolidation, retention, trust scoring, and stored data;
+- memory ranking, consolidation, retention, trust scoring, and stored data;
 - privileged capability providers, deployment workers, and recovery behavior;
 - host or fleet topology, runner mappings, credentials, local paths, and runbooks;
 - real logs, incidents, traces, evidence, and operational measurements.
@@ -95,7 +95,9 @@ Repository settings are expected to require the aggregate checks, but committed 
 
 ## Status and compatibility
 
-The repository is **incubating**. Experimental capability-boundary contracts, conformance fixtures, deterministic release tooling, publication validation, and the public website are present; stabilization and adopter integration remain active work.
+The repository is **incubating**. The first experimental capability-boundary slice, conformance fixtures, deterministic release tooling, publication validation, and public website are present; stabilization and adopter integration remain active work.
+
+No `contract-v*` release is currently an accepted consumer baseline. Issue #17 remains open until protected-main policy is active, the first tag is published, its artifacts and attestations are verified by the post-publication consumer job, and the release record is reviewed. Until then, `main` is development source rather than immutable contract identity.
 
 Content is explicitly marked `experimental`, `v1alpha`, `v1beta`, or `stable`. Unmarked content is not a compatibility commitment. The monorepo uses one coordinated release version initially. Compatibility and deprecation rules are defined in [COMPATIBILITY.md](COMPATIBILITY.md).
 
@@ -115,8 +117,13 @@ The source license does not grant rights to imply endorsement, certification, or
 
 Every private-to-public import requires an irreversible-publication review covering ownership, patent and trade-secret posture, third-party provenance, secrets, operational disclosure, synthetic fixtures, generated metadata, and Git history.
 
-## Current public contract slice
+## Current public slice
 
-The current experimental contract work includes a narrow capability-boundary envelope with canonicalization, synthetic adversarial fixtures, conformance checks, and a no-effect reference. It does not include a production gateway, privileged providers, deployment implementation, supervisor implementation, private data implementation, or host configuration.
+The current experimental slice defines a narrow Capability Gateway envelope with canonicalization, synthetic adversarial fixtures, conformance checks, and a no-effect reference. It does not include any production gateway, privileged providers, deployment implementation, supervisor, memory implementation, or host configuration.
 
-Consumers should pin reviewed immutable release identities when available, run the conformance suites, and avoid treating experimental source as a stable compatibility promise.
+At least one downstream consumer has exercised the v1alpha boundary from an exact source commit and reported contract-level feedback. That feedback is tracked publicly:
+
+- #29 — declare a bounded retryable `503` response for status inspection;
+- #31 — align pre-dispatch `indeterminate` attribution between the specification and schema.
+
+These are public contract questions, not permission to infer private runtime behavior. Consumers should pin an exact reviewed commit, run the conformance suites, and avoid treating the current v1alpha source as a stable release until the first protected `contract-v*` baseline is accepted.
