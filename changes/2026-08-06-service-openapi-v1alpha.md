@@ -23,16 +23,16 @@ Each bundle includes a normative specification, canonical JSON Schema, OpenAPI 3
 
 ### Supervisor / LLM gateway
 
-- Align the public contract to `dubnium_supervisor_gateway.lineage_app:main`.
+- Publish only the reviewed external transport contract rather than private module or routing implementation identities.
 - Publish logical alias negotiation, capabilities, trusted execution identity, normalized errors, streaming metadata, and delegation lineage.
-- Model specialist prompt behavior as truncation to 2,000 characters rather than request rejection.
+- Keep provider selection, prompts, routing heuristics, and other production orchestration behavior outside the public bundle.
 - Add positive examples for health, model declaration, chat JSON, streaming metadata, and errors plus negative capability, version, and alias fixtures.
 
 ### Scheduler
 
 - Publish process health, schedule list/detail, recent history, control, and error wire shapes.
-- Describe current history behavior accurately: up to 20 parsed journal JSON records, no field redaction, and no separate response-byte bound.
-- Describe control responses as commands issued rather than proof of successful systemd state transitions.
+- Specify only the externally observable bounded history and control-response shapes required by the public contract.
+- Keep private persistence, journal/source selection, service-manager wiring, and operator implementation details outside the public bundle.
 - Add positive examples for every operation and negative history/control fixtures.
 
 ## Generic conformance architecture
@@ -64,7 +64,7 @@ These changes remain experimental and additive. They do not promote the services
 The bundles intentionally do not standardize:
 
 - memory storage layout, embeddings, ranking, consolidation, or retention;
-- scheduler persistence, unit generation, retry, command-success attestation, or host policy;
+- scheduler persistence, service-manager wiring, retry, command-success attestation, or host policy;
 - a complete OpenAI API surface;
 - deployment authority, listener exposure, private authentication, or routing configuration.
 
@@ -72,13 +72,13 @@ The bundles intentionally do not standardize:
 
 - All examples are synthetic.
 - Remote schema references and repository escapes are prohibited.
-- Scheduler history is explicitly classified as sensitive unredacted administrative output.
+- Administrative history output is treated as sensitive contract data even when its wire shape is public.
 - Supervisor backend-authored metadata is not treated as trusted execution or lineage.
 - Memory content remains evidence and does not grant execution authority.
 
 ## Provenance
 
-The transport behavior was reviewed against `ryjen/dubnium` commit `cfc0af808b3cac9e1098f630a187ab9497a80a70`.
+The transport behavior was reviewed against a private implementation snapshot through the established disclosure boundary. Private repository names, source commits, module paths, and implementation issue coordinates are intentionally omitted from this public change record.
 
 The public specifications, schemas, examples, and conformance catalog are independently reviewable from this repository and do not require private source access.
 
