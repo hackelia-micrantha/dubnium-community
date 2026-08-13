@@ -47,7 +47,19 @@ It must not disclose:
 
 ## Public provenance schema
 
-`site/docs/publication.json` uses the reviewed public metadata schema and contains public-safe provenance only. Public metadata may identify the schema version, an opaque publication identifier, a digest of public content, the generator, and generation time.
+`site/docs/publication.json` uses schema version 2 and contains only:
+
+```json
+{
+  "schema_version": 2,
+  "publication_id": "opaque-publication-id",
+  "content_digest": "sha256:<digest>",
+  "generator": "mdbook <version>; mdbook-mermaid <version>",
+  "generated_at": "<UTC RFC 3339 timestamp>"
+}
+```
+
+The publication identifier is opaque and derived from public content. The digest covers the generated public artifact, excluding `publication.json` itself.
 
 Private provenance may exist in private evidence storage, but it must not appear in public files, commits, pull-request text, deployment metadata, or links.
 
