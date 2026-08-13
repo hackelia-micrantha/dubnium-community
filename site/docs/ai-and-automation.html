@@ -3,12 +3,12 @@
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
-        <title>Client Architecture - Dubnium</title>
+        <title>AI and Automation - Dubnium</title>
 
 
         <!-- Custom HTML head -->
 
-        <meta name="description" content="Public Dubnium overview documentation">
+        <meta name="description" content="Public overview of Dubnium engineering-environment concepts, contracts, governance, and safety">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="theme-color" content="#ffffff">
 
@@ -35,10 +35,10 @@
             const path_to_root = "";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "searchindex-d035b8e1.js";
+            window.path_to_searchindex_js = "searchindex-6be2a01f.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="toc-99e585f3.js"></script>
+        <script src="toc-ab6e6d74.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -174,27 +174,40 @@
 
                 <div id="mdbook-content" class="content">
                     <main>
-                        <h1 id="client-architecture"><a class="header" href="#client-architecture">Client Architecture</a></h1>
-<p>Dubnium distinguishes host composition (what the machine runs) from client architecture (how users and tools reach the machine).</p>
-<h2 id="client-classes"><a class="header" href="#client-classes">Client classes</a></h2>
-<ul>
-<li><strong>Local workstation</strong> — interactive user session on the host itself</li>
-<li><strong>Remote admin</strong> — laptop or secondary machine over Tailscale</li>
-<li><strong>Phone or secondary device</strong> — limited access for status checks</li>
-<li><strong>Automation clients</strong> — n8n workflows, CI-triggered jobs, scheduled tasks</li>
-</ul>
-<h2 id="boundaries"><a class="header" href="#boundaries">Boundaries</a></h2>
-<p>Clients do not define host truth — the flake does. Clients should prefer bounded entrypoints (the control plane, <code>dubctl</code>, <code>modectl</code>) over ad hoc service access. Remote admin access follows the VPN and service exposure architecture. Credential-bearing or agentic clients should route through the AI control plane rather than calling providers or runtimes directly.</p>
+                        <h1 id="ai-and-automation"><a class="header" href="#ai-and-automation">AI and Automation</a></h1>
+<p>Dubnium supports AI-assisted development and automation without making a model the operating-system authority.</p>
+<h2 id="ai-is-optional-capability"><a class="header" href="#ai-is-optional-capability">AI is optional capability</a></h2>
+<p>A Dubnium environment may use local models, remote models, or no model at all. Deterministic configuration, security boundaries, runtime observation, workflow state, and recovery should continue to work independently.</p>
+<p>Model selection and provider choice are implementation concerns behind a stable caller-facing boundary. Changing a model must not silently widen access to data, tools, credentials, networks, or privileged effects.</p>
+<h2 id="reasoning-is-not-an-effect"><a class="header" href="#reasoning-is-not-an-effect">Reasoning is not an effect</a></h2>
+<p>A useful separation is:</p>
+<pre><code class="language-text">reasoning proposes intent
+-&gt; deterministic validation
+-&gt; policy / approval boundary
+-&gt; bounded capability
+-&gt; effect execution
+-&gt; durable outcome and evidence
+</code></pre>
+<p>Model output can propose an action. It cannot mint its own identity, approve itself, or turn previous success into future authority.</p>
+<h2 id="stateful-automation-owns-state"><a class="header" href="#stateful-automation-owns-state">Stateful automation owns state</a></h2>
+<p>Scheduled work, durable workflows, memory/context systems, and long-running operations should expose explicit lifecycle and state rather than exist only inside model context.</p>
+<p>That makes retries, recovery, auditing, and replacement possible without asking a model to reconstruct what probably happened.</p>
+<h2 id="resource-aware-operation"><a class="header" href="#resource-aware-operation">Resource-aware operation</a></h2>
+<p>AI inference, builds, tests, background automation, and interactive work can all compete for CPU, memory, storage, network, and accelerators. Dubnium treats resource placement and isolation as operating concerns rather than model-routing side effects.</p>
+<h2 id="evidence-remains-bounded"><a class="header" href="#evidence-remains-bounded">Evidence remains bounded</a></h2>
+<p>Automation should produce enough structured evidence to explain outcomes while avoiding indiscriminate capture of source, prompts, credentials, private messages, or unrelated user activity.</p>
+<h2 id="public-interoperability"><a class="header" href="#public-interoperability">Public interoperability</a></h2>
+<p>Public Dubnium contracts may describe model-independent request surfaces, capability envelopes, scheduling or state semantics, and conformance behavior when those interfaces are useful to external consumers. Private routing heuristics, production prompts, trusted identities, provider configuration, and stored user data remain outside the public boundary.</p>
 
                     </main>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
-                            <a rel="prev" href="support-tiers.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                            <a rel="prev" href="observability.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                                 <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
                             </a>
 
-                            <a rel="next prefetch" href="memory-architecture.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                            <a rel="next prefetch" href="governance.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                                 <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
                             </a>
 
@@ -204,11 +217,11 @@
             </div>
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
-                    <a rel="prev" href="support-tiers.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                    <a rel="prev" href="observability.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                         <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
                     </a>
 
-                    <a rel="next prefetch" href="memory-architecture.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                    <a rel="next prefetch" href="governance.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                         <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
                     </a>
             </nav>

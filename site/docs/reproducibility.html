@@ -3,12 +3,12 @@
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
-        <title>Dubctl — Host Operator UX - Dubnium</title>
+        <title>Reproducible Engineering - Dubnium</title>
 
 
         <!-- Custom HTML head -->
 
-        <meta name="description" content="Public Dubnium overview documentation">
+        <meta name="description" content="Public overview of Dubnium engineering-environment concepts, contracts, governance, and safety">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="theme-color" content="#ffffff">
 
@@ -35,10 +35,10 @@
             const path_to_root = "";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "searchindex-d035b8e1.js";
+            window.path_to_searchindex_js = "searchindex-6be2a01f.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="toc-99e585f3.js"></script>
+        <script src="toc-ab6e6d74.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -174,117 +174,70 @@
 
                 <div id="mdbook-content" class="content">
                     <main>
-                        <h1 id="dubctl--host-operator-ux"><a class="header" href="#dubctl--host-operator-ux">Dubctl — Host Operator UX</a></h1>
-<p><code>dubctl</code> is Dubnium’s narrow operator helper for common host-local operations — service enablement, capability management, flake input manipulation, package overrides, AI diagnostics, GPU monitoring, and NixOS rebuild orchestration.</p>
-<p>It is not a second configuration control plane. It writes bounded host-local selection state that NixOS sees at rebuild time, keeping the flake as the source of truth for architectural wiring.</p>
-<h2 id="key-capabilities"><a class="header" href="#key-capabilities">Key capabilities</a></h2>
-<ul>
-<li><strong>Service management</strong> — list, enable, and disable registered services with optional profile bindings and settings. Mutations require root.</li>
-<li><strong>Capability management</strong> — enable or disable registered integration and capability selections.</li>
-<li><strong>Flake input management</strong> — list, search, add, remove, and update flake inputs without editing Nix source by hand.</li>
-<li><strong>Local package overrides</strong> — inspect and manage local system package attrs outside the flake.</li>
-<li><strong>AI diagnostics</strong> — report provider and system diagnostics, delegate analysis to the AI control plane.</li>
-<li><strong>GPU monitoring</strong> — watch NVIDIA GPU utilization by role or profile (read-only wrapper around <code>nvidia-smi</code>).</li>
-<li><strong>Apply</strong> — run <code>nixos-rebuild</code> for the declared Dubnium state with automatic local path overrides.</li>
-</ul>
-<h2 id="external-command-trees"><a class="header" href="#external-command-trees">External command trees</a></h2>
-<p><code>dubctl</code> can dispatch a user-owned command subtree from <code>$PATH</code>. Executables use
-the naming convention <code>dubctl-&lt;token&gt;-&lt;token&gt;</code>, where each command token is
-lowercase ASCII alphanumeric text, and receive the remaining
-arguments unchanged:</p>
-<pre><code class="language-text">dubctl meeting session start --foo
-  -&gt; dubctl-meeting-session start --foo
+                        <h1 id="reproducible-engineering"><a class="header" href="#reproducible-engineering">Reproducible Engineering</a></h1>
+<p>Dubnium aims to make engineering environments replaceable without turning every project dependency into permanent workstation state.</p>
+<h2 id="layered-ownership"><a class="header" href="#layered-ownership">Layered ownership</a></h2>
+<p>A useful mental model is:</p>
+<pre><code class="language-text">platform configuration
+  -&gt; operating system, security baseline, resource policy
+
+portable user environment
+  -&gt; shell, editor, terminal, user-facing development preferences
+
+project environment
+  -&gt; project-specific SDKs, compilers, dependencies, tools, and workflow requirements
+
+trusted acceleration
+  -&gt; caches, builders, prebuilt artifacts, and remote capacity
 </code></pre>
-<p>The longest matching executable prefix wins. Built-in commands and aliases
-always take precedence. Resolution uses direct argv execution, never a shell,
-and is disabled for privileged execution, including UID transitions and
-effective UID 0. Plugins should own their own state and communicate with <code>dubctl</code> through argv, environment,
-stdin/stdout/stderr, exit codes, and signals.</p>
-<p>The initial intended consumer is a Home Manager-installed
-<code>dubctl-meeting-session</code> command for graphical user-session lifecycle actions.</p>
-<h2 id="command-surface-audit"><a class="header" href="#command-surface-audit">Command-surface audit</a></h2>
+<p>The layers can use different tools, but their ownership should remain explicit.</p>
+<h2 id="desired-developer-path"><a class="header" href="#desired-developer-path">Desired developer path</a></h2>
+<p>A project should increasingly be able to approach:</p>
+<pre><code class="language-text">clone
+-&gt; enter declared environment
+-&gt; build
+-&gt; test
+-&gt; run
+</code></pre>
+<p>without depending on undocumented machine history.</p>
+<h2 id="reproducible-does-not-mean-trusted"><a class="header" href="#reproducible-does-not-mean-trusted">Reproducible does not mean trusted</a></h2>
+<p>A perfectly reproducible malicious dependency is still malicious. Supply-chain policy may therefore include:</p>
+<ul>
+<li>pinned source and dependency identities;</li>
+<li>reviewed trust roots for caches or artifacts;</li>
+<li>signatures, provenance, or attestations where they add value;</li>
+<li>controlled update and rollback behavior;</li>
+<li>visible failure when required trust evidence is unavailable.</li>
+</ul>
+<p>The exact mechanisms can vary by deployment and project.</p>
+<h2 id="mutable-state-is-classified-not-ignored"><a class="header" href="#mutable-state-is-classified-not-ignored">Mutable state is classified, not ignored</a></h2>
+<p>Not everything should live in declarative configuration. Dubnium uses a conceptual state classification:</p>
 <div class="table-wrapper">
 <table>
 <thead>
-<tr><th>Logical paths and aliases</th><th>Implementation / owner</th><th>State, adapters, privilege/session model</th><th>Initial disposition</th></tr>
+<tr><th>Class</th><th>Meaning</th><th>Typical treatment</th></tr>
 </thead>
 <tbody>
-<tr><td><code>inputs list</code>, <code>search</code>, <code>info</code>, <code>install</code>/<code>add</code>, <code>remove</code>/<code>uninstall</code>, <code>update</code>/<code>upgrade</code></td><td><code>scripts/dubctl-core.py</code> plus <code>scripts/dubctl.py</code> input-update override; host operator</td><td>Reads/edits flake source and lock state; subprocesses <code>nix</code>; no graphical session</td><td>Evaluate later</td></tr>
-<tr><td><code>service list</code>, <code>enable</code>, <code>disable</code>, <code>refresh</code></td><td><code>scripts/dubctl-core.py</code>; host operator</td><td>Reads registry/state; writes <code>/var/lib/dubnium/local</code> and <code>/etc/dubnium/local</code>; mutations require root</td><td>Keep core initially</td></tr>
-<tr><td><code>capability list</code>, <code>enable</code>, <code>disable</code></td><td><code>scripts/dubctl-core.py</code>; host operator</td><td>Reads/writes generated host-local state; mutations require root</td><td>Keep core initially</td></tr>
-<tr><td><code>schedule list</code>, <code>show</code>, <code>trigger</code>, <code>pause</code>, <code>resume</code>, <code>history</code></td><td><code>scripts/dubctl-core.py</code>; scheduler API owner</td><td>Reads or mutates scheduler API state; no graphical session</td><td>Evaluate later</td></tr>
-<tr><td><code>apply</code></td><td><code>scripts/dubctl-core.py</code>; host rebuild boundary</td><td>Invokes <code>nixos-rebuild</code>; privilege boundary is explicit <code>sudo</code>; no plugin state</td><td>Keep core initially</td></tr>
-<tr><td><code>ai status</code>, <code>providers</code>/<code>provider</code>/<code>list</code>, <code>ask</code>, <code>diagnose</code></td><td><code>scripts/dubctl-ai.py</code>; AI control-plane owner</td><td>Provider HTTP, Hermes subprocess, and read-only diagnostics; may read user config; user session for user-owned Hermes tools</td><td>Migrate first</td></tr>
-<tr><td><code>gpu monitor</code>/<code>mon</code>/<code>watch</code></td><td><code>scripts/dubctl-gpu.py</code>; hardware adapter owner</td><td>Reads NVIDIA tools and runtime telemetry; hardware dependency; no state mutation</td><td>Migrate first</td></tr>
-<tr><td><code>llm profiles</code>, <code>download</code>, <code>serve</code>, <code>benchmark</code></td><td><code>scripts/dubctl-llm.py</code>; local model/runtime owner</td><td>Model profile files and service/process adapters; optional host packages; no core-private state contract</td><td>Migrate first</td></tr>
-<tr><td><code>package list</code>, <code>add</code>, <code>remove</code></td><td><code>scripts/dubctl-package.py</code>; package override owner</td><td>Reads/writes local package override state; filesystem adapter; state boundary requires audit</td><td>Migrate first after state audit</td></tr>
-<tr><td><code>runtime status</code>, <code>preflight</code>, <code>observe</code></td><td><code>scripts/dubctl-runtime.py</code>; runtime read-model owner</td><td>Reads runtime policy and process telemetry; read-only system adapters</td><td>Migrate first</td></tr>
-<tr><td><code>specialists catalog</code>, <code>status</code>, <code>run</code></td><td><code>scripts/dubctl-specialists.py</code>; specialist runtime owner</td><td>Reads catalog and delegates runs through runtime adapters; process/service boundary; no direct core-private mutation</td><td>Migrate first</td></tr>
-<tr><td><code>automation list</code>, <code>validate</code></td><td><code>scripts/dubctl-automation.py</code>; automation catalog owner</td><td>Reads/validates source-owned automation catalog; YAML/schema adapters; read-only</td><td>Keep as adapter initially</td></tr>
-<tr><td><code>supervisor status</code>, <code>health</code></td><td><code>scripts/dubctl-supervisor.py</code>; gateway owner</td><td>HTTP read model; read-only service adapter; no graphical session</td><td>Keep as adapter initially</td></tr>
-<tr><td><code>meeting session start</code>, <code>stop</code>, <code>status</code></td><td>External Home Manager plugin; user-session owner</td><td>Owns graphical-session state and Wayland/DBus adapters; normal user only; no core imports</td><td>External command</td></tr>
+<tr><td>Declarative</td><td>Reconstructable from reviewed configuration</td><td>Rebuild</td></tr>
+<tr><td>Re-fetchable</td><td>Available again from another trusted source</td><td>Download or regenerate</td></tr>
+<tr><td>Recoverable</td><td>Mutable or costly state worth preserving</td><td>Explicit backup and restore</td></tr>
+<tr><td>Irreplaceable</td><td>Loss breaks identity, trust, or access</td><td>Separate recovery or escrow strategy</td></tr>
 </tbody>
 </table>
 </div>
-<p>The current source-file split is not itself treated as an architectural
-boundary. Later migrations must identify each command’s use cases, narrow
-ports, system adapters, privilege/session requirements, state ownership, and
-independent packaging value before removing static parser wiring.</p>
-<h2 id="discovery-and-external-help"><a class="header" href="#discovery-and-external-help">Discovery and external help</a></h2>
-<p>Use <code>dubctl commands</code> to inspect the unified command surface. The human output
-contains logical paths, whether each entry is built-in or external, its
-selection state, and the selected executable path. Use
-<code>dubctl commands --format json</code> for a versioned machine-readable inventory:</p>
-<pre><code class="language-json">{"schemaVersion": 1, "commands": []}
-</code></pre>
-<p>External entries can be inspected without knowing their executable name:</p>
-<pre><code class="language-bash">dubctl help meeting session
-</code></pre>
-<p>This forwards <code>--help</code> to the selected external executable. Discovery and help
-forwarding use the same privilege/trust policy as normal external dispatch.</p>
-<h2 id="home-manager-integration"><a class="header" href="#home-manager-integration">Home Manager integration</a></h2>
-<p>A user-session plugin can be installed without changing Dubnium’s core package:</p>
-<pre><code class="language-nix">{ pkgs, ... }:
-{
-  home.packages = [
-    (pkgs.writeShellApplication {
-      name = "dubctl-meeting-session";
-      text = ''
-        case "''${1-}" in
-          --help)
-            echo "usage: dubctl meeting session {start|stop|status}"
-            exit 0
-            ;;
-          --version)
-            echo "dubctl-meeting-session 0.1.0"
-            exit 0
-            ;;
-        esac
-        exec my-session-use-case "$@"
-      '';
-    })
-  ];
-}
-</code></pre>
-<p>The plugin owns its application state, graphical-session adapters, and domain
-use cases. It communicates with <code>dubctl</code> only through argv, environment,
-stdin/stdout/stderr, exit status, and signals. Read-only verbs such as
-<code>status</code> must not mutate state. Machine-readable output should use a versioned
-envelope such as <code>{ "schemaVersion": 1, "command": "meeting session status" }</code>.</p>
-<h2 id="safety-model"><a class="header" href="#safety-model">Safety model</a></h2>
-<p><code>dubctl</code> treats command arguments as untrusted input, validates Nix attr safety, backs up <code>flake.nix</code> before mutation, and uses argv arrays instead of shell string concatenation. Service and capability mutations require root; listing and diagnostics do not.</p>
-<h2 id="boundaries"><a class="header" href="#boundaries">Boundaries</a></h2>
-<p><code>dubctl</code> may manage generated host-local state and invoke <code>nixos-rebuild</code>. It must not become the owner of source-controlled policy, manage user home layering (that is <code>configctl</code>’s domain), store secrets, or edit service-specific app state.</p>
+<p>A replaceable environment should be reconstructed from declared inputs plus explicitly restored state rather than depend on an opaque machine image.</p>
+<h2 id="performance-is-part-of-developer-experience"><a class="header" href="#performance-is-part-of-developer-experience">Performance is part of developer experience</a></h2>
+<p>Reproducibility should not require every task to rebuild the world. Shared immutable inputs, bounded caches, remote build capacity, and resource-aware scheduling can accelerate work as long as their trust and ownership boundaries remain explicit.</p>
 
                     </main>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
-                            <a rel="prev" href="service-exposure.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                            <a rel="prev" href="architecture.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                                 <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
                             </a>
 
-                            <a rel="next prefetch" href="configctl.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                            <a rel="next prefetch" href="observability.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                                 <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
                             </a>
 
@@ -294,11 +247,11 @@ envelope such as <code>{ "schemaVersion": 1, "command": "meeting session status"
             </div>
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
-                    <a rel="prev" href="service-exposure.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                    <a rel="prev" href="architecture.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                         <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
                     </a>
 
-                    <a rel="next prefetch" href="configctl.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                    <a rel="next prefetch" href="observability.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                         <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
                     </a>
             </nav>
