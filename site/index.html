@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <meta name="description" content="Dubnium is a reproducible, observable, governed engineering environment with public contracts, conformance assets, and documentation for safe automation." />
+  <meta name="description" content="Dubnium is a reproducible, observable, governed engineering environment with explicit runtime control, operator tooling, contracts, and conformance assets." />
   <title>Dubnium</title>
   <link rel="icon" href="favicon.svg" type="image/svg+xml">
   <style>
@@ -20,7 +20,6 @@
       --btn-bg: #0f172a;
       --btn-text: #fff;
       --btn-hover: #1e293b;
-      --m-bg: #f3f4f6;
       --active-bg: #ecfdf5;
       --active-text: #166534;
       --experimental-bg: #fff7ed;
@@ -39,7 +38,6 @@
       --btn-bg: #e2e8f0;
       --btn-text: #0f172a;
       --btn-hover: #cbd5e1;
-      --m-bg: #1e293b;
       --active-bg: #14352b;
       --active-text: #86efac;
       --experimental-bg: #422006;
@@ -48,12 +46,11 @@
     body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;max-width:980px;margin:48px auto;padding:0 20px;color:var(--text);background:var(--bg)}
     h1{margin-bottom:6px}
     header p{color:var(--text-secondary);margin-top:0}
-    section{margin:32px 0}
+    section{margin:36px 0}
     ul{line-height:1.5}
     a{color:var(--accent)}
     code{font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace}
     footer{color:var(--text-tertiary);margin-top:36px;font-size:.95em}
-    .m{background:var(--m-bg);padding:14px;border-radius:8px}
     .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px}
     .card{background:var(--card-bg);border:1px solid var(--border);border-radius:8px;padding:14px;transition:border-color .15s,box-shadow .15s}
     .card:hover{border-color:var(--accent);box-shadow:0 1px 4px rgba(0,0,0,.08)}
@@ -61,25 +58,28 @@
     .card p{margin:0;color:var(--text-secondary)}
     .card p + p{margin-top:10px}
     .card a{font-weight:600;text-decoration:none}
-    .feature{margin-top:24px;padding:18px 20px;border-radius:14px;background:var(--feature-bg);border:1px solid var(--feature-border)}
-    .feature h2{margin:0 0 8px 0;font-size:1.1rem}
-    .feature p{margin:0 0 14px 0;color:var(--text-secondary)}
-    .feature a.primary{display:inline-block;padding:10px 14px;border-radius:999px;background:var(--btn-bg);color:var(--btn-text);text-decoration:none;font-weight:600;transition:background .15s}
-    .feature a.primary:hover{background:var(--btn-hover)}
+    .hero{margin-top:24px;padding:28px;border-radius:16px;background:var(--feature-bg);border:1px solid var(--feature-border)}
+    .hero h2{margin:4px 0 12px;font-size:clamp(1.75rem,4vw,2.45rem);line-height:1.08;letter-spacing:-.025em;max-width:780px}
+    .hero .lede{margin:0;max-width:810px;color:var(--text-secondary);font-size:1.05rem;line-height:1.6}
+    .eyebrow{margin:0!important;color:var(--text-tertiary)!important;font-size:.8rem;font-weight:750;letter-spacing:.08em;text-transform:uppercase}
+    .actions{display:flex;flex-wrap:wrap;gap:10px;margin:20px 0 0}
+    .actions a{display:inline-block;padding:10px 14px;border-radius:999px;text-decoration:none;font-weight:650}
+    .actions .primary{background:var(--btn-bg);color:var(--btn-text)}
+    .actions .primary:hover{background:var(--btn-hover)}
+    .actions .secondary{border:1px solid var(--border);background:var(--card-bg);color:var(--text)}
+    .actions .secondary:hover{border-color:var(--accent);color:var(--accent)}
+    .proof{display:flex;flex-wrap:wrap;gap:8px;margin-top:18px}
+    .proof span{border:1px solid var(--border);background:var(--card-bg);border-radius:999px;padding:4px 9px;color:var(--text-secondary);font-size:.82rem}
     .theme-toggle{background:none;border:1px solid var(--border);border-radius:6px;padding:4px 10px;cursor:pointer;color:var(--text-secondary);font-size:.85rem;margin-left:auto}
     .theme-toggle:hover{border-color:var(--accent);color:var(--accent)}
-    .badge{display:inline-block;font-size:.8rem;color:var(--text-tertiary);margin-top:4px}
-    .links{display:flex;flex-wrap:wrap;gap:14px;margin:14px 0 0}
+    .links{display:flex;flex-wrap:wrap;gap:14px;margin:16px 0 0}
     .links a{text-decoration:none;font-weight:600}
     .status{display:inline-block;margin:0 0 9px;padding:2px 7px;border-radius:999px;font-size:.74rem;font-weight:700;letter-spacing:.02em}
     .status.active{background:var(--active-bg);color:var(--active-text)}
     .status.experimental{background:var(--experimental-bg);color:var(--experimental-text)}
     .evidence{font-size:.86rem;color:var(--text-tertiary)!important}
-    .stack{display:grid;gap:8px;margin-top:14px}
-    .layer{border-left:3px solid var(--accent);background:var(--card-bg);padding:10px 12px;border-radius:0 8px 8px 0}
-    .layer strong{display:inline-block;min-width:82px}
     .note{font-size:.92rem;color:var(--text-secondary)}
-    @media(max-width:600px){.grid{grid-template-columns:1fr}}
+    @media(max-width:600px){.grid{grid-template-columns:1fr}.hero{padding:22px}.actions a{width:100%;text-align:center}}
   </style>
   <script>!function(){try{var t=localStorage.getItem('dubnium-theme');if(t==='dark'||(!t&&window.matchMedia('(prefers-color-scheme:dark)').matches))document.documentElement.classList.add('dark')}catch(e){}}()</script>
 </head>
@@ -101,54 +101,58 @@
       </div>
       <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle dark mode">◐</button>
     </div>
-    <div class="feature">
-      <h2>Engineering environments that can explain and govern themselves</h2>
-      <p>Dubnium combines reproducible configuration, local-first observability, bounded capabilities, project development environments, and optional AI-assisted automation without turning a model into ambient system authority.</p>
-      <p><a class="primary" href="docs/">Open Public Guide</a></p>
+
+    <div class="hero">
+      <p class="eyebrow">Micrantha Solution · Incubating</p>
+      <h2>Reproducible engineering environments with explicit runtime control</h2>
+      <p class="lede">Dubnium combines declarative NixOS environments, operator tooling, runtime resource modes, writable user configuration, observability, and governed AI/automation into one inspectable engineering platform.</p>
+      <div class="actions">
+        <a class="primary" href="docs/">Explore Technical Overview</a>
+        <a class="secondary" href="#components">View Components</a>
+      </div>
+      <div class="proof" aria-label="Implemented and inspectable surfaces">
+        <span>NixOS</span>
+        <span><code>dubctl</code></span>
+        <span><code>modectl</code></span>
+        <span><code>configctl</code></span>
+        <span>Contracts</span>
+        <span>Conformance</span>
+      </div>
       <div class="links" aria-label="Project links">
         <a href="https://github.com/hackelia-micrantha/dubnium-community">Community repository</a>
-        <a href="https://github.com/hackelia-micrantha/dubnium-community/blob/main/ROADMAP.md">Public roadmap</a>
+        <a href="https://github.com/hackelia-micrantha/dubnium-community/blob/main/ROADMAP.md">Roadmap</a>
         <a href="https://github.com/hackelia-micrantha/dubnium-community/blob/main/SECURITY.md">Security</a>
       </div>
-      <p class="badge">Micrantha Solution · Incubating</p>
     </div>
   </header>
 
-  <section>
-    <h2>Overview</h2>
-    <div class="m">
-      <p>Dubnium asks how an engineering environment should behave when it must be replaceable, observable, secure, useful for interactive development, and able to host or call automation without giving every tool ambient authority.</p>
-      <p>The architecture can be composed as smaller client environments, richer workstations, build or compute nodes, remote managed environments, and stronger security or administrative environments. The public model describes responsibilities and trust boundaries rather than production topology.</p>
-    </div>
-  </section>
-
-  <section>
+  <section id="components">
     <h2>Components</h2>
-    <p>Dubnium is composed from bounded pieces with explicit ownership. Status labels describe current maturity; public contracts are linked where an interoperability boundary is stable enough to inspect.</p>
+    <p>Dubnium is composed from bounded pieces with explicit ownership. Status labels describe current maturity; the <a href="docs/">Technical Overview</a> explains their state models and intentional boundaries in more detail.</p>
     <div class="grid">
       <div class="card">
         <span class="status active">Active</span>
         <h3>Declarative platform</h3>
         <p>NixOS and Home Manager define rebuildable operating-system, user-environment, security, and resource-policy inputs.</p>
-        <p class="evidence">Evidence: public architecture and reproducibility guide.</p>
+        <p class="evidence">Evidence: architecture and reproducibility documentation.</p>
       </div>
       <div class="card">
         <span class="status active">Active / evolving</span>
         <h3><code>dubctl</code></h3>
-        <p>Operator-facing entry point for Dubnium development, inspection, and system workflows.</p>
-        <p class="evidence">Evidence: implemented operator surface; public behavior documented selectively.</p>
+        <p>Host/operator entry point for inspection, bounded selections, development workflows, and explicit declarative apply.</p>
+        <p class="evidence">Evidence: implemented operator surface.</p>
       </div>
       <div class="card">
         <span class="status active">Active</span>
         <h3><code>modectl</code></h3>
-        <p>Guarded runtime transitions between interactive desktop, media-priority, and compute operating modes.</p>
-        <p class="evidence">Evidence: reconciled desired/current state and transition guards.</p>
+        <p>Guarded runtime posture transitions between interactive desktop, media-priority, and compute work.</p>
+        <p class="evidence">Evidence: desired/observed reconciliation model.</p>
       </div>
       <div class="card">
         <span class="status active">Active</span>
         <h3><code>configctl</code></h3>
-        <p>Writable user-configuration layering, first-run contracts, and drift/reconciliation beside declarative configuration.</p>
-        <p class="evidence">Evidence: managed/local/custom/adopted ownership model.</p>
+        <p>Writable user-configuration ownership, first-run contracts, and drift/reconciliation beside declarative configuration.</p>
+        <p class="evidence">Evidence: managed/local/custom/adopted layer model.</p>
       </div>
       <div class="card">
         <span class="status experimental">Experimental</span>
@@ -160,48 +164,22 @@
         <span class="status experimental">Experimental</span>
         <h3><a href="https://github.com/hackelia-micrantha/dubnium-community/blob/main/spec/supervisor-gateway-v1alpha.md">Supervisor / LLM Gateway</a></h3>
         <p>Bounded model and specialist interface with explicit capabilities, sanitized metadata, and execution lineage.</p>
-        <p class="evidence">Public v1alpha specification and OpenAPI surface.</p>
+        <p class="evidence">v1alpha specification and OpenAPI surface.</p>
       </div>
       <div class="card">
         <span class="status experimental">Experimental</span>
         <h3><a href="https://github.com/hackelia-micrantha/dubnium-community/blob/main/spec/memory-service-v1alpha.md">Memory Service</a></h3>
         <p>Scoped reusable-context and memory interoperability boundary for automation and model-assisted workflows.</p>
-        <p class="evidence">Public v1alpha specification.</p>
+        <p class="evidence">v1alpha specification.</p>
       </div>
       <div class="card">
         <span class="status experimental">Experimental</span>
         <h3><a href="https://github.com/hackelia-micrantha/dubnium-community/blob/main/spec/scheduler-v1alpha.md">Scheduler</a></h3>
         <p>Scheduled and deferred automation interoperability boundary with explicit state rather than hidden background behavior.</p>
-        <p class="evidence">Public v1alpha specification.</p>
+        <p class="evidence">v1alpha specification.</p>
       </div>
     </div>
-    <p class="note">Some implementation and operator wiring remains private because it contains deployment topology, credentials, machine policy, or privileged operational detail. Published specifications and conformance assets are intended to be independently inspectable.</p>
-  </section>
-
-  <section>
-    <h2>Runtime operating modes</h2>
-    <p>A reproducible endpoint does not need every declared capability active simultaneously. <code>modectl</code> selects which declared workload set should be active, runs guards, reconciles the transition, verifies observed state, and records the result.</p>
-    <div class="grid">
-      <div class="card"><h3><code>desktop</code></h3><p>Normal interactive engineering mode. Graphical and developer-facing workloads take priority while compute-oriented AI workloads remain suppressed by mode policy.</p></div>
-      <div class="card"><h3><code>studio-local</code> · media</h3><p>Interactive media mode. The desktop stays available while media-priority policy suppresses competing compute workloads.</p></div>
-      <div class="card"><h3><code>compute</code></h3><p>Dedicated compute and local-AI mode. Graphical work is released so compute-oriented services can receive the resources they require.</p></div>
-    </div>
-    <p class="note"><code>studio-local</code> is the current runtime identifier for media mode; older internal service names may still say studio or audio. Runtime modes choose among declared capabilities; they do not rewrite the NixOS definition, widen authorization, or bypass capability policy.</p>
-  </section>
-
-  <section>
-    <h2>Writable user configuration</h2>
-    <div class="m">
-      <p>NixOS-managed configuration is often backed by the immutable Nix store and should be regenerated rather than edited in place. The user environment itself is not globally read-only.</p>
-      <p><code>configctl</code> provides an explicit writable boundary for applications and user preferences, then makes drift and promotion back into declarative configuration visible.</p>
-    </div>
-    <div class="stack" aria-label="User configuration layers">
-      <div class="layer"><strong>Managed</strong> reviewed declarative defaults; regenerated instead of edited in place.</div>
-      <div class="layer"><strong>Local</strong> writable machine-specific overrides that remain local.</div>
-      <div class="layer"><strong>Custom</strong> writable user fragments that can later be reviewed and promoted.</div>
-      <div class="layer"><strong>Adopted</strong> fragments already represented by managed configuration and retained as reconciliation history.</div>
-    </div>
-    <p class="note">This keeps the base system reproducible without forcing legitimate application preferences, local customization, or first-run mutable state into ad-hoc system mutation.</p>
+    <p class="note">Published material documents responsibilities, stable behavior, and interoperability. Deployment topology, credentials, exact enforcement wiring, policy thresholds, and privileged procedures remain outside this surface.</p>
   </section>
 
   <section>
@@ -215,10 +193,10 @@
   </section>
 
   <section>
-    <h2>Public surface</h2>
+    <h2>Engineering evidence</h2>
     <div class="grid">
-      <div class="card"><h3><a href="docs/">Public guide</a></h3><p>Conceptual architecture, reproducibility, observability, governance, AI boundaries, and public direction.</p></div>
-      <div class="card"><h3><a href="https://github.com/hackelia-micrantha/dubnium-community/tree/main/spec">Contracts</a></h3><p>Versioned protocol specifications and compatibility semantics for public interoperability boundaries.</p></div>
+      <div class="card"><h3><a href="docs/">Technical Overview</a></h3><p>Components, operator tooling, runtime behavior, writable configuration, architecture, reproducibility, observability, and governance.</p></div>
+      <div class="card"><h3><a href="https://github.com/hackelia-micrantha/dubnium-community/tree/main/spec">Contracts</a></h3><p>Versioned protocol specifications and compatibility semantics for deliberately published interoperability boundaries.</p></div>
       <div class="card"><h3><a href="https://github.com/hackelia-micrantha/dubnium-community/tree/main/conformance">Conformance</a></h3><p>Synthetic fixtures, adversarial cases, validators, and implementation-neutral contract checks.</p></div>
       <div class="card"><h3><a href="https://github.com/hackelia-micrantha/dubnium-community/tree/main/reference">References</a></h3><p>Deliberately bounded, no-effect examples that demonstrate contracts without publishing production implementation.</p></div>
     </div>
@@ -226,10 +204,10 @@
 
   <section>
     <h2>Project status</h2>
-    <p><strong>Incubating.</strong> Core platform tooling and several interoperability boundaries are implemented and exercised. Public contracts, conformance, documentation, and adopter integration are active work; APIs and deployment forms remain experimental until their contracts and operational evidence stabilize.</p>
+    <p><strong>Incubating.</strong> Core platform tooling and several interoperability boundaries are implemented and exercised. Contracts, conformance, technical documentation, and adopter integration are active work; APIs and deployment forms remain experimental until their contracts and operational evidence stabilize.</p>
   </section>
 
-  <footer><p>Dubnium public site · hackelia-micrantha/dubnium-community</p></footer>
+  <footer><p>Dubnium · hackelia-micrantha/dubnium-community</p></footer>
   <script>function toggleTheme(){try{var e=document.documentElement,t=e.classList.toggle('dark');localStorage.setItem('dubnium-theme',t?'dark':'light')}catch(e){}}</script>
 </body>
 </html>
