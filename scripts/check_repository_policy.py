@@ -72,16 +72,21 @@ MARKED_POLICY_FILES = {
     "docs/release-integrity.md",
 }
 
+PRIVATE_OWNER_REPOSITORY_PATTERN = re.compile(
+    r"github\.com/ryjen/[A-Za-z0-9_.-]+(?:\.git)?(?:/|$)", re.I
+)
+PRIVATE_OWNER_ISSUE_PATTERN = re.compile(r"\bryjen/[A-Za-z0-9_.-]+#\d+\b", re.I)
+
 PROHIBITED_PUBLIC_PATTERNS: tuple[tuple[str, re.Pattern[str]], ...] = (
     ("SSH Git dependency", re.compile(r"(?:git\+ssh://|ssh://git@|git@[^\s:]+:)", re.I)),
     ("local file dependency", re.compile(r"(?:file://|file:\.\.?/|path\s*=\s*[\"']?/)", re.I)),
     ("local home path", re.compile(r"(?:/home/|/Users/|[A-Z]:\\\\Users\\\\)", re.I)),
     ("loopback endpoint", re.compile(r"(?:localhost|127\.0\.0\.1|\[::1\])", re.I)),
     ("private IPv4 endpoint", re.compile(r"(?:10\.(?:\d{1,3}\.){2}\d{1,3}|192\.168\.(?:\d{1,3}\.)\d{1,3}|172\.(?:1[6-9]|2\d|3[01])\.(?:\d{1,3}\.)\d{1,3})")),
-    ("private Dubnium repository coordinate", re.compile(r"github\.com/ryjen/dubnium(?:\.git)?", re.I)),
+    ("private-owner repository coordinate", PRIVATE_OWNER_REPOSITORY_PATTERN),
+    ("private-owner issue coordinate", PRIVATE_OWNER_ISSUE_PATTERN),
 )
 
-PRIVATE_COORDINATE_PATTERN = re.compile(r"github\.com/ryjen/dubnium(?:\.git)?", re.I)
 MARKER_PATTERN = re.compile(
     r"^Status: (?:experimental|v1alpha|v1beta|stable)$.*?"
     r"^Content: (?:normative|informative)$.*?"
@@ -89,8 +94,13 @@ MARKER_PATTERN = re.compile(
     r"^Generated: (?:no|yes from .+)$",
     re.M | re.S,
 )
-EXACT_SEMVER_PATTERN = re.compile(r"^[0-9]+\.[0-9]+\.[0-9]+$")
-COMPATIBILITY_DATE_PATTERN = re.compile(r"^20[0-9]{2}-[0-9]{2}-[0-9]{2}$")
+
+CLOUDFLARE_WORKER_NAME = "dubnium"
+CLOUDFLARE_COMPATIBILITY_DATE = "2026-08-06"
+CLOUDFLARE_WRANGLER_VERSION = "4.114.0"
+CLOUDFLARE_ASSET_DIRECTORY = "./site"
+CLOUDFLARE_DEPLOY_COMMAND = "wrangler deploy"
+CLOUDFLARE_PREVIEW_COMMAND = "wrangler versions upload"
 
 TEXT_SUFFIXES = {
     ".md",
@@ -166,16 +176,17 @@ def check_cloudflare_build(errors: list[str]) -> None:
     if wrangler is None or package is None:
         return
 
-    if wrangler.get("name") != "dubnium":
-        errors.append("Cloudflare Worker name must be exactly 'dubnium'")
+    if wrangler.get("name") != CLOUDFLARE_WORKER_NAME:
+        errors.append(f"Cloudflare Worker name must be exactly '{CLOUDFLARE_WORKER_NAME}'")
 
-    compatibility_date = wrangler.get("compatibility_date")
-    if not isinstance(compatibility_date, str) or not COMPATIBILITY_DATE_PATTERN.fullmatch(compatibility_date):
-        errors.append("Cloudflare compatibility_date must use YYYY-MM-DD")
+    if wrangler.get("compatibility_date") != CLOUDFLARE_COMPATIBILITY_DATE:
+        errors.append(
+            f"Cloudflare compatibility_date must be exactly '{CLOUDFLARE_COMPATIBILITY_DATE}'"
+        )
 
     assets = wrangler.get("assets")
     asset_directory = assets.get("directory") if isinstance(assets, dict) else None
-    if not isinstance(asset_directory, str) or asset_directory.rstrip("/") != "./site":
+    if not isinstance(asset_directory, str) or asset_directory.rstrip("/") != CLOUDFLARE_ASSET_DIRECTORY:
         errors.append("Cloudflare assets.directory must resolve to './site/'")
 
     if package.get("private") is not True:
@@ -185,15 +196,15 @@ def check_cloudflare_build(errors: list[str]) -> None:
     if not isinstance(scripts, dict):
         errors.append("package.json scripts must be an object")
     else:
-        if scripts.get("deploy") != "wrangler deploy":
-            errors.append("package.json deploy script must be 'wrangler deploy'")
-        if scripts.get("preview") != "wrangler versions upload":
-            errors.append("package.json preview script must be 'wrangler versions upload'")
+        if scripts.get("deploy") != CLOUDFLARE_DEPLOY_COMMAND:
+            errors.append(f"package.json deploy script must be '{CLOUDFLARE_DEPLOY_COMMAND}'")
+        if scripts.get("preview") != CLOUDFLARE_PREVIEW_COMMAND:
+            errors.append(f"package.json preview script must be '{CLOUDFLARE_PREVIEW_COMMAND}'")
 
     dev_dependencies = package.get("devDependencies")
     wrangler_version = dev_dependencies.get("wrangler") if isinstance(dev_dependencies, dict) else None
-    if not isinstance(wrangler_version, str) or not EXACT_SEMVER_PATTERN.fullmatch(wrangler_version):
-        errors.append("Wrangler must be pinned to an exact semantic version")
+    if wrangler_version != CLOUDFLARE_WRANGLER_VERSION:
+        errors.append(f"Wrangler must be pinned exactly to {CLOUDFLARE_WRANGLER_VERSION}")
 
 
 def check_symlinks(errors: list[str]) -> None:
@@ -239,8 +250,10 @@ def check_private_coordinate_leakage(errors: list[str]) -> None:
         paths = [base] if base.is_file() else list(base.rglob("*.md"))
         for path in paths:
             text = path.read_text(encoding="utf-8")
-            if PRIVATE_COORDINATE_PATTERN.search(text):
-                errors.append(f"private repository coordinate in public documentation: {relative(path)}")
+            if PRIVATE_OWNER_REPOSITORY_PATTERN.search(text):
+                errors.append(f"private-owner repository coordinate in public documentation: {relative(path)}")
+            if PRIVATE_OWNER_ISSUE_PATTERN.search(text):
+                errors.append(f"private-owner issue coordinate in public documentation: {relative(path)}")
 
 
 def main() -> int:
