@@ -3,7 +3,7 @@
 Status: experimental
 Audience: maintainers
 
-The public Dubnium website is owned by this repository and deployed from `site/**` to Cloudflare Workers Static Assets.
+The public Dubnium website is owned by this repository and deployed from `site/**` to Cloudflare Workers Static Assets through Cloudflare Workers Builds Git integration.
 
 ## Source-of-truth boundaries
 
@@ -13,9 +13,10 @@ The public Dubnium website is owned by this repository and deployed from `site/*
 | Generated public guide | `site/docs/**` |
 | Publication disclosure rules | `PUBLICATION_BOUNDARY.md` and `scripts/validate_publication.py` |
 | Cloudflare project configuration | `wrangler.jsonc` |
-| CI validation and production deployment | `.github/workflows/pages.yml` |
+| GitHub-side validation | `.github/workflows/pages.yml` |
+| Preview and production deployment | Cloudflare Workers Builds Git integration |
 
-The workflow filename is retained for repository-policy compatibility. It no longer deploys GitHub Pages.
+The GitHub workflow filename is retained for repository-policy compatibility. It validates the public artifact but does not deploy GitHub Pages or perform a second Cloudflare production upload.
 
 ## Pull-request validation
 
@@ -31,43 +32,43 @@ The dry run validates that the checked-in Wrangler configuration can package the
 
 Generated-book pull requests remain more restrictive: automated publication changes must be confined to `site/docs/**`.
 
+Cloudflare independently builds non-production branches and reports deployment status and preview URLs back to GitHub. A preview proves that the connected Cloudflare project can build the branch, but it does not replace the repository publication guard.
+
 ## Production deployment
 
-A trusted push to `main` that changes the site or deployment inputs runs the same validation and then deploys with the pinned Cloudflare Wrangler GitHub Action.
+Cloudflare Workers Builds is the sole deployment authority. The connected Worker is named `dubnium`, matching `wrangler.jsonc`, and the production branch is expected to be `main`.
 
-The repository must provide these GitHub Actions secrets:
+Cloudflare's build configuration should use the repository root and the checked-in Wrangler configuration. For this static site, no separate application build step is required; the deploy command can use the Workers Builds default `npx wrangler deploy` behavior.
 
-- `CLOUDFLARE_ACCOUNT_ID`
-- `CLOUDFLARE_API_TOKEN`
-
-The API token should be scoped to the Cloudflare account and Worker needed for this site. Do not use a global API key or commit credentials to the repository.
-
-Production deployment fails closed when validation fails, credentials are absent, Wrangler deployment fails, or the action does not return a deployment URL.
+Do not add a second `wrangler deploy` step to GitHub Actions while Workers Builds is connected. Two deploy authorities create ordering races, duplicate credentials, and ambiguous rollback/evidence semantics.
 
 ## Verification
 
-For a deployment change, verify in this order:
+For a site or deployment change, verify in this order:
 
-1. pull-request publication validation is green;
+1. GitHub publication validation is green;
 2. Wrangler dry-run is green;
-3. merge to `main` completes the `Deploy public site` workflow successfully;
-4. the workflow reports a Cloudflare deployment URL;
-5. `/` serves the landing page;
-6. `/docs/` serves the generated public guide; and
-7. representative static assets and an unknown route behave according to `wrangler.jsonc`.
+3. the Cloudflare PR comment/check reports a successful preview deployment;
+4. the preview root serves the refreshed landing page;
+5. the preview `/docs/` route serves the generated public guide;
+6. merge to `main` produces a successful Cloudflare production build/deployment; and
+7. the production `/` and `/docs/` routes serve the merged revision.
 
-The deployment URL is evidence that Cloudflare accepted the deployment; it is not a substitute for checking the public routes.
+A successful preview demonstrates branch deployment health. Production remains separately verified after merge because branch previews are uploaded without replacing the active production deployment.
 
 ## Rollback
 
-Rollback is source-driven. Revert the offending `site/**`, validator, workflow, or Wrangler configuration change on `main` and allow the normal deployment workflow to publish the reverted state.
+Rollback is source-driven. Revert the offending `site/**`, validator, workflow, or Wrangler configuration change on `main` and allow Workers Builds to publish the reverted revision.
 
-Do not bypass destination validation by manually uploading a different artifact. Emergency Cloudflare-side rollback may restore availability, but the repository must subsequently be reconciled so that declared source and deployed content agree.
+Cloudflare version rollback may restore availability faster during an incident, but the repository must subsequently be reconciled so that declared source and the active deployment agree.
+
+Do not bypass destination validation by manually uploading a different long-lived artifact.
 
 ## Security properties
 
-- The deployment job has GitHub `contents: read` permission only.
-- Cloudflare credentials are supplied only to the trusted production deployment job, not pull-request validation.
-- Third-party GitHub Actions are pinned to immutable commit SHAs.
-- The public deployment consumes only `site/**`; it does not fetch private implementation source.
+- GitHub site validation runs with `contents: read` permission only.
+- GitHub Actions does not require Cloudflare deployment credentials for this site.
+- Cloudflare deployment authority is scoped to its connected Git repository and Worker build configuration.
+- Third-party GitHub Actions remain pinned to immutable commit SHAs.
+- The public deployment consumes only the public repository; it does not fetch private implementation source.
 - Private-to-public generated documentation is independently validated again in this repository before deployment.
