@@ -75,7 +75,6 @@
     .status.active{background:var(--active-bg);color:var(--active-text)}
     .status.experimental{background:var(--experimental-bg);color:var(--experimental-text)}
     .evidence{font-size:.86rem;color:var(--text-tertiary)!important}
-    .command{background:var(--m-bg);border:1px solid var(--border);border-radius:8px;padding:12px 14px;overflow:auto;line-height:1.55}
     .stack{display:grid;gap:8px;margin-top:14px}
     .layer{border-left:3px solid var(--accent);background:var(--card-bg);padding:10px 12px;border-radius:0 8px 8px 0}
     .layer strong{display:inline-block;min-width:82px}
@@ -187,10 +186,6 @@
       <div class="card"><h3><code>studio-local</code> · media</h3><p>Interactive media mode. The desktop stays available while media-priority policy suppresses competing compute workloads.</p></div>
       <div class="card"><h3><code>compute</code></h3><p>Dedicated compute and local-AI mode. Graphical work is released so compute-oriented services can receive the resources they require.</p></div>
     </div>
-    <pre class="command"><code>modectl status
-modectl request desktop
-modectl request studio-local
-modectl request compute</code></pre>
     <p class="note"><code>studio-local</code> is the current runtime identifier for media mode; older internal service names may still say studio or audio. Runtime modes choose among declared capabilities; they do not rewrite the NixOS definition, widen authorization, or bypass capability policy.</p>
   </section>
 
@@ -206,10 +201,6 @@ modectl request compute</code></pre>
       <div class="layer"><strong>Custom</strong> writable user fragments that can later be reviewed and promoted.</div>
       <div class="layer"><strong>Adopted</strong> fragments already represented by managed configuration and retained as reconciliation history.</div>
     </div>
-    <pre class="command"><code>user or application writes a setting
-→ configctl reports ownership and drift
-→ portable change is reviewed and promoted
-→ rebuild makes it the managed default</code></pre>
     <p class="note">This keeps the base system reproducible without forcing legitimate application preferences, local customization, or first-run mutable state into ad-hoc system mutation.</p>
   </section>
 
