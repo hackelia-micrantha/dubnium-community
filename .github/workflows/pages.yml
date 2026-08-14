@@ -1,28 +1,35 @@
 name: Deploy public site
 
 on:
+  pull_request:
+    branches: [main]
+    paths:
+      - "site/**"
+      - "scripts/validate_publication.py"
+      - "tests/test_validate_publication.py"
+      - "wrangler.jsonc"
+      - ".github/workflows/pages.yml"
   push:
     branches: [main]
     paths:
       - "site/**"
       - "scripts/validate_publication.py"
       - "tests/test_validate_publication.py"
+      - "wrangler.jsonc"
       - ".github/workflows/pages.yml"
   workflow_dispatch:
 
 permissions:
   contents: read
-  pages: write
-  id-token: write
 
 concurrency:
-  group: pages
+  group: public-site-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
   validate:
     runs-on: ubuntu-latest
-    timeout-minutes: 5
+    timeout-minutes: 10
     steps:
       - name: Checkout
         uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v6
@@ -35,27 +42,51 @@ jobs:
       - name: Validate publication boundary
         run: python3 scripts/validate_publication.py
 
+      - name: Validate Cloudflare static-assets deployment
+        run: npx --yes wrangler@4.114.0 deploy --dry-run
+
   deploy:
+    if: github.event_name != 'pull_request'
     needs: validate
     runs-on: ubuntu-latest
     timeout-minutes: 10
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - name: Checkout
         uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v6
         with:
           persist-credentials: false
 
-      - name: Configure Pages
-        uses: actions/configure-pages@983d7736d9b0ae728b81ab479565c72886d7745b # v5
+      - name: Require Cloudflare deployment credentials
+        env:
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+        run: |
+          set -euo pipefail
+          test -n "$CLOUDFLARE_ACCOUNT_ID" || {
+            echo "CLOUDFLARE_ACCOUNT_ID is not configured" >&2
+            exit 1
+          }
+          test -n "$CLOUDFLARE_API_TOKEN" || {
+            echo "CLOUDFLARE_API_TOKEN is not configured" >&2
+            exit 1
+          }
 
-      - name: Upload site artifact
-        uses: actions/upload-pages-artifact@7b1f4a764d45c48632c6b24a0339c27f5614fb0b # v4
+      - name: Deploy to Cloudflare Workers
+        id: deploy
+        uses: cloudflare/wrangler-action@ebbaa1584979971c8614a24965b4405ff95890e0 # v4.0.0
         with:
-          path: site
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          wranglerVersion: "4.114.0"
+          command: deploy
 
-      - name: Deploy
-        id: deployment
-        uses: actions/deploy-pages@d6db90164ac5ed86f2b6aed7e0febac5b3c0c03e # v4
+      - name: Record deployment URL
+        env:
+          DEPLOYMENT_URL: ${{ steps.deploy.outputs.deployment-url }}
+        run: |
+          set -euo pipefail
+          test -n "$DEPLOYMENT_URL" || {
+            echo "Cloudflare deployment did not return a deployment URL" >&2
+            exit 1
+          }
+          printf 'Cloudflare deployment: %s\n' "$DEPLOYMENT_URL" >> "$GITHUB_STEP_SUMMARY"
