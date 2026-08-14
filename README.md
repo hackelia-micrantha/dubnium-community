@@ -31,18 +31,19 @@ These concepts are directional architecture, not a claim that every deployment f
 
 This repository is the sole authority for the public web surface.
 
-| Path | Ownership |
+| Path / system | Ownership |
 | --- | --- |
 | `site/index.html` and adjacent assets | Hand-maintained public landing page |
 | `site/docs/**` | Generated public mdBook artifact; changed only through the guarded publication path |
 | `PUBLICATION_BOUNDARY.md` | Normative public disclosure and publication contract |
 | `scripts/validate_publication.py` | Destination-side disclosure, metadata, size, and path guard |
 | `wrangler.jsonc` | Cloudflare Workers Static Assets configuration |
-| `.github/workflows/pages.yml` | Pull-request validation and trusted `main` deployment to Cloudflare |
+| `.github/workflows/pages.yml` | GitHub-side publication validation and Wrangler dry run |
+| Cloudflare Workers Builds Git integration | Preview and production deployment authority |
 
-The deployment workflow filename is retained for repository-policy compatibility; the supported deployment target is Cloudflare Workers, not GitHub Pages.
+The GitHub workflow filename is retained for repository-policy compatibility; it does not deploy GitHub Pages. GitHub Actions validates the repository artifact while Cloudflare's connected Git integration performs deployments. Maintaining one deploy authority avoids duplicate production uploads and duplicated Cloudflare credentials.
 
-Every site-related pull request runs publication tests, destination validation, and a Wrangler deployment dry run. Trusted `main` changes deploy only after those checks pass. See [docs/public-site-deployment.md](docs/public-site-deployment.md) for the deployment and rollback contract.
+Every site-related pull request runs publication tests, destination validation, and a Wrangler deployment dry run. Cloudflare independently creates branch previews and reports build status back to GitHub. See [docs/public-site-deployment.md](docs/public-site-deployment.md) for verification and rollback guidance.
 
 The generated book is a curated conceptual overview. Its producer uses an explicit source-file allowlist; unlinked source pages are not a publication mechanism. Public output must not contain production topology, policy internals, prompts, memory behavior, privileged providers, host configuration, credentials, operational evidence, private repository coordinates, private commits, workflow identifiers, or private issue links.
 
@@ -97,7 +98,7 @@ Public content must not depend on private Git repositories, private registries, 
 
 `Contract CI / contract-gate` runs on pull requests and `main` pushes. It validates change classification, repository policy, GitHub Actions trust boundaries, dependency changes, bounded contract parsing, change records, and the validator test suite.
 
-`Contract Release CI / consume-release` builds the candidate bundle twice, requires byte-for-byte reproducibility, uploads it as a workflow artifact, and verifies it from a separate consumer job. Public-site deployment independently validates the complete `site/` artifact before Cloudflare deployment.
+`Contract Release CI / consume-release` builds the candidate bundle twice, requires byte-for-byte reproducibility, uploads it as a workflow artifact, and verifies it from a separate consumer job. Public-site validation independently checks the complete `site/` artifact and Wrangler packaging; Cloudflare Workers Builds independently reports preview and production build status.
 
 Repository settings are expected to require the aggregate checks, but committed workflow and policy files do not prove that GitHub protection is active. Verify active settings with `scripts/apply_repository_policy.py check` before creating a release tag. See [docs/ci-security.md](docs/ci-security.md) and [docs/branch-protection.md](docs/branch-protection.md).
 
