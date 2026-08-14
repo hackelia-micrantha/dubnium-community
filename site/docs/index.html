@@ -3,12 +3,12 @@
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
-        <title>Dubnium Documentation - Dubnium</title>
+        <title>Dubnium - Dubnium</title>
 
 
         <!-- Custom HTML head -->
 
-        <meta name="description" content="Public Dubnium overview documentation">
+        <meta name="description" content="Public overview of Dubnium engineering-environment concepts, contracts, governance, and safety">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="theme-color" content="#ffffff">
 
@@ -35,10 +35,10 @@
             const path_to_root = "";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "searchindex-d035b8e1.js";
+            window.path_to_searchindex_js = "searchindex-6be2a01f.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="toc-99e585f3.js"></script>
+        <script src="toc-ab6e6d74.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -174,85 +174,35 @@
 
                 <div id="mdbook-content" class="content">
                     <main>
-                        <h1 id="dubnium-documentation"><a class="header" href="#dubnium-documentation">Dubnium Documentation</a></h1>
-<p>Operator entrypoint for installing, bringing up, and understanding the Dubnium workstation and AI control plane.</p>
-<p>Dubnium is a rebuildable workstation and AI control-plane experiment for local-first developer workflows, model routing, memory-assisted tooling, and governed automation. It explores how a personal machine can be treated as a coherent operating environment instead of a loose collection of tools: reproducible configuration, explicit modes, local-first AI, reusable context, and policy-aware automation.</p>
-<blockquote>
-<p><strong>Note:</strong> Internal documentation provides substantially greater depth on all topics. This external guide covers concepts at a summary level.</p>
-</blockquote>
-<h2 id="choose-your-path"><a class="header" href="#choose-your-path">Choose Your Path</a></h2>
+                        <h1 id="dubnium"><a class="header" href="#dubnium">Dubnium</a></h1>
+<p>Dubnium is a reproducible, observable, governed engineering environment for developer workstations, smaller client environments, build and compute nodes, and AI-assisted automation.</p>
+<p>The project is built around four system qualities:</p>
 <ul>
-<li><strong>Installing</strong> — fresh install and custom installer USB</li>
-<li><strong>Bring-up</strong> — first bring-up and transition testing</li>
-<li><strong>Local inference</strong> — model seeding and LLM server setup</li>
-<li><strong>Memory system</strong> — persistent context and memory service</li>
-<li><strong>Headless VM</strong> — headless documentation boundary and bring-up</li>
-<li><strong>WSL</strong> — WSL documentation and bring-up</li>
-<li><strong>CI</strong> — GitHub Actions runner</li>
-<li><strong>Flake management</strong> — dubctl for flake input and operator state</li>
+<li><strong>reproducibility</strong> — environments can be rebuilt, replaced, and reviewed from declared inputs;</li>
+<li><strong>observability</strong> — runtime state, failures, resource pressure, security posture, and significant operations can be explained from bounded evidence;</li>
+<li><strong>security</strong> — connectivity, identity, capabilities, and automated effects remain explicit rather than ambient;</li>
+<li><strong>development acceleration</strong> — project environments, builds, automation, and AI support should reduce setup and recovery cost without making the workstation fragile.</li>
 </ul>
-<h2 id="current-defaults"><a class="header" href="#current-defaults">Current Defaults</a></h2>
-<div class="table-wrapper">
-<table>
-<thead>
-<tr><th>Option</th><th>Default</th><th>Note</th></tr>
-</thead>
-<tbody>
-<tr><td><code>dubnium.boot.defaultMode</code></td><td><code>"desktop"</code></td><td>Boots into interactive desktop mode</td></tr>
-<tr><td><code>dubnium.profiles</code></td><td><code>[ "base" ]</code></td><td>Only base profile active by default</td></tr>
-<tr><td><code>dubnium.targets.*.enable</code></td><td><code>false</code></td><td>All targets opt-in (graphical, studio, AI, compute)</td></tr>
-<tr><td><code>dubnium.llm.enable</code></td><td><code>false</code></td><td>LLM server opt-in</td></tr>
-<tr><td><code>dubnium.memory.enable</code></td><td><code>false</code></td><td>Memory service opt-in</td></tr>
-<tr><td><code>dubnium.k3s.enable</code></td><td><code>false</code></td><td>k3s cluster opt-in</td></tr>
-<tr><td><code>dubnium.plano.enable</code></td><td><code>false</code></td><td>Plano routing opt-in</td></tr>
-<tr><td><code>dubnium.githubRunner.enable</code></td><td><code>false</code></td><td>GitHub Actions runner opt-in</td></tr>
-<tr><td><code>dubnium.laboratory.enable</code></td><td><code>false</code></td><td>Laboratory cluster bootstrap opt-in</td></tr>
-<tr><td><code>dubnium.integrations.dotfiles.enable</code></td><td><code>true</code></td><td>Dotfiles integration on by default</td></tr>
-<tr><td><code>dubnium.graphicalCredentialStore.enable</code></td><td><code>true</code></td><td>Graphical credential store on by default</td></tr>
-<tr><td>—</td><td>Secrets outside Nix source</td><td>Runtime secrets stay in SOPS/age or host-local files</td></tr>
-<tr><td>—</td><td>Flake input ops via <code>dubctl</code></td><td>Installed by default on workstation</td></tr>
-</tbody>
-</table>
-</div>
-<h2 id="public-guide"><a class="header" href="#public-guide">Public Guide</a></h2>
-<p>This public guide covers the project at a conceptual level:</p>
+<p>Dubnium is local-first, not local-only. A useful endpoint should remain diagnosable and recoverable without a central control plane while still being able to use remote services through explicit contracts and policy boundaries.</p>
+<h2 id="deployment-is-compositional"><a class="header" href="#deployment-is-compositional">Deployment is compositional</a></h2>
+<p>Dubnium is not limited to one workstation shape. The same architectural contracts can support a small client VM, a richer interactive workstation, a build or compute node, a remote managed development environment, or a stronger security/admin environment. Each deployment enables only the capabilities it needs.</p>
+<p>AI is one capability of the environment, not the authority for the environment. Deterministic configuration, runtime observation, policy, durable state, and recovery remain useful without a model.</p>
+<h2 id="purpose-of-this-guide"><a class="header" href="#purpose-of-this-guide">Purpose of this guide</a></h2>
+<p>This guide describes public-safe goals, principles, architecture, interoperability contracts, governance, and direction. It is intentionally conceptual.</p>
+<p>It does <strong>not</strong> document production topology, machine identities, hardware assignments, endpoints, service wiring, credentials, policy internals, prompts, model-routing heuristics, private data, privileged providers, deployment procedures, recovery procedures, operational evidence, or private delivery plans.</p>
+<p>The public repository is independently useful and buildable. It is not a sanitized mirror of a private runtime.</p>
+<h2 id="start-here"><a class="header" href="#start-here">Start here</a></h2>
 <ul>
-<li><a href="architecture.html">Architecture</a> explains the broad system model.</li>
-<li><a href="ai-control-plane.html">AI Control Plane</a> describes model routing and governed AI usage.</li>
-<li><a href="memory.html">Memory</a> explains the public memory model.</li>
-<li><a href="governance.html">Governance</a> describes the automation control posture.</li>
-</ul>
-<p>Public docs are curated overviews. They explain what Dubnium explores and why the design choices matter. Trusted-operator details, including exact commands, topology, service wiring, recovery procedures, and security-sensitive implementation details, live in the internal documentation set.</p>
-<h2 id="install-source-contract"><a class="header" href="#install-source-contract">Install Source Contract</a></h2>
-<ul>
-<li>Installer media labels: <code>DUB-ISO</code> and <code>DUB-SEED</code></li>
-<li>Bootstrap from local source, no install-time GitHub token</li>
-<li>Post-install source reconciliation is explicit</li>
-</ul>
-<h2 id="ownership-boundaries"><a class="header" href="#ownership-boundaries">Ownership Boundaries</a></h2>
-<div class="table-wrapper">
-<table>
-<thead>
-<tr><th>Owner</th><th>Responsibility</th></tr>
-</thead>
-<tbody>
-<tr><td>Dubnium</td><td>NixOS system config, workstation services, install media, runtime units</td></tr>
-<tr><td>Dotfiles</td><td>Home Manager user config, user shell, user-level tool configuration</td></tr>
-<tr><td>Runtime secret provider</td><td>Host and user secrets outside Git-tracked Nix source</td></tr>
-<tr><td>Model/router repos</td><td>Client policy, routing schemas, and model-router behavior</td></tr>
-</tbody>
-</table>
-</div>
-<h2 id="sanity-checks"><a class="header" href="#sanity-checks">Sanity Checks</a></h2>
-<pre><code class="language-bash">nix flake check
-sudo nixos-rebuild build --flake .#workstation
-mdbook build
-</code></pre>
-<p>When building docs from Windows, run <code>mdbook build</code> inside the NixOS WSL distro with <code>mdbook</code> and <code>mdbook-mermaid</code> in the shell.</p>
-<h2 id="known-warnings"><a class="header" href="#known-warnings">Known Warnings</a></h2>
-<ul>
-<li><code>mdbook-mermaid</code> may warn about a minor mdBook version mismatch; that warning is non-fatal when the HTML backend finishes successfully.</li>
-<li>vLLM runtime setup should avoid broad PyTorch, audio, JAX, or TPU extras unless explicitly required.</li>
+<li><a href="principles.html">Principles</a> describes the design posture.</li>
+<li><a href="vision.html">Vision and Deployment Model</a> explains the long-term product shape.</li>
+<li><a href="architecture.html">Conceptual Architecture</a> describes responsibility and source-of-truth boundaries.</li>
+<li><a href="reproducibility.html">Reproducible Engineering</a> covers replacement, project environments, and supply-chain trust.</li>
+<li><a href="observability.html">Observability and Evidence</a> separates host, organizational, and personal observability.</li>
+<li><a href="ai-and-automation.html">AI and Automation</a> explains how model-assisted work fits without becoming ambient authority.</li>
+<li><a href="governance.html">Governance and Safety</a> describes bounded effects and trust boundaries.</li>
+<li><a href="public-contracts.html">Public Contracts</a> explains what is suitable for interoperability.</li>
+<li><a href="status.html">Public Status and Direction</a> separates public capabilities from directional work.</li>
+<li><a href="community.html">Community and Contributions</a> points to the public source of truth.</li>
 </ul>
 
                     </main>
@@ -260,7 +210,7 @@ mdbook build
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
 
-                            <a rel="next prefetch" href="ai-control-plane.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                            <a rel="next prefetch" href="principles.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                                 <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
                             </a>
 
@@ -271,7 +221,7 @@ mdbook build
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
 
-                    <a rel="next prefetch" href="ai-control-plane.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                    <a rel="next prefetch" href="principles.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                         <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
                     </a>
             </nav>

@@ -3,12 +3,12 @@
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
-        <title>Architecture Overview - Dubnium</title>
+        <title>Conceptual Architecture - Dubnium</title>
 
 
         <!-- Custom HTML head -->
 
-        <meta name="description" content="Public Dubnium overview documentation">
+        <meta name="description" content="Public overview of Dubnium engineering-environment concepts, contracts, governance, and safety">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="theme-color" content="#ffffff">
 
@@ -35,10 +35,10 @@
             const path_to_root = "";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "searchindex-d035b8e1.js";
+            window.path_to_searchindex_js = "searchindex-6be2a01f.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="toc-99e585f3.js"></script>
+        <script src="toc-ab6e6d74.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -174,57 +174,54 @@
 
                 <div id="mdbook-content" class="content">
                     <main>
-                        <h1 id="architecture"><a class="header" href="#architecture">Architecture</a></h1>
-<p>Dubnium organizes a NixOS workstation around operating modes, composable profiles, and a control plane that separates interactive and background workloads. It treats a workstation as a governed operating environment: reproducible configuration, explicit runtime posture, local-first AI, and controlled automation.</p>
-<h2 id="system-themes"><a class="header" href="#system-themes">System themes</a></h2>
-<p>The public architecture view is organized around a few ideas:</p>
+                        <h1 id="conceptual-architecture"><a class="header" href="#conceptual-architecture">Conceptual Architecture</a></h1>
+<p>Dubnium treats an engineering endpoint as a governed operating environment rather than a collection of unrelated tools.</p>
+<h2 id="conceptual-layers"><a class="header" href="#conceptual-layers">Conceptual layers</a></h2>
+<pre class="mermaid">flowchart TB
+    U[People and developer tools] --&gt; E[Engineering endpoint]
+    C[Reproducible configuration] --&gt; E
+    E --&gt; G[Governed capability boundary]
+    G --&gt; D[Development and operating-system capabilities]
+    G --&gt; A[AI and automation capabilities]
+    D --&gt; S[Durable state and bounded evidence]
+    A --&gt; S
+    E --&gt; O[Runtime observation]
+    O --&gt; S
+</pre>
+
+<p>The diagram communicates responsibilities, not production topology.</p>
 <ul>
-<li><strong>Rebuildability</strong>: the system should be recoverable from declared configuration and source-controlled intent.</li>
-<li><strong>Operating modes</strong>: interactive, compute, automation, and AI workloads should not silently compete for the same resources.</li>
-<li><strong>Local-first AI</strong>: local model use should remain practical while still allowing external model routing when appropriate.</li>
-<li><strong>Governed transitions</strong>: changes in posture should be explicit, observable, and reversible.</li>
-<li><strong>Layered ownership</strong>: system configuration, user configuration, runtime state, and generated artifacts need clear boundaries.</li>
+<li><strong>Reproducible configuration</strong> declares intended system, user, and project inputs.</li>
+<li><strong>Engineering endpoint</strong> composes only the capabilities required by its deployment form.</li>
+<li><strong>Governed capability boundary</strong> separates a request from authorization and effect execution.</li>
+<li><strong>Development and operating-system capabilities</strong> perform bounded engineering work.</li>
+<li><strong>AI and automation capabilities</strong> may assist reasoning and workflows without inheriting unrestricted authority.</li>
+<li><strong>Runtime observation</strong> reports what is actually happening rather than assuming intended state succeeded.</li>
+<li><strong>Durable state and bounded evidence</strong> preserve exact domain state and reviewable outcomes.</li>
 </ul>
-<h2 id="operating-modes"><a class="header" href="#operating-modes">Operating modes</a></h2>
-<p>A mode defines the runtime character of the system — whether it behaves as a desktop workstation, a headless AI compute node, a development environment, or some combination. The system boots into a configured default mode and can transition between modes at runtime. Modes control which services are active, what resources are allocated, and how the system responds to workload demands. This prevents AI batch jobs from competing with interactive desktop use and keeps the automation surface intentional.</p>
-<h2 id="profiles"><a class="header" href="#profiles">Profiles</a></h2>
-<p>Profiles are opt-in named sets of services. Only the minimal <code>base</code> profile is active by default. Additional profiles enable:</p>
-<div class="table-wrapper">
-<table>
-<thead>
-<tr><th>Profile</th><th>Purpose</th></tr>
-</thead>
-<tbody>
-<tr><td><code>graphical</code></td><td>Desktop environment, display server, input</td></tr>
-<tr><td><code>studio</code></td><td>Creative and development tooling</td></tr>
-<tr><td><code>AI</code></td><td>LLM serving, model routing, memory</td></tr>
-<tr><td><code>compute</code></td><td>Batch processing, CI runners, k3s</td></tr>
-</tbody>
-</table>
-</div>
-<p>Profiles compose — you can enable AI on a graphical system or run a headless compute node with no desktop at all.</p>
-<h2 id="host-composition"><a class="header" href="#host-composition">Host composition</a></h2>
-<p>The repository builds installable NixOS configurations for multiple targets: a physical workstation, a headless VM for validation, WSL on Windows, and container hosts. Shared modules live in the flake and are composed per-target, so the same AI stack works across form factors with target-specific hardware configuration.</p>
-<h2 id="control-plane"><a class="header" href="#control-plane">Control plane</a></h2>
-<p>The control plane routes AI tooling through explicit policies rather than wiring clients directly to model endpoints. This allows:</p>
-<ul>
-<li>Intentional model selection per workload</li>
-<li>Separation of interactive and batch inference</li>
-<li>Local-first workflows that degrade gracefully when offline</li>
-<li>Governed tool access that preserves audit evidence</li>
-</ul>
-<h2 id="public-boundary"><a class="header" href="#public-boundary">Public boundary</a></h2>
-<p>This is a conceptual map. Operational topology, service wiring, hardware assignments, deployment procedures, and recovery paths belong in trusted-operator documentation.</p>
+<h2 id="source-of-truth-hierarchy"><a class="header" href="#source-of-truth-hierarchy">Source-of-truth hierarchy</a></h2>
+<p>Different questions have different authorities:</p>
+<pre><code class="language-text">declarative intent       -&gt; versioned configuration
+observed runtime state   -&gt; operating-system/runtime observation
+durable domain state     -&gt; workflow and operation stores
+event evidence           -&gt; bounded logs and events
+derived understanding    -&gt; reports, dashboards, and journals
+</code></pre>
+<p>A dashboard does not become runtime truth. A log does not become authorization. A previous successful operation does not grant authority for a future one.</p>
+<h2 id="endpoint-and-central-responsibilities"><a class="header" href="#endpoint-and-central-responsibilities">Endpoint and central responsibilities</a></h2>
+<p>A Dubnium endpoint should remain locally inspectable. Optional central services may aggregate posture, provide shared resources, or coordinate policy, but central state should carry freshness and uncertainty rather than overwrite contradictory endpoint facts.</p>
+<h2 id="public-abstraction-boundary"><a class="header" href="#public-abstraction-boundary">Public abstraction boundary</a></h2>
+<p>The public model intentionally omits machine identities, networks, endpoints, service placement, provider selection, runtime modes, resource assignments, data schemas, policy thresholds, credentials, and recovery procedures. Those are deployment and implementation concerns rather than requirements for understanding the architecture.</p>
 
                     </main>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
-                            <a rel="prev" href="scheduling.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                            <a rel="prev" href="vision.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                                 <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
                             </a>
 
-                            <a rel="next prefetch" href="ai-architecture.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                            <a rel="next prefetch" href="reproducibility.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                                 <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
                             </a>
 
@@ -234,11 +231,11 @@
             </div>
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
-                    <a rel="prev" href="scheduling.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                    <a rel="prev" href="vision.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                         <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
                     </a>
 
-                    <a rel="next prefetch" href="ai-architecture.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                    <a rel="next prefetch" href="reproducibility.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                         <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
                     </a>
             </nav>

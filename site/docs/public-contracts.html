@@ -3,12 +3,12 @@
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
-        <title>Decisions - Dubnium</title>
+        <title>Public Contracts - Dubnium</title>
 
 
         <!-- Custom HTML head -->
 
-        <meta name="description" content="Public Dubnium overview documentation">
+        <meta name="description" content="Public overview of Dubnium engineering-environment concepts, contracts, governance, and safety">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="theme-color" content="#ffffff">
 
@@ -35,10 +35,10 @@
             const path_to_root = "";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "searchindex-d035b8e1.js";
+            window.path_to_searchindex_js = "searchindex-6be2a01f.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="toc-99e585f3.js"></script>
+        <script src="toc-ab6e6d74.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -174,64 +174,48 @@
 
                 <div id="mdbook-content" class="content">
                     <main>
-                        <h1 id="decisions"><a class="header" href="#decisions">Decisions</a></h1>
-<p>Dubnium’s architecture decision records capture the rationale behind current defaults, boundaries, and tradeoffs. The architecture and runbook pages describe current guidance; the ADRs explain why those choices were made.</p>
-<h2 id="runtime-and-host-behavior"><a class="header" href="#runtime-and-host-behavior">Runtime and host behavior</a></h2>
-<div class="table-wrapper">
-<table>
-<thead>
-<tr><th>ADR</th><th>Decision</th></tr>
-</thead>
-<tbody>
-<tr><td>ADR-0001</td><td>Runtime switching first — modes before full profile abstraction</td></tr>
-<tr><td>ADR-0002</td><td>Studio-local is a desktop overlay, not an isolated target</td></tr>
-<tr><td>ADR-0004</td><td>Boot defaults to desktop mode</td></tr>
-<tr><td>ADR-0005</td><td>k3s stays stable across modes in v1</td></tr>
-<tr><td>ADR-0006</td><td>Tailscale is the primary remote connectivity layer</td></tr>
-<tr><td>ADR-0007</td><td>Headless VM as the CI-safe validation target</td></tr>
-</tbody>
-</table>
-</div>
-<h2 id="ai-and-model-serving"><a class="header" href="#ai-and-model-serving">AI and model serving</a></h2>
-<div class="table-wrapper">
-<table>
-<thead>
-<tr><th>ADR</th><th>Decision</th></tr>
-</thead>
-<tbody>
-<tr><td>ADR-0003</td><td>vLLM is compute-only in v1 — not mixed with desktop AI</td></tr>
-<tr><td>ADR-0008</td><td>Seed local vLLM model bundles, do not bake weights into the ISO</td></tr>
-<tr><td>ADR-0010</td><td>Keep persistent memory separate from the vLLM runtime</td></tr>
-<tr><td>ADR-0013</td><td>llama-server as the default local inference backend</td></tr>
-<tr><td>ADR-0014</td><td>Active models follow a symlink schema for runtime model switching</td></tr>
-<tr><td>ADR-0017</td><td>AI control plane architecture — policy above routing above runtimes</td></tr>
-</tbody>
-</table>
-</div>
-<h2 id="ownership-state-and-tooling"><a class="header" href="#ownership-state-and-tooling">Ownership, state, and tooling</a></h2>
-<div class="table-wrapper">
-<table>
-<thead>
-<tr><th>ADR</th><th>Decision</th></tr>
-</thead>
-<tbody>
-<tr><td>ADR-0009</td><td>Manage runtime secrets outside Nix source — SOPS and host-local files</td></tr>
-<tr><td>ADR-0011</td><td>External ownership boundaries — Dubnium vs dotfiles vs model-router</td></tr>
-<tr><td>ADR-0012</td><td>Tool boundary design — dubctl, configctl, and modectl scopes</td></tr>
-<tr><td>ADR-0015</td><td>Host-local generated state protocol — <code>/etc/dubnium/local/generated.nix</code></td></tr>
-<tr><td>ADR-0016</td><td>Service registry eval pattern — flake-evaluated service metadata consumed at runtime</td></tr>
-</tbody>
-</table>
-</div>
+                        <h1 id="public-contracts"><a class="header" href="#public-contracts">Public Contracts</a></h1>
+<p>Dubnium publishes contracts when interoperability is useful and disclosure does not require publishing the production implementation behind the boundary.</p>
+<h2 id="suitable-public-material"><a class="header" href="#suitable-public-material">Suitable public material</a></h2>
+<ul>
+<li>normative protocol and schema definitions;</li>
+<li>canonicalization and compatibility rules;</li>
+<li>request, response, error, state, and evidence envelopes;</li>
+<li>synthetic positive, negative, and adversarial fixtures;</li>
+<li>implementation-neutral conformance tests;</li>
+<li>thin clients, validators, and authoring helpers;</li>
+<li>minimal no-effect reference implementations;</li>
+<li>release checksums, software bills of materials, and public attestations.</li>
+</ul>
+<p>Public contracts may eventually cover additional capability, scheduling, state, or model-independent interfaces when there is a stable interoperability need. Publication follows usefulness and disclosure review rather than mirroring internal APIs by default.</p>
+<h2 id="material-that-remains-private"><a class="header" href="#material-that-remains-private">Material that remains private</a></h2>
+<ul>
+<li>production planning, prompts, routing, retries, and fallbacks;</li>
+<li>production policy, approvals, thresholds, and trusted identities;</li>
+<li>private data ranking, retention, consolidation, retrieval, and stored content;</li>
+<li>privileged providers, deployment workers, and recovery behavior;</li>
+<li>host and fleet topology, credentials, operator configuration, and runbooks;</li>
+<li>real logs, incidents, traces, evidence, and operational measurements.</li>
+</ul>
+<h2 id="compatibility-model"><a class="header" href="#compatibility-model">Compatibility model</a></h2>
+<p>Public contracts are versioned and classified by stability. Consumers should pin immutable releases, verify digests and provenance, and exercise conformance tests at their integration boundary.</p>
+<p>A contract describes observable behavior. It does not promise a particular internal architecture, service layout, implementation language, deployment model, or provider.</p>
+<h2 id="disclosure-model"><a class="header" href="#disclosure-model">Disclosure model</a></h2>
+<p>A contract crosses the public boundary only when its external value exceeds the cost and risk of maintaining it publicly. Private implementation details are not documentation debt merely because a public contract exists.</p>
+<h2 id="public-source-of-truth"><a class="header" href="#public-source-of-truth">Public source of truth</a></h2>
+<p>Specifications, schemas, conformance assets, reference implementations, release metadata, and community documentation are maintained in the <a href="https://github.com/hackelia-micrantha/dubnium-community">Dubnium Community repository</a>.</p>
 
                     </main>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
-                            <a rel="prev" href="mode-controller.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                            <a rel="prev" href="governance.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                                 <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
                             </a>
 
+                            <a rel="next prefetch" href="status.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                            </a>
 
                         <div style="clear: both"></div>
                     </nav>
@@ -239,10 +223,13 @@
             </div>
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
-                    <a rel="prev" href="mode-controller.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                    <a rel="prev" href="governance.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                         <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
                     </a>
 
+                    <a rel="next prefetch" href="status.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                    </a>
             </nav>
 
         </div>

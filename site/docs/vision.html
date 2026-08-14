@@ -3,12 +3,12 @@
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
-        <title>Control Plane - Dubnium</title>
+        <title>Vision and Deployment Model - Dubnium</title>
 
 
         <!-- Custom HTML head -->
 
-        <meta name="description" content="Public Dubnium overview documentation">
+        <meta name="description" content="Public overview of Dubnium engineering-environment concepts, contracts, governance, and safety">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="theme-color" content="#ffffff">
 
@@ -35,10 +35,10 @@
             const path_to_root = "";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "searchindex-d035b8e1.js";
+            window.path_to_searchindex_js = "searchindex-6be2a01f.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="toc-99e585f3.js"></script>
+        <script src="toc-ab6e6d74.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -174,30 +174,47 @@
 
                 <div id="mdbook-content" class="content">
                     <main>
-                        <h1 id="control-plane"><a class="header" href="#control-plane">Control Plane</a></h1>
-<p>The control plane reconciles requested mode intent with runtime facts. It is a local privileged authority, not a convenience shell script.</p>
-<h2 id="authority-model"><a class="header" href="#authority-model">Authority model</a></h2>
-<p>Transition execution is privileged — the operator path is <code>sudo modectl request &lt;mode&gt;</code> or a root-owned systemd service. Unprivileged users must not mutate observed state or forge transition success.</p>
-<h2 id="state-model"><a class="header" href="#state-model">State model</a></h2>
-<p>Live state lives under <code>/run/mode-controller</code>: desired mode, current mode, lock, last transition, last guard results, capability placement, and hardware topology. Persistent transition history lives as an append-only JSONL event stream under <code>/var/lib/mode-controller/events.jsonl</code>.</p>
-<h2 id="reconciliation-sequence"><a class="header" href="#reconciliation-sequence">Reconciliation sequence</a></h2>
-<p>Every requested transition follows a ten-step sequence: acquire lock, observe current state, validate target, validate capability placement, run guards, execute bounded actions, re-observe, classify final state, record outcome, release lock. If target predicates fail after mutation, the controller attempts rollback or reports a failed transition.</p>
-<h2 id="observer-contract"><a class="header" href="#observer-contract">Observer contract</a></h2>
-<p>The observer derives current state from evidence only. It must not trust desired state as proof of success. Required signals include graphical session presence, compositor state, target isolation status, service markers, GPU evidence, and controller lock state. The observer reports <code>unknown</code>, <code>transitioning</code>, <code>degraded</code>, or <code>failed-transition</code> instead of pretending a stable target has been reached.</p>
-<h2 id="guards"><a class="header" href="#guards">Guards</a></h2>
-<p>Guards are small deterministic checks with stable exit codes: 0 for pass, 10-19 for policy block, 20+ for execution error. The initial set covers target reachability, audio idle, graphical session terminability, GPU display release, LLM server drainability, capability presence, memory headroom, and persistence paths.</p>
-<h2 id="failure-semantics"><a class="header" href="#failure-semantics">Failure semantics</a></h2>
-<p>Blocked transitions (guard policy block) leave desired state requested without rewriting current state. Execution errors mean a guard or action could not run reliably. Degraded state means the system is usable but does not satisfy all guarantees. Failed transitions mean no stable contract could be established.</p>
+                        <h1 id="vision-and-deployment-model"><a class="header" href="#vision-and-deployment-model">Vision and Deployment Model</a></h1>
+<p>Dubnium’s long-term direction is a family of reproducible engineering environments built from shared contracts rather than one machine that must perform every role.</p>
+<h2 id="product-shape"><a class="header" href="#product-shape">Product shape</a></h2>
+<pre><code class="language-text">Dubnium
+├── Client environment / VM
+│   └── small, replaceable development and access environment
+├── Workstation
+│   └── interactive environment with richer local device or compute access
+├── Build / compute node
+│   └── bounded non-interactive build, CI, cache, or compute capacity
+├── Remote managed environment
+│   └── sensitive work kept on infrastructure with an appropriate trust boundary
+└── Security / administrative environment
+    └── stronger isolation and access controls selected by threat model
+</code></pre>
+<p>These are deployment compositions, not identities or permission levels. A deployment should enable only the services and capabilities justified by its use case.</p>
+<h2 id="why-a-smaller-client-environment-matters"><a class="header" href="#why-a-smaller-client-environment-matters">Why a smaller client environment matters</a></h2>
+<p>A small managed VM can make project setup, replacement, credential cleanup, and offboarding easier without forcing the user’s entire physical machine into one configuration model. It can also give teams a consistent development substrate while leaving heavyweight build, AI, or infrastructure workloads elsewhere.</p>
+<p>A VM on an unmanaged physical host is <strong>not</strong> a confidentiality boundary against that host. If the host itself is outside the trust model, sensitive source, data, or credentials may require a managed endpoint or remote execution environment instead of stronger claims about the guest.</p>
+<h2 id="identity-posture-and-authority-stay-separate"><a class="header" href="#identity-posture-and-authority-stay-separate">Identity, posture, and authority stay separate</a></h2>
+<p>The architecture intentionally distinguishes:</p>
+<pre><code class="language-text">network reachable
+identity authenticated
+endpoint posture known
+operation authorized
+</code></pre>
+<p>Each can inform policy, but one should not silently stand in for another.</p>
+<h2 id="local-operation-remains-important"><a class="header" href="#local-operation-remains-important">Local operation remains important</a></h2>
+<p>Central inventory, observability, policy distribution, or remote services may be useful for larger deployments. They should extend local behavior rather than becoming the only way to inspect, diagnose, or recover an endpoint.</p>
+<h2 id="direction-not-a-support-claim"><a class="header" href="#direction-not-a-support-claim">Direction, not a support claim</a></h2>
+<p>This page describes a public architectural direction. It does not claim that every deployment form, fleet function, identity system, or remote environment is currently implemented or generally available.</p>
 
                     </main>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
-                            <a rel="prev" href="ai-architecture.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                            <a rel="prev" href="principles.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                                 <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
                             </a>
 
-                            <a rel="next prefetch" href="profiles-and-modes.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                            <a rel="next prefetch" href="architecture.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                                 <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
                             </a>
 
@@ -207,11 +224,11 @@
             </div>
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
-                    <a rel="prev" href="ai-architecture.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                    <a rel="prev" href="principles.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                         <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
                     </a>
 
-                    <a rel="next prefetch" href="profiles-and-modes.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                    <a rel="next prefetch" href="architecture.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                         <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
                     </a>
             </nav>

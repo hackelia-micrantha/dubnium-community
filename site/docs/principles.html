@@ -3,12 +3,12 @@
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
-        <title>Capability Map - Dubnium</title>
+        <title>Principles - Dubnium</title>
 
 
         <!-- Custom HTML head -->
 
-        <meta name="description" content="Public Dubnium overview documentation">
+        <meta name="description" content="Public overview of Dubnium engineering-environment concepts, contracts, governance, and safety">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="theme-color" content="#ffffff">
 
@@ -35,10 +35,10 @@
             const path_to_root = "";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "searchindex-d035b8e1.js";
+            window.path_to_searchindex_js = "searchindex-6be2a01f.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="toc-99e585f3.js"></script>
+        <script src="toc-ab6e6d74.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -174,54 +174,42 @@
 
                 <div id="mdbook-content" class="content">
                     <main>
-                        <h1 id="capability-map"><a class="header" href="#capability-map">Capability Map</a></h1>
-<p>Dubnium capabilities are intentionally layered. A fresh install should be useful as a workstation before any local AI, automation, cluster, or scheduler services are enabled.</p>
-<h2 id="capability-states"><a class="header" href="#capability-states">Capability states</a></h2>
-<div class="table-wrapper">
-<table>
-<thead>
-<tr><th>State</th><th>Meaning</th></tr>
-</thead>
-<tbody>
-<tr><td>Default</td><td>Enabled by the normal workstation install. Must be boring, safe, and maintainable.</td></tr>
-<tr><td>Opt-in</td><td>Available through Nix options or <code>dubctl apply</code>, but disabled by default.</td></tr>
-<tr><td>Experimental</td><td>Useful but still moving; expect interface changes.</td></tr>
-<tr><td>Planned</td><td>Design direction only; no stable operator contract yet.</td></tr>
-</tbody>
-</table>
-</div>
-<h2 id="key-capabilities"><a class="header" href="#key-capabilities">Key capabilities</a></h2>
-<div class="table-wrapper">
-<table>
-<thead>
-<tr><th>Capability</th><th>State</th><th>Description</th></tr>
-</thead>
-<tbody>
-<tr><td><code>base-workstation</code></td><td>Default</td><td>NixOS system closure, users, Hyprland, audio, safe defaults</td></tr>
-<tr><td><code>home-layering</code></td><td>Default</td><td>Managed dotfiles with writable local overlays</td></tr>
-<tr><td><code>ai-helper</code></td><td>Default</td><td>Hermes and provider config wrappers (not model-serving daemons)</td></tr>
-<tr><td><code>ai-local</code></td><td>Opt-in</td><td>Local OpenAI-compatible LLM endpoint</td></tr>
-<tr><td><code>memory</code></td><td>Opt-in</td><td>Persistent memory and RAG substrate</td></tr>
-<tr><td><code>gateway</code></td><td>Opt-in</td><td>Local routing gateway (Plano)</td></tr>
-<tr><td><code>runner</code></td><td>Opt-in</td><td>GitHub Actions self-hosted runner</td></tr>
-<tr><td><code>scheduler</code></td><td>Opt-in</td><td>Local systemd timer substrate</td></tr>
-<tr><td><code>cluster</code></td><td>Opt-in</td><td>Local Kubernetes (k3s)</td></tr>
-<tr><td><code>model-seed</code></td><td>Opt-in</td><td>Model weight population outside Git and Nix store</td></tr>
-</tbody>
-</table>
-</div>
-<h2 id="ownership-rules"><a class="header" href="#ownership-rules">Ownership rules</a></h2>
-<p>Default capabilities must not require secrets or expose network services. Opt-in services must bind locally unless explicitly exposed. <code>dubctl</code> changes persistent capability state; <code>modectl</code> changes runtime posture only. Secrets enter through SOPS or host-local runtime files, not generated Nix-store files.</p>
+                        <h1 id="principles"><a class="header" href="#principles">Principles</a></h1>
+<p>Dubnium is guided by system-level principles that apply across workstation, client, compute, automation, and AI-assisted deployments.</p>
+<h2 id="declarative-intent-before-accumulated-setup"><a class="header" href="#declarative-intent-before-accumulated-setup">Declarative intent before accumulated setup</a></h2>
+<p>Long-lived configuration should be declared, reviewable, and reproducible. A working machine should not depend on undocumented installation history.</p>
+<h2 id="desired-state-is-not-observed-state"><a class="header" href="#desired-state-is-not-observed-state">Desired state is not observed state</a></h2>
+<p>Configuration says what should be true. Runtime observation says what is true now. A transition, deployment, or workflow is not successful merely because it was requested.</p>
+<h2 id="local-first-not-local-only"><a class="header" href="#local-first-not-local-only">Local-first, not local-only</a></h2>
+<p>Endpoints should remain useful, diagnosable, and recoverable with local resources. Remote services may extend the system through explicit compatibility, privacy, security, and availability boundaries.</p>
+<h2 id="capabilities-instead-of-ambient-authority"><a class="header" href="#capabilities-instead-of-ambient-authority">Capabilities instead of ambient authority</a></h2>
+<p>A caller should request a bounded capability rather than inherit broad host, network, data, device, credential, or tool access.</p>
+<h2 id="reachability-is-not-authorization"><a class="header" href="#reachability-is-not-authorization">Reachability is not authorization</a></h2>
+<p>Network location, VPN membership, endpoint health, and authenticated identity are useful security inputs. None of them alone grants authority for an unrelated or privileged effect.</p>
+<h2 id="durable-domain-state-before-log-reconstruction"><a class="header" href="#durable-domain-state-before-log-reconstruction">Durable domain state before log reconstruction</a></h2>
+<p>Workflows, approvals, automated operations, and other stateful domains should own their exact records. Logs and events provide evidence; they should not be forced to become a substitute database.</p>
+<h2 id="structured-evidence-before-generated-narrative"><a class="header" href="#structured-evidence-before-generated-narrative">Structured evidence before generated narrative</a></h2>
+<p>Reports and summaries should be derived from bounded structured evidence. AI may help synthesize that evidence, but it should not decide what may be collected, retained, or exported.</p>
+<h2 id="reproducibility-is-not-supply-chain-trust"><a class="header" href="#reproducibility-is-not-supply-chain-trust">Reproducibility is not supply-chain trust</a></h2>
+<p>Pinned inputs make behavior easier to reproduce. Trust still requires explicit provenance, verification, update, and dependency policy appropriate to the deployment.</p>
+<h2 id="bounded-resource-use"><a class="header" href="#bounded-resource-use">Bounded resource use</a></h2>
+<p>Interactive development, background automation, builds, and AI workloads should coexist intentionally. Resource contention, disk growth, and runaway work are operational concerns to design for rather than surprises to tolerate.</p>
+<h2 id="personal-observability-is-not-organizational-surveillance"><a class="header" href="#personal-observability-is-not-organizational-surveillance">Personal observability is not organizational surveillance</a></h2>
+<p>A system can help its operator understand work without covert productivity monitoring. Personal reports and journals require a separate ownership and sharing boundary from organizational endpoint posture.</p>
+<h2 id="contracts-before-coupling"><a class="header" href="#contracts-before-coupling">Contracts before coupling</a></h2>
+<p>Public and private consumers should depend on versioned contracts, canonical behavior, and conformance evidence rather than production implementation details.</p>
+<h2 id="safe-public-disclosure"><a class="header" href="#safe-public-disclosure">Safe public disclosure</a></h2>
+<p>Public artifacts should be independently useful while revealing no private topology, credentials, privileged implementation, policy internals, operator data, or private provenance. Publication is an irreversible security and intellectual-property decision.</p>
 
                     </main>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
-                            <a rel="prev" href="runtime-behavior.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                            <a rel="prev" href="index.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                                 <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
                             </a>
 
-                            <a rel="next prefetch" href="support-tiers.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                            <a rel="next prefetch" href="vision.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                                 <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
                             </a>
 
@@ -231,11 +219,11 @@
             </div>
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
-                    <a rel="prev" href="runtime-behavior.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                    <a rel="prev" href="index.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                         <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
                     </a>
 
-                    <a rel="next prefetch" href="support-tiers.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                    <a rel="next prefetch" href="vision.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                         <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
                     </a>
             </nav>

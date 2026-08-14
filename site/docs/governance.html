@@ -3,12 +3,12 @@
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
-        <title>Local Override Convention - Dubnium</title>
+        <title>Governance and Safety - Dubnium</title>
 
 
         <!-- Custom HTML head -->
 
-        <meta name="description" content="Public Dubnium overview documentation">
+        <meta name="description" content="Public overview of Dubnium engineering-environment concepts, contracts, governance, and safety">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="theme-color" content="#ffffff">
 
@@ -35,10 +35,10 @@
             const path_to_root = "";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "searchindex-d035b8e1.js";
+            window.path_to_searchindex_js = "searchindex-6be2a01f.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="toc-99e585f3.js"></script>
+        <script src="toc-ab6e6d74.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -174,44 +174,57 @@
 
                 <div id="mdbook-content" class="content">
                     <main>
-                        <h1 id="local-override-convention"><a class="header" href="#local-override-convention">Local Override Convention</a></h1>
-<p>Dubnium supports several gitignored override points so operators can add host-local packages, user-local Home Manager config, installer secrets, and generated machine state without dirtying tracked source or forking the flake.</p>
-<h2 id="layer-model"><a class="header" href="#layer-model">Layer model</a></h2>
-<p>Five conceptual layers from closest to the machine to closest to the user:</p>
-<div class="table-wrapper">
-<table>
-<thead>
-<tr><th>Layer</th><th>Path</th><th>Scope</th><th>Survives re-clone?</th></tr>
-</thead>
-<tbody>
-<tr><td>0 — Repo-Local Dev</td><td><code>local/*.nix</code></td><td>Temp system-wide packages and options</td><td>No</td></tr>
-<tr><td>1 — Host-Specific</td><td><code>hosts/&lt;host&gt;/user.local.nix</code></td><td>Per-host NixOS overrides</td><td>No</td></tr>
-<tr><td>2 — System External</td><td><code>/etc/dubnium/local/generated.nix</code></td><td>Durable machine identity, dubctl capability toggles</td><td>Yes — outside repo</td></tr>
-<tr><td>3 — Dotfiles User</td><td><code>home/&lt;user&gt;/git-local.nix</code></td><td>Temp user-level Home Manager packages</td><td>No</td></tr>
-<tr><td>4 — Home Machine Config</td><td><code>~/.config/&lt;tool&gt;/local.*</code></td><td>Durable per-machine user preferences</td><td>Yes — governed by home-layering</td></tr>
-</tbody>
-</table>
-</div>
-<h2 id="when-to-use-which"><a class="header" href="#when-to-use-which">When to use which</a></h2>
+                        <h1 id="governance-and-safety"><a class="header" href="#governance-and-safety">Governance and Safety</a></h1>
+<p>Dubnium treats automation as a request for bounded capability, not as ambient permission to act.</p>
+<h2 id="trust-model"><a class="header" href="#trust-model">Trust model</a></h2>
+<p>The conceptual flow is:</p>
+<pre><code class="language-text">intent
+-&gt; contract validation
+-&gt; authenticated actor and context
+-&gt; policy / approval decision
+-&gt; bounded capability
+-&gt; effect
+-&gt; durable outcome and evidence
+</code></pre>
+<p>Each stage has a distinct responsibility:</p>
 <ul>
-<li><strong>Temporary system experiment</strong> → Layer 0 (<code>local/dubctl-packages.nix</code>)</li>
-<li><strong>Host-specific durable override</strong> → Layer 1 (<code>hosts/&lt;host&gt;/user.local.nix</code>, copied from <code>hosts/user.example.nix</code>)</li>
-<li><strong>State that survives repo re-clone</strong> → Layer 2 (<code>/etc/dubnium/local/generated.nix</code>)</li>
-<li><strong>Temporary user-level package</strong> → Layer 3 (<code>git-local.nix</code>)</li>
-<li><strong>Per-machine display, scaling, aliases</strong> → Layer 4 (<code>~/.config/&lt;tool&gt;/local.*</code>)</li>
+<li><strong>Intent</strong> states the requested outcome without granting authority.</li>
+<li><strong>Contract validation</strong> rejects malformed, ambiguous, or incompatible requests.</li>
+<li><strong>Identity and context</strong> bind the request to trusted transport or enrollment facts rather than model assertions.</li>
+<li><strong>Policy / approval decision</strong> determines whether the exact request is allowed, denied, constrained, or requires approval.</li>
+<li><strong>Bounded capability</strong> receives only the scope needed for the authorized operation.</li>
+<li><strong>Effect execution</strong> performs the domain operation without widening the decision.</li>
+<li><strong>Outcome and evidence</strong> record enough durable state to inspect what happened.</li>
 </ul>
-<h2 id="tool-boundaries"><a class="header" href="#tool-boundaries">Tool boundaries</a></h2>
-<p><code>dubctl</code> writes only Layer 2. <code>configctl</code> governs only Layer 4. Layers 0, 1, and 3 are hand-edited. The goal is to promote durable choices into versioned config after 2-3 stable rebuilds. Machine-specific state (GPU topology, disk layout) stays in Layer 1 or 2 permanently.</p>
+<h2 id="security-properties"><a class="header" href="#security-properties">Security properties</a></h2>
+<p>Public Dubnium work emphasizes:</p>
+<ul>
+<li>deny-by-default capability access;</li>
+<li>least privilege and explicit effect boundaries;</li>
+<li>deterministic validation and canonicalization;</li>
+<li>clear separation between policy authority and effect execution;</li>
+<li>no automatic widening when a dependency is unavailable;</li>
+<li>synthetic adversarial fixtures and implementation-neutral conformance;</li>
+<li>reviewable compatibility and security changes;</li>
+<li>no-effect reference implementations where real effects would create unnecessary risk.</li>
+</ul>
+<h2 id="identity-and-posture-are-policy-inputs"><a class="header" href="#identity-and-posture-are-policy-inputs">Identity and posture are policy inputs</a></h2>
+<p>Network reachability, authenticated identity, endpoint posture, and attestation can constrain a decision. They are not universal permission for privileged effects. Unsupported or stale posture should remain visible rather than being treated as success.</p>
+<h2 id="public-versus-private-governance"><a class="header" href="#public-versus-private-governance">Public versus private governance</a></h2>
+<p>Public contracts may define request envelopes, decision references, authorized manifests, errors, evidence shapes, and compatibility rules.</p>
+<p>Production policy, approval rules, thresholds, trusted identities, prompts, fallback behavior, provider wiring, audit records, and recovery procedures remain private. Publishing a contract does not publish the implementation or policy behind it.</p>
+<h2 id="relationship-to-anthesis"><a class="header" href="#relationship-to-anthesis">Relationship to Anthesis</a></h2>
+<p>Where Dubnium integrates with Anthesis, Anthesis remains authoritative for governance decision and approval semantics. Dubnium transports and enforces bounded decisions through its capability boundary; it does not redefine Anthesis policy authority in the public Dubnium contracts.</p>
 
                     </main>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
-                            <a rel="prev" href="memory-architecture.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                            <a rel="prev" href="ai-and-automation.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                                 <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
                             </a>
 
-                            <a rel="next prefetch" href="service-exposure.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                            <a rel="next prefetch" href="public-contracts.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                                 <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
                             </a>
 
@@ -221,11 +234,11 @@
             </div>
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
-                    <a rel="prev" href="memory-architecture.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                    <a rel="prev" href="ai-and-automation.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                         <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
                     </a>
 
-                    <a rel="next prefetch" href="service-exposure.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                    <a rel="next prefetch" href="public-contracts.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                         <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
                     </a>
             </nav>

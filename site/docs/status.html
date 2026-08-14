@@ -3,12 +3,12 @@
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
-        <title>AI Control Plane - Dubnium</title>
+        <title>Public Status and Direction - Dubnium</title>
 
 
         <!-- Custom HTML head -->
 
-        <meta name="description" content="Public Dubnium overview documentation">
+        <meta name="description" content="Public overview of Dubnium engineering-environment concepts, contracts, governance, and safety">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="theme-color" content="#ffffff">
 
@@ -35,10 +35,10 @@
             const path_to_root = "";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "searchindex-d035b8e1.js";
+            window.path_to_searchindex_js = "searchindex-6be2a01f.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="toc-99e585f3.js"></script>
+        <script src="toc-ab6e6d74.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -174,40 +174,55 @@
 
                 <div id="mdbook-content" class="content">
                     <main>
-                        <h1 id="ai-control-plane"><a class="header" href="#ai-control-plane">AI Control Plane</a></h1>
-<p>The AI control plane makes model usage intentional by routing every inference request through policy, not through hard-wired client configuration. Dubnium explores an AI control plane for routing local and remote model use through explicit policy instead of wiring every client directly to every provider.</p>
-<h2 id="design-goals"><a class="header" href="#design-goals">Design goals</a></h2>
+                        <h1 id="public-status-and-direction"><a class="header" href="#public-status-and-direction">Public Status and Direction</a></h1>
+<p>This page describes the public surface and directional architecture only. It is not an internal delivery schedule and does not imply publication of private implementation.</p>
+<h2 id="current-public-work"><a class="header" href="#current-public-work">Current public work</a></h2>
 <ul>
-<li><strong>Intentional model selection</strong> — workloads declare capability requirements; the control plane resolves them to a provider and model instead of each client choosing its own endpoint.</li>
-<li><strong>Workload separation</strong> — interactive chat sessions and batch background jobs use separate queues and resource pools so neither starves the other.</li>
-<li><strong>Local-first by default</strong> — when a local model can serve the request, it should. Remote providers are fallbacks for capability gaps, not the primary path.</li>
-<li><strong>Governed tool access</strong> — tool calls pass through an authorization gate that checks policy before execution.</li>
-<li><strong>Reviewable evidence</strong> — every request, routing decision, and tool invocation leaves traceable records for audit and debugging.</li>
+<li>maintaining the community repository as the authoritative public website, documentation, contract, and release surface;</li>
+<li>stabilizing experimental capability-boundary contracts and canonical behavior;</li>
+<li>expanding synthetic conformance, adversarial fixtures, validators, and no-effect references;</li>
+<li>maintaining an explicit source allowlist and guarded private-to-public documentation publication path;</li>
+<li>improving public architecture, governance, compatibility, security, and release guidance.</li>
 </ul>
-<h2 id="routing-model"><a class="header" href="#routing-model">Routing model</a></h2>
-<p>The control plane does not ship baked-in provider wiring. It uses a routing layer that maps capability requirements to available providers (local LLM servers, remote APIs, or specialized backends) based on runtime policy. This makes the routing surface declarative and auditable rather than scattered across client code.</p>
-<h2 id="service-stack"><a class="header" href="#service-stack">Service stack</a></h2>
-<p>The control plane includes:</p>
+<h2 id="current-architectural-direction"><a class="header" href="#current-architectural-direction">Current architectural direction</a></h2>
+<p>The public design now treats Dubnium as a reproducible, observable, governed engineering environment rather than only a single workstation plus AI runtime.</p>
+<p>Directional themes include:</p>
 <ul>
-<li>An LLM server runtime for hosting local models (backends like vLLM)</li>
-<li>A model seed system for populating the local model cache</li>
-<li>A scheduling and automation layer for batch inference and recurring tasks</li>
-<li>A memory service for persistent context (see <a href="memory.html">Memory</a>)</li>
+<li>smaller replaceable client environments alongside richer workstations and build/compute nodes;</li>
+<li>project-local reproducible development environments and explicit supply-chain trust;</li>
+<li>local-first observability with bounded organizational posture when appropriate;</li>
+<li>private operator-owned status reporting and journaling kept distinct from organizational telemetry;</li>
+<li>AI and automation behind explicit state, resource, and governed-effect boundaries;</li>
+<li>recovery and replacement based on declared configuration plus classified mutable state.</li>
 </ul>
-<h2 id="why-it-matters"><a class="header" href="#why-it-matters">Why it matters</a></h2>
-<p>AI tooling tends to sprawl across editors, terminals, agents, scripts, and services. Dubnium treats that sprawl as an operating-surface problem: clients should have clear routes, workloads should have clear posture, and automation should be observable enough to understand later.</p>
-<h2 id="public-boundary"><a class="header" href="#public-boundary">Public boundary</a></h2>
-<p>This page describes the control-plane concept. Provider wiring, endpoint details, local service names, storage paths, and operator commands belong in trusted-operator documentation.</p>
+<p>These themes are architecture, not a claim that a production fleet service or every deployment form is currently available.</p>
+<h2 id="next-public-facing-work"><a class="header" href="#next-public-facing-work">Next public-facing work</a></h2>
+<ul>
+<li>verify generated publication and destination validation continue to enforce the explicit source allowlist;</li>
+<li>improve adopter documentation and contract integration examples;</li>
+<li>consume public contract releases immutably from downstream implementations;</li>
+<li>mature release checksums, software bills of materials, attestations, and deprecation guidance;</li>
+<li>document public threat models and compatibility guarantees at stable interoperability boundaries.</li>
+</ul>
+<h2 id="later-evidence-permitting"><a class="header" href="#later-evidence-permitting">Later, evidence permitting</a></h2>
+<ul>
+<li>additional adapters or language bindings justified by real consumers;</li>
+<li>thin public validation and conformance commands;</li>
+<li>additional public API families where an interoperability need stabilizes;</li>
+<li>public fleet or endpoint contracts only if they can be useful without exposing private topology, identity, or policy.</li>
+</ul>
+<h2 id="explicitly-outside-the-public-roadmap"><a class="header" href="#explicitly-outside-the-public-roadmap">Explicitly outside the public roadmap</a></h2>
+<p>The public roadmap does not imply publication of production prompts, routing heuristics, policy internals, trusted identities, private data, privileged provider implementation, host or fleet configuration, operational evidence, incidents, credentials, or private planning.</p>
 
                     </main>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
-                            <a rel="prev" href="index.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                            <a rel="prev" href="public-contracts.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                                 <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
                             </a>
 
-                            <a rel="next prefetch" href="ai-stack.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                            <a rel="next prefetch" href="community.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                                 <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
                             </a>
 
@@ -217,11 +232,11 @@
             </div>
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
-                    <a rel="prev" href="index.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                    <a rel="prev" href="public-contracts.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                         <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
                     </a>
 
-                    <a rel="next prefetch" href="ai-stack.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                    <a rel="next prefetch" href="community.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                         <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
                     </a>
             </nav>
