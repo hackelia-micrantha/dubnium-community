@@ -11,7 +11,7 @@ assert SPEC and SPEC.loader
 MODULE = importlib.util.module_from_spec(SPEC)
 SPEC.loader.exec_module(MODULE)
 
-CHECKOUT_SHA = "11d5960a326750d5838078e36cf38b85af677262"
+CHECKOUT_SHA = "3d3c42e5aac5ba805825da76410c181273ba90b1"
 
 
 def valid_workflow() -> str:
@@ -48,7 +48,7 @@ class WorkflowSecurityTests(unittest.TestCase):
         self.assertEqual([], self.validate_text(valid_workflow()))
 
     def test_rejects_mutable_action_tag(self) -> None:
-        errors = self.validate_text(valid_workflow().replace(f"actions/checkout@{CHECKOUT_SHA}", "actions/checkout@v6"))
+        errors = self.validate_text(valid_workflow().replace(f"actions/checkout@{CHECKOUT_SHA}", "actions/checkout@v7.0.1"))
         self.assertTrue(any("full immutable SHA" in error for error in errors))
 
     def test_rejects_pull_request_target(self) -> None:
