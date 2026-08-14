@@ -142,7 +142,7 @@
       <div class="card">
         <span class="status active">Active</span>
         <h3><code>modectl</code></h3>
-        <p>Guarded runtime transitions between interactive desktop, audio-priority studio, and compute operating modes.</p>
+        <p>Guarded runtime transitions between interactive desktop, media-priority, and compute operating modes.</p>
         <p class="evidence">Evidence: reconciled desired/current state and transition guards.</p>
       </div>
       <div class="card">
@@ -184,14 +184,14 @@
     <p>A reproducible endpoint does not need every declared capability active simultaneously. <code>modectl</code> selects which declared workload set should be active, runs guards, reconciles the transition, verifies observed state, and records the result.</p>
     <div class="grid">
       <div class="card"><h3><code>desktop</code></h3><p>Normal interactive engineering mode. Graphical and developer-facing workloads take priority while compute-oriented AI workloads remain suppressed by mode policy.</p></div>
-      <div class="card"><h3><code>studio-local</code></h3><p>Interactive audio mode. The desktop stays available while audio-priority policy suppresses competing compute workloads.</p></div>
+      <div class="card"><h3><code>studio-local</code> · media</h3><p>Interactive media mode. The desktop stays available while media-priority policy suppresses competing compute workloads.</p></div>
       <div class="card"><h3><code>compute</code></h3><p>Dedicated compute and local-AI mode. Graphical work is released so compute-oriented services can receive the resources they require.</p></div>
     </div>
     <pre class="command"><code>modectl status
 modectl request desktop
 modectl request studio-local
 modectl request compute</code></pre>
-    <p class="note">Runtime modes choose among declared capabilities; they do not rewrite the NixOS definition, widen authorization, or bypass capability policy. Exact machine thresholds and service wiring are deployment details.</p>
+    <p class="note"><code>studio-local</code> is the current runtime identifier for media mode; older internal service names may still say studio or audio. Runtime modes choose among declared capabilities; they do not rewrite the NixOS definition, widen authorization, or bypass capability policy.</p>
   </section>
 
   <section>
