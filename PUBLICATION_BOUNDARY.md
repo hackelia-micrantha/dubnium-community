@@ -4,7 +4,7 @@ Status: experimental
 Content: normative
 Canonical source: this file
 Generated: no
-Reviewed: 2026-08-12
+Reviewed: 2026-08-13
 
 ## Authority
 
@@ -12,10 +12,27 @@ This repository is authoritative for the complete Dubnium public website.
 
 - `site/index.html` and adjacent assets are maintained directly here.
 - `site/docs/**` is a generated public mdBook artifact.
-- `.github/workflows/pages.yml` is the only supported public deployment path.
-- `scripts/validate_publication.py` independently validates the deployed artifact.
+- `.github/workflows/pages.yml` is the only supported repository-driven public deployment path.
+- `wrangler.jsonc` defines the Cloudflare Workers Static Assets deployment for `site/**`.
+- `scripts/validate_publication.py` independently validates the deployed artifact before any production deployment runs.
+
+The workflow filename is retained for repository-policy compatibility, but the deployment target is Cloudflare Workers, not GitHub Pages. GitHub Pages is not part of the supported publication architecture.
 
 No private implementation repository is a public website host or public documentation authority.
+
+## Deployment contract
+
+Every pull request that changes the public site, publication validator, Wrangler configuration, or deployment workflow must pass:
+
+1. the publication-validator unit tests;
+2. destination-side publication validation; and
+3. a Wrangler `deploy --dry-run` against the checked-in static-assets configuration.
+
+Production deployment runs only for trusted `main` pushes or an explicit workflow dispatch. It uses the repository secrets `CLOUDFLARE_ACCOUNT_ID` and `CLOUDFLARE_API_TOKEN`. Those credentials must be scoped to the Cloudflare account and Worker required for this public site and must never be committed to the repository or copied into generated documentation.
+
+A successful deployment must return a Cloudflare deployment URL. Missing credentials, invalid configuration, failed publication validation, or a missing deployment result fails closed.
+
+Cloudflare receives only the already-reviewed contents of `site/**`; the deployment workflow does not read from or fetch any private implementation repository.
 
 ## Generated-book contract
 
@@ -71,12 +88,12 @@ The landing page and generated book have separate update paths:
 
 - hand-authored website changes may modify `site/index.html` and site assets through normal review;
 - generated-book publication changes are confined to `site/docs/**`;
-- a generated-book publication cannot modify the landing page, workflow, validator, or repository policy in the same automated change.
+- a generated-book publication cannot modify the landing page, workflow, validator, Wrangler configuration, or repository policy in the same automated change.
 
 A regenerated book replaces the complete `site/docs/**` artifact. Stale generated content must not survive merely because a source page was removed.
 
 ## Failure posture
 
-Publication fails closed on unexpected paths, file types, symlinks, excessive size, malformed metadata, private metadata fields, private repository references, internal paths, private addresses, absolute home paths, secret-like assignments, or executable links to local endpoints.
+Publication fails closed on unexpected paths, file types, symlinks, excessive size, malformed metadata, private metadata fields, private repository references, internal paths, private addresses, absolute home paths, secret-like assignments, executable links to local endpoints, invalid Cloudflare deployment configuration, or missing deployment credentials.
 
 Uncertainty about ownership, licensing, patents, trade secrets, security exposure, or provenance is resolved by keeping material private until review is complete.
