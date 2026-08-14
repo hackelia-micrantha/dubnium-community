@@ -4,7 +4,7 @@ Status: experimental
 Content: normative
 Canonical source: this file
 Generated: no
-Reviewed: 2026-08-12
+Reviewed: 2026-08-13
 
 ## Authority
 
@@ -12,10 +12,28 @@ This repository is authoritative for the complete Dubnium public website.
 
 - `site/index.html` and adjacent assets are maintained directly here.
 - `site/docs/**` is a generated public mdBook artifact.
-- `.github/workflows/pages.yml` is the only supported public deployment path.
-- `scripts/validate_publication.py` independently validates the deployed artifact.
+- `scripts/validate_publication.py` independently validates the public artifact.
+- `.github/workflows/pages.yml` validates site changes in GitHub Actions, including a Wrangler deployment dry run.
+- `wrangler.jsonc` defines the Cloudflare Workers Static Assets project and `site/**` asset root.
+- Cloudflare Workers Builds Git integration is the sole production and preview deployment authority.
+
+The workflow filename is retained for repository-policy compatibility. It no longer deploys GitHub Pages, and GitHub Actions does not hold a second set of Cloudflare deployment credentials.
 
 No private implementation repository is a public website host or public documentation authority.
+
+## Deployment contract
+
+Every pull request that changes the public site, publication validator, Wrangler configuration, or site-validation workflow must pass:
+
+1. the publication-validator unit tests;
+2. destination-side publication validation; and
+3. a Wrangler `deploy --dry-run` against the checked-in static-assets configuration.
+
+Cloudflare's Git integration independently builds repository branches and reports deployment status back to GitHub. Non-production branches receive preview deployments; the configured production branch deploys the merged site. A Cloudflare preview is useful review evidence, but it does not replace the destination-side publication guard.
+
+There is exactly one deployment authority. GitHub Actions validates; Cloudflare Workers Builds deploys. Do not add a second `wrangler deploy` path to GitHub Actions while the Git integration is active.
+
+Cloudflare receives only the already-reviewed public repository content. It does not read from or fetch any private implementation repository.
 
 ## Generated-book contract
 
@@ -65,18 +83,20 @@ Private provenance may exist in private evidence storage, but it must not appear
 
 ## Source and destination separation
 
-The source-side publisher and this destination repository both validate the artifact. Destination validation is authoritative for deployment and must not trust source-side checks alone.
+The source-side publisher and this destination repository both validate the artifact. Destination validation is authoritative for publication and must not trust source-side checks alone.
 
 The landing page and generated book have separate update paths:
 
 - hand-authored website changes may modify `site/index.html` and site assets through normal review;
 - generated-book publication changes are confined to `site/docs/**`;
-- a generated-book publication cannot modify the landing page, workflow, validator, or repository policy in the same automated change.
+- a generated-book publication cannot modify the landing page, workflow, validator, Wrangler configuration, or repository policy in the same automated change.
 
 A regenerated book replaces the complete `site/docs/**` artifact. Stale generated content must not survive merely because a source page was removed.
 
 ## Failure posture
 
-Publication fails closed on unexpected paths, file types, symlinks, excessive size, malformed metadata, private metadata fields, private repository references, internal paths, private addresses, absolute home paths, secret-like assignments, or executable links to local endpoints.
+Publication fails closed on unexpected paths, file types, symlinks, excessive size, malformed metadata, private metadata fields, private repository references, internal paths, private addresses, absolute home paths, secret-like assignments, executable links to local endpoints, or invalid Cloudflare deployment configuration.
+
+Deployment health is tracked separately: a failed Cloudflare preview or production build is a deployment failure even when repository validation is green. A successful Cloudflare build is not permission to weaken the publication guard.
 
 Uncertainty about ownership, licensing, patents, trade secrets, security exposure, or provenance is resolved by keeping material private until review is complete.
