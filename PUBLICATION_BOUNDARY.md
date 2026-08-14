@@ -1,4 +1,4 @@
-# Public Website and Book Publication Boundary
+# Public Website and Technical Overview Publication Boundary
 
 Status: experimental
 Content: normative
@@ -11,7 +11,7 @@ Reviewed: 2026-08-13
 This repository is authoritative for the complete Dubnium public website.
 
 - `site/index.html` and adjacent assets are maintained directly here.
-- `site/docs/**` is a generated public mdBook artifact.
+- `site/docs/**` is the generated Dubnium Technical Overview artifact.
 - `scripts/validate_publication.py` independently validates the public artifact.
 - `.github/workflows/pages.yml` validates site changes in GitHub Actions, including a Wrangler deployment dry run.
 - `wrangler.jsonc` defines the Cloudflare Workers Static Assets project and `site/**` asset root.
@@ -20,6 +20,8 @@ This repository is authoritative for the complete Dubnium public website.
 The workflow filename is retained for repository-policy compatibility. It no longer deploys GitHub Pages, and GitHub Actions does not hold a second set of Cloudflare deployment credentials.
 
 No private implementation repository is a public website host or public documentation authority.
+
+Reader-facing documentation uses **Technical Overview** rather than “Public Guide.” “Public” remains a repository-visibility and publication-boundary term.
 
 ## Deployment contract
 
@@ -35,32 +37,55 @@ There is exactly one deployment authority. GitHub Actions validates; Cloudflare 
 
 Cloudflare receives only the already-reviewed public repository content. It does not read from or fetch any private implementation repository.
 
-## Generated-book contract
+## Landing page versus Technical Overview
 
-A generated-book pull request may change only `site/docs/**`. It must pass repository tests and destination-side publication validation before merge or deployment.
+The two surfaces have different jobs:
 
-The producer must construct the book from an explicit reviewed source-file allowlist. Book navigation alone is not an acceptable disclosure boundary because a documentation generator may emit source pages that are not linked from its table of contents. Unlinked or otherwise unreviewed source files must fail closed before generation.
+| Surface | Purpose | Detail level |
+| --- | --- | --- |
+| Landing page | Define the product, show component maturity, and route readers to evidence | Concise; no runbook-like command blocks or detailed state flows |
+| Technical Overview | Explain components, operator-tool boundaries, stable runtime semantics, configuration ownership, architecture, and published contracts | More detailed, but implementation-safe |
+| Contracts / conformance | Specify deliberately published interoperable behavior exactly | Exact where intentionally published |
 
-The book is an overview. It may describe:
+The landing page must not grow into a substitute for technical documentation. Stable explanatory depth belongs in the generated Technical Overview when it passes disclosure review.
+
+## Generated Technical Overview contract
+
+A generated-documentation pull request may change only `site/docs/**`. It must pass repository tests and destination-side publication validation before merge or deployment.
+
+The producer must construct the Technical Overview from an explicit reviewed source-file allowlist. Book navigation alone is not an acceptable disclosure boundary because a documentation generator may emit source pages that are not linked from its table of contents. Unlinked or otherwise unreviewed source files must fail closed before generation.
+
+The governing rule is:
+
+> Publish what the system promises and what an integrator or operator can observe; keep private how a particular deployment enforces it.
+
+The Technical Overview may describe:
 
 - project purpose, principles, and directional deployment forms;
-- conceptual components, source-of-truth boundaries, and trust boundaries;
+- stable component names, responsibilities, maturity, and intentional boundaries;
+- stable operator-tool names, responsibilities, and representative command families;
+- stable runtime-mode identifiers and human-facing semantics;
+- conceptual desired/observed state models, reconciliation loops, and invariants;
+- conceptual transition-guard categories without exact identifiers or thresholds;
+- conceptual writable-configuration ownership layers and lifecycle;
 - reproducible-development and supply-chain concepts;
 - local, organizational, and personal observability at a conceptual level;
 - AI and automation boundaries without private routing or prompt behavior;
-- observable public contracts and compatibility rules;
+- observable contracts and compatibility rules;
 - governance and safety posture;
-- bounded public status and roadmap themes;
+- bounded status and roadmap themes;
 - community contribution and release processes.
 
 It must not disclose:
 
-- production topology, services, hosts, networks, ports, or resource assignments;
-- prompts, routing heuristics, retry or fallback behavior;
-- policy thresholds, operational allowlists, approvals, or trusted identities;
-- private data schemas, ranking, retention, retrieval, or stored content;
-- privileged providers, deployment workers, recovery procedures, or credentials;
-- real logs, incidents, traces, evidence, or operational measurements;
+- real production topology, services, hosts, networks, ports/endpoints, service-unit wiring, or resource assignments;
+- exact transition thresholds, guard names, implementation allowlists, bypass mechanics, or machine-specific exceptions;
+- prompts, model/provider routing heuristics, retry or fallback behavior;
+- production policy internals, operational approvals, or trusted identities;
+- private data schemas, ranking, retention, retrieval, consolidation, or stored content unless separately published as a reviewed contract;
+- privileged providers, deployment workers, recovery/migration procedures, or credentials;
+- private scheduler state, runner mappings, fleet authorization internals, or privileged worker mechanics;
+- real logs, incidents, traces, evidence, operational measurements, secrets, or operator/customer data;
 - private repository names, source commits, branches, paths, issues, pull requests, workflow runs, jobs, or runner identities.
 
 ## Public provenance schema
@@ -85,13 +110,13 @@ Private provenance may exist in private evidence storage, but it must not appear
 
 The source-side publisher and this destination repository both validate the artifact. Destination validation is authoritative for publication and must not trust source-side checks alone.
 
-The landing page and generated book have separate update paths:
+The landing page and generated Technical Overview have separate update paths:
 
 - hand-authored website changes may modify `site/index.html` and site assets through normal review;
-- generated-book publication changes are confined to `site/docs/**`;
-- a generated-book publication cannot modify the landing page, workflow, validator, Wrangler configuration, or repository policy in the same automated change.
+- generated documentation changes are confined to `site/docs/**`;
+- a generated publication cannot modify the landing page, workflow, validator, Wrangler configuration, or repository policy in the same automated change.
 
-A regenerated book replaces the complete `site/docs/**` artifact. Stale generated content must not survive merely because a source page was removed.
+A regenerated Technical Overview replaces the complete `site/docs/**` artifact. Stale generated content must not survive merely because a source page was removed.
 
 ## Failure posture
 
