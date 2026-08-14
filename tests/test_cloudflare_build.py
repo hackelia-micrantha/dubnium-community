@@ -52,6 +52,14 @@ class CloudflareBuildPolicyTests(unittest.TestCase):
             policy.check_cloudflare_build(errors)
         return errors
 
+    def read_object(self, path: Path) -> dict[str, object]:
+        value = json.loads(path.read_text(encoding="utf-8"))
+        assert isinstance(value, dict)
+        return value
+
+    def write_object(self, path: Path, value: dict[str, object]) -> None:
+        path.write_text(json.dumps(value), encoding="utf-8")
+
     def test_valid_static_assets_contract_passes(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
@@ -62,30 +70,58 @@ class CloudflareBuildPolicyTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
             self.write_valid_contract(root)
-            (root / "wrangler.jsonc").write_text(
-                json.dumps(
-                    {
-                        "name": "wrong-worker",
-                        "compatibility_date": "2026-08-06",
-                        "assets": {"directory": "./dist"},
-                    }
-                ),
-                encoding="utf-8",
-            )
+            wrangler = self.read_object(root / "wrangler.jsonc")
+            wrangler["name"] = "wrong-worker"
+            wrangler["assets"] = {"directory": "./dist"}
+            self.write_object(root / "wrangler.jsonc", wrangler)
             errors = self.check(root)
             self.assertIn("Cloudflare Worker name must be exactly 'dubnium'", errors)
             self.assertIn("Cloudflare assets.directory must resolve to './site/'", errors)
 
-    def test_wrangler_version_must_be_exact(self) -> None:
+    def test_compatibility_date_is_fixed(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
             self.write_valid_contract(root)
-            package = json.loads((root / "package.json").read_text(encoding="utf-8"))
-            package["devDependencies"]["wrangler"] = "^4.114.0"
-            (root / "package.json").write_text(json.dumps(package), encoding="utf-8")
+            wrangler = self.read_object(root / "wrangler.jsonc")
+            wrangler["compatibility_date"] = "2026-08-07"
+            self.write_object(root / "wrangler.jsonc", wrangler)
             self.assertIn(
-                "Wrangler must be pinned to an exact semantic version",
+                "Cloudflare compatibility_date must be exactly '2026-08-06'",
                 self.check(root),
+            )
+
+    def test_wrangler_version_is_fixed_and_exact(self) -> None:
+        for version in ("^4.114.0", "4.115.0"):
+            with self.subTest(version=version), tempfile.TemporaryDirectory() as directory:
+                root = Path(directory)
+                self.write_valid_contract(root)
+                package = self.read_object(root / "package.json")
+                dependencies = package["devDependencies"]
+                assert isinstance(dependencies, dict)
+                dependencies["wrangler"] = version
+                self.write_object(root / "package.json", package)
+                self.assertIn(
+                    "Wrangler must be pinned exactly to 4.114.0",
+                    self.check(root),
+                )
+
+    def test_package_privacy_and_deploy_commands_are_fixed(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            self.write_valid_contract(root)
+            package = self.read_object(root / "package.json")
+            package["private"] = False
+            package["scripts"] = {
+                "deploy": "wrangler deploy --env production",
+                "preview": "wrangler dev",
+            }
+            self.write_object(root / "package.json", package)
+            errors = self.check(root)
+            self.assertIn("Cloudflare package must be private", errors)
+            self.assertIn("package.json deploy script must be 'wrangler deploy'", errors)
+            self.assertIn(
+                "package.json preview script must be 'wrangler versions upload'",
+                errors,
             )
 
     def test_site_entry_point_is_required(self) -> None:
@@ -96,6 +132,15 @@ class CloudflareBuildPolicyTests(unittest.TestCase):
             self.assertIn(
                 "missing Cloudflare static asset entry point: site/index.html",
                 self.check(root),
+            )
+
+    def test_invalid_json_fails_closed(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            self.write_valid_contract(root)
+            (root / "package.json").write_text("{invalid", encoding="utf-8")
+            self.assertTrue(
+                any(error.startswith("invalid package.json:") for error in self.check(root))
             )
 
 
