@@ -3,6 +3,7 @@
 
 from __future__ import annotations
 
+import json
 import re
 import sys
 from pathlib import Path
@@ -22,6 +23,8 @@ REQUIRED_FILES = {
     "TRADEMARKS.md",
     "COMPATIBILITY.md",
     "ROADMAP.md",
+    "package.json",
+    "wrangler.jsonc",
     ".github/CODEOWNERS",
     ".github/dependabot.yml",
     ".github/workflows/contract-ci.yml",
@@ -92,6 +95,13 @@ MARKER_PATTERN = re.compile(
     re.M | re.S,
 )
 
+CLOUDFLARE_WORKER_NAME = "dubnium"
+CLOUDFLARE_COMPATIBILITY_DATE = "2026-08-06"
+CLOUDFLARE_WRANGLER_VERSION = "4.114.0"
+CLOUDFLARE_ASSET_DIRECTORY = "./site"
+CLOUDFLARE_DEPLOY_COMMAND = "wrangler deploy"
+CLOUDFLARE_PREVIEW_COMMAND = "wrangler versions upload"
+
 TEXT_SUFFIXES = {
     ".md",
     ".txt",
@@ -125,6 +135,18 @@ def read_text(path: Path) -> str | None:
         return None
 
 
+def read_json_object(path: Path, label: str, errors: list[str]) -> dict[str, object] | None:
+    try:
+        value = json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, UnicodeDecodeError, json.JSONDecodeError) as exc:
+        errors.append(f"invalid {label}: {exc}")
+        return None
+    if not isinstance(value, dict):
+        errors.append(f"invalid {label}: root must be an object")
+        return None
+    return value
+
+
 def check_required(errors: list[str]) -> None:
     for item in sorted(REQUIRED_FILES):
         if not (ROOT / item).is_file():
@@ -136,6 +158,53 @@ def check_required(errors: list[str]) -> None:
             errors.append(f"missing public monorepo directory: {directory}/")
         elif not (path / "README.md").is_file():
             errors.append(f"missing boundary README: {directory}/README.md")
+
+
+def check_cloudflare_build(errors: list[str]) -> None:
+    wrangler_path = ROOT / "wrangler.jsonc"
+    package_path = ROOT / "package.json"
+    site_index = ROOT / "site" / "index.html"
+
+    if not site_index.is_file():
+        errors.append("missing Cloudflare static asset entry point: site/index.html")
+
+    if not wrangler_path.is_file() or not package_path.is_file():
+        return
+
+    wrangler = read_json_object(wrangler_path, "wrangler.jsonc", errors)
+    package = read_json_object(package_path, "package.json", errors)
+    if wrangler is None or package is None:
+        return
+
+    if wrangler.get("name") != CLOUDFLARE_WORKER_NAME:
+        errors.append(f"Cloudflare Worker name must be exactly '{CLOUDFLARE_WORKER_NAME}'")
+
+    if wrangler.get("compatibility_date") != CLOUDFLARE_COMPATIBILITY_DATE:
+        errors.append(
+            f"Cloudflare compatibility_date must be exactly '{CLOUDFLARE_COMPATIBILITY_DATE}'"
+        )
+
+    assets = wrangler.get("assets")
+    asset_directory = assets.get("directory") if isinstance(assets, dict) else None
+    if not isinstance(asset_directory, str) or asset_directory.rstrip("/") != CLOUDFLARE_ASSET_DIRECTORY:
+        errors.append("Cloudflare assets.directory must resolve to './site/'")
+
+    if package.get("private") is not True:
+        errors.append("Cloudflare package must be private")
+
+    scripts = package.get("scripts")
+    if not isinstance(scripts, dict):
+        errors.append("package.json scripts must be an object")
+    else:
+        if scripts.get("deploy") != CLOUDFLARE_DEPLOY_COMMAND:
+            errors.append(f"package.json deploy script must be '{CLOUDFLARE_DEPLOY_COMMAND}'")
+        if scripts.get("preview") != CLOUDFLARE_PREVIEW_COMMAND:
+            errors.append(f"package.json preview script must be '{CLOUDFLARE_PREVIEW_COMMAND}'")
+
+    dev_dependencies = package.get("devDependencies")
+    wrangler_version = dev_dependencies.get("wrangler") if isinstance(dev_dependencies, dict) else None
+    if wrangler_version != CLOUDFLARE_WRANGLER_VERSION:
+        errors.append(f"Wrangler must be pinned exactly to {CLOUDFLARE_WRANGLER_VERSION}")
 
 
 def check_symlinks(errors: list[str]) -> None:
@@ -190,6 +259,7 @@ def check_private_coordinate_leakage(errors: list[str]) -> None:
 def main() -> int:
     errors: list[str] = []
     check_required(errors)
+    check_cloudflare_build(errors)
     check_symlinks(errors)
     check_markers(errors)
     check_public_roots(errors)
