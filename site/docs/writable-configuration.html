@@ -3,7 +3,7 @@
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
-        <title>Reproducible Engineering - Dubnium</title>
+        <title>Writable User Configuration - Dubnium</title>
 
 
         <!-- Custom HTML head -->
@@ -174,74 +174,74 @@
 
                 <div id="mdbook-content" class="content">
                     <main>
-                        <h1 id="reproducible-engineering"><a class="header" href="#reproducible-engineering">Reproducible Engineering</a></h1>
-<p>Dubnium aims to make engineering environments replaceable without turning every project dependency into permanent workstation state.</p>
-<h2 id="layered-ownership"><a class="header" href="#layered-ownership">Layered ownership</a></h2>
-<p>A useful mental model is:</p>
-<pre><code class="language-text">platform configuration
-  -&gt; operating system, security baseline, resource policy
-
-portable user environment
-  -&gt; shell, editor, terminal, user-facing development preferences
-
-project environment
-  -&gt; project-specific SDKs, compilers, dependencies, tools, and workflow requirements
-
-trusted acceleration
-  -&gt; caches, builders, prebuilt artifacts, and remote capacity
-</code></pre>
-<p>The layers can use different tools, but their ownership should remain explicit.</p>
-<h2 id="immutable-managed-configuration-is-not-a-read-only-user-environment"><a class="header" href="#immutable-managed-configuration-is-not-a-read-only-user-environment">Immutable managed configuration is not a read-only user environment</a></h2>
-<p>NixOS and Home Manager deliberately make managed configuration reproducible, and many managed files are materialized from immutable Nix-store content. That does not mean legitimate application preferences and user state must be forced through a system rebuild.</p>
-<p>Dubnium treats writable user configuration as a separate ownership problem. <a href="writable-configuration.html">Writable User Configuration</a> describes the managed, local, custom, and adopted layers and the role of <code>configctl</code> in making drift and promotion visible.</p>
-<p>The important reproducibility invariant is that writable state remains <strong>classified</strong>: a local preference does not silently become the managed source of truth, and a generated managed file is not edited in place merely because it is convenient.</p>
-<h2 id="desired-developer-path"><a class="header" href="#desired-developer-path">Desired developer path</a></h2>
-<p>A project should increasingly be able to approach:</p>
-<pre><code class="language-text">clone
--&gt; enter declared environment
--&gt; build
--&gt; test
--&gt; run
-</code></pre>
-<p>without depending on undocumented machine history.</p>
-<h2 id="reproducible-does-not-mean-trusted"><a class="header" href="#reproducible-does-not-mean-trusted">Reproducible does not mean trusted</a></h2>
-<p>A perfectly reproducible malicious dependency is still malicious. Supply-chain policy may therefore include:</p>
-<ul>
-<li>pinned source and dependency identities;</li>
-<li>reviewed trust roots for caches or artifacts;</li>
-<li>signatures, provenance, or attestations where they add value;</li>
-<li>controlled update and rollback behavior;</li>
-<li>visible failure when required trust evidence is unavailable.</li>
-</ul>
-<p>The exact mechanisms can vary by deployment and project.</p>
-<h2 id="mutable-state-is-classified-not-ignored"><a class="header" href="#mutable-state-is-classified-not-ignored">Mutable state is classified, not ignored</a></h2>
-<p>Not everything should live in declarative configuration. Dubnium uses a conceptual state classification:</p>
+                        <h1 id="writable-user-configuration"><a class="header" href="#writable-user-configuration">Writable User Configuration</a></h1>
+<p>NixOS and Home Manager make managed configuration reproducible, and many managed files are materialized from immutable Nix-store content. Those files should be regenerated rather than edited in place.</p>
+<p>That does <strong>not</strong> mean the user environment is globally read-only.</p>
+<p>Dubnium keeps an explicit writable boundary for application preferences, machine-specific choices, and first-run state that legitimately changes outside a system rebuild. <code>configctl</code> makes ownership and drift visible so mutable user state does not become undocumented configuration history.</p>
+<h2 id="layer-model"><a class="header" href="#layer-model">Layer model</a></h2>
 <div class="table-wrapper">
 <table>
 <thead>
-<tr><th>Class</th><th>Meaning</th><th>Typical treatment</th></tr>
+<tr><th>Layer</th><th>Ownership</th><th>Intended use</th></tr>
 </thead>
 <tbody>
-<tr><td>Declarative</td><td>Reconstructable from reviewed configuration</td><td>Rebuild</td></tr>
-<tr><td>Re-fetchable</td><td>Available again from another trusted source</td><td>Download or regenerate</td></tr>
-<tr><td>Recoverable</td><td>Mutable or costly state worth preserving</td><td>Explicit backup and restore</td></tr>
-<tr><td>Irreplaceable</td><td>Loss breaks identity, trust, or access</td><td>Separate recovery or escrow strategy</td></tr>
+<tr><td><strong>Managed</strong></td><td>Declarative configuration</td><td>Reviewed defaults and portable configuration; regenerated rather than edited in place</td></tr>
+<tr><td><strong>Local</strong></td><td>User / machine</td><td>Machine-specific overrides that should remain local</td></tr>
+<tr><td><strong>Custom</strong></td><td>User</td><td>Writable fragments that may be useful enough to review and promote</td></tr>
+<tr><td><strong>Adopted</strong></td><td>Reconciliation history</td><td>Fragments already represented by managed configuration and no longer loaded as independent overrides</td></tr>
 </tbody>
 </table>
 </div>
-<p>A replaceable environment should be reconstructed from declared inputs plus explicitly restored state rather than depend on an opaque machine image.</p>
-<h2 id="performance-is-part-of-developer-experience"><a class="header" href="#performance-is-part-of-developer-experience">Performance is part of developer experience</a></h2>
-<p>Reproducibility should not require every task to rebuild the world. Shared immutable inputs, bounded caches, remote build capacity, and resource-aware scheduling can accelerate work as long as their trust and ownership boundaries remain explicit.</p>
+<p>The names describe ownership, not trust level. A writable fragment does not automatically become managed merely because it works locally.</p>
+<h2 id="configctl-responsibility"><a class="header" href="#configctl-responsibility"><code>configctl</code> responsibility</a></h2>
+<p><code>configctl</code> provides a generic reconciliation surface around those layers. Its useful operator vocabulary includes:</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Surface</th><th>Responsibility</th></tr>
+</thead>
+<tbody>
+<tr><td><code>status</code></td><td>Show which configuration layers exist and where unpromoted state remains</td></tr>
+<tr><td><code>adopt</code></td><td>Establish the expected writable layer structure for a supported tool</td></tr>
+<tr><td><code>promote</code></td><td>Move a useful custom fragment into a reviewable declarative path</td></tr>
+<tr><td><code>reconcile</code></td><td>Report drift between local writable state and managed configuration</td></tr>
+<tr><td><code>doctor</code></td><td>Check that the reconciliation environment and contracts are healthy</td></tr>
+<tr><td><code>init</code></td><td>Handle bounded first-run state that cannot be represented by declaring a static file alone</td></tr>
+</tbody>
+</table>
+</div>
+<p>This is an ownership workflow, not an attempt to make every application configuration format identical.</p>
+<h2 id="promotion-rather-than-mutation"><a class="header" href="#promotion-rather-than-mutation">Promotion rather than mutation</a></h2>
+<p>A portable preference can begin as a writable local/custom change. <code>configctl</code> can identify that the change is outside the managed layer and help move it into review. Once the reviewed declarative configuration represents the same intent, a rebuild can make it part of the managed default and the independent custom fragment no longer needs to carry authority.</p>
+<p>That gives Dubnium both properties at once:</p>
+<ul>
+<li>managed defaults remain reproducible and reviewable;</li>
+<li>legitimate application and user preferences still have an explicit writable home.</li>
+</ul>
+<h2 id="first-run-mutable-state"><a class="header" href="#first-run-mutable-state">First-run mutable state</a></h2>
+<p>Some tools need initialization rather than a static configuration file. <code>configctl</code> supports explicit first-run contracts so these changes are inspectable and risk-gated rather than hidden in shell startup, installer side effects, or ad-hoc bootstrap scripts.</p>
+<p>The technical overview intentionally describes the contract shape, not tool-specific mutable paths or operational procedures.</p>
+<h2 id="security-boundary"><a class="header" href="#security-boundary">Security boundary</a></h2>
+<p>Writable configuration is not an escape hatch from host policy. <code>configctl</code> does not grant authority over:</p>
+<ul>
+<li>secrets or credentials;</li>
+<li>privileged system state;</li>
+<li>service authorization;</li>
+<li>host security policy;</li>
+<li>deployment topology;</li>
+<li>governed effects.</li>
+</ul>
+<p>Those concerns remain with their own declarative, runtime, secret-management, and governance boundaries.</p>
 
                     </main>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
-                            <a rel="prev" href="architecture.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                            <a rel="prev" href="runtime-modes.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                                 <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
                             </a>
 
-                            <a rel="next prefetch" href="observability.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                            <a rel="next prefetch" href="principles.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                                 <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
                             </a>
 
@@ -251,11 +251,11 @@ trusted acceleration
             </div>
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
-                    <a rel="prev" href="architecture.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                    <a rel="prev" href="runtime-modes.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                         <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
                     </a>
 
-                    <a rel="next prefetch" href="observability.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                    <a rel="next prefetch" href="principles.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                         <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
                     </a>
             </nav>

@@ -3,7 +3,7 @@
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
-        <title>Reproducible Engineering - Dubnium</title>
+        <title>Components - Dubnium</title>
 
 
         <!-- Custom HTML head -->
@@ -174,74 +174,97 @@
 
                 <div id="mdbook-content" class="content">
                     <main>
-                        <h1 id="reproducible-engineering"><a class="header" href="#reproducible-engineering">Reproducible Engineering</a></h1>
-<p>Dubnium aims to make engineering environments replaceable without turning every project dependency into permanent workstation state.</p>
-<h2 id="layered-ownership"><a class="header" href="#layered-ownership">Layered ownership</a></h2>
-<p>A useful mental model is:</p>
-<pre><code class="language-text">platform configuration
-  -&gt; operating system, security baseline, resource policy
-
-portable user environment
-  -&gt; shell, editor, terminal, user-facing development preferences
-
-project environment
-  -&gt; project-specific SDKs, compilers, dependencies, tools, and workflow requirements
-
-trusted acceleration
-  -&gt; caches, builders, prebuilt artifacts, and remote capacity
-</code></pre>
-<p>The layers can use different tools, but their ownership should remain explicit.</p>
-<h2 id="immutable-managed-configuration-is-not-a-read-only-user-environment"><a class="header" href="#immutable-managed-configuration-is-not-a-read-only-user-environment">Immutable managed configuration is not a read-only user environment</a></h2>
-<p>NixOS and Home Manager deliberately make managed configuration reproducible, and many managed files are materialized from immutable Nix-store content. That does not mean legitimate application preferences and user state must be forced through a system rebuild.</p>
-<p>Dubnium treats writable user configuration as a separate ownership problem. <a href="writable-configuration.html">Writable User Configuration</a> describes the managed, local, custom, and adopted layers and the role of <code>configctl</code> in making drift and promotion visible.</p>
-<p>The important reproducibility invariant is that writable state remains <strong>classified</strong>: a local preference does not silently become the managed source of truth, and a generated managed file is not edited in place merely because it is convenient.</p>
-<h2 id="desired-developer-path"><a class="header" href="#desired-developer-path">Desired developer path</a></h2>
-<p>A project should increasingly be able to approach:</p>
-<pre><code class="language-text">clone
--&gt; enter declared environment
--&gt; build
--&gt; test
--&gt; run
-</code></pre>
-<p>without depending on undocumented machine history.</p>
-<h2 id="reproducible-does-not-mean-trusted"><a class="header" href="#reproducible-does-not-mean-trusted">Reproducible does not mean trusted</a></h2>
-<p>A perfectly reproducible malicious dependency is still malicious. Supply-chain policy may therefore include:</p>
-<ul>
-<li>pinned source and dependency identities;</li>
-<li>reviewed trust roots for caches or artifacts;</li>
-<li>signatures, provenance, or attestations where they add value;</li>
-<li>controlled update and rollback behavior;</li>
-<li>visible failure when required trust evidence is unavailable.</li>
-</ul>
-<p>The exact mechanisms can vary by deployment and project.</p>
-<h2 id="mutable-state-is-classified-not-ignored"><a class="header" href="#mutable-state-is-classified-not-ignored">Mutable state is classified, not ignored</a></h2>
-<p>Not everything should live in declarative configuration. Dubnium uses a conceptual state classification:</p>
+                        <h1 id="components"><a class="header" href="#components">Components</a></h1>
+<p>Dubnium is composed from bounded components rather than one always-on control plane. The important question for each component is not only what it does, but what authority and state it deliberately does <strong>not</strong> own.</p>
+<p>Maturity labels describe the current implementation surface, not a compatibility guarantee.</p>
 <div class="table-wrapper">
 <table>
 <thead>
-<tr><th>Class</th><th>Meaning</th><th>Typical treatment</th></tr>
+<tr><th>Component</th><th>Responsibility</th><th>Maturity</th></tr>
 </thead>
 <tbody>
-<tr><td>Declarative</td><td>Reconstructable from reviewed configuration</td><td>Rebuild</td></tr>
-<tr><td>Re-fetchable</td><td>Available again from another trusted source</td><td>Download or regenerate</td></tr>
-<tr><td>Recoverable</td><td>Mutable or costly state worth preserving</td><td>Explicit backup and restore</td></tr>
-<tr><td>Irreplaceable</td><td>Loss breaks identity, trust, or access</td><td>Separate recovery or escrow strategy</td></tr>
+<tr><td>Declarative platform</td><td>Rebuildable operating-system, user-environment, security, and resource-policy inputs</td><td>Active</td></tr>
+<tr><td><code>dubctl</code></td><td>Host/operator entry point for inspection, bounded selections, development workflows, and explicit apply</td><td>Active / evolving</td></tr>
+<tr><td><code>modectl</code></td><td>Guarded runtime posture transitions between desktop, media, and compute operation</td><td>Active</td></tr>
+<tr><td><code>configctl</code></td><td>Writable user-configuration layers, first-run contracts, and drift/reconciliation beside declarative configuration</td><td>Active</td></tr>
+<tr><td>Capability Gateway</td><td>Governed request, authorization, lifecycle, and bounded-effect contract</td><td>Experimental; v1 contract</td></tr>
+<tr><td>Supervisor / LLM Gateway</td><td>Bounded model and specialist interface with explicit capability and lineage semantics</td><td>Experimental; v1alpha contract</td></tr>
+<tr><td>Memory Service</td><td>Scoped reusable-context and memory interoperability boundary</td><td>Experimental; v1alpha contract</td></tr>
+<tr><td>Scheduler</td><td>Scheduled and deferred automation interoperability boundary</td><td>Experimental; v1alpha contract</td></tr>
 </tbody>
 </table>
 </div>
-<p>A replaceable environment should be reconstructed from declared inputs plus explicitly restored state rather than depend on an opaque machine image.</p>
-<h2 id="performance-is-part-of-developer-experience"><a class="header" href="#performance-is-part-of-developer-experience">Performance is part of developer experience</a></h2>
-<p>Reproducibility should not require every task to rebuild the world. Shared immutable inputs, bounded caches, remote build capacity, and resource-aware scheduling can accelerate work as long as their trust and ownership boundaries remain explicit.</p>
+<h2 id="declarative-platform"><a class="header" href="#declarative-platform">Declarative platform</a></h2>
+<p><strong>Purpose.</strong> Define what an endpoint is allowed and able to become from reviewed inputs. NixOS and Home Manager provide the rebuildable system and portable-user layers, while project environments can add project-specific dependencies without turning them into permanent workstation state.</p>
+<p><strong>Boundary.</strong> Declarative configuration is intended state, not proof of current runtime state. It does not replace runtime observation, durable application state, or explicit recovery of mutable data.</p>
+<p><strong>State model.</strong> Versioned configuration describes desired system and user state. A rebuild materializes that intent; runtime observation determines what is actually active afterward.</p>
+<h2 id="dubctl"><a class="header" href="#dubctl"><code>dubctl</code></a></h2>
+<p><strong>Purpose.</strong> Provide a coherent operator surface over Dubnium host workflows instead of requiring users to know every underlying Nix or system-service detail.</p>
+<p><strong>Boundary.</strong> <code>dubctl</code> is not a second policy engine. Reviewed configuration, registries, profiles, and capability policy remain authoritative. It does not own writable Home configuration, service-specific application data, or secret storage.</p>
+<p><strong>State model.</strong> Read-only commands inspect the endpoint. Mutating commands change only bounded selections or perform an explicit apply of declared configuration.</p>
+<p>See <a href="operator-tooling.html">Operator Tooling</a> for the published responsibility model.</p>
+<h2 id="modectl"><a class="header" href="#modectl"><code>modectl</code></a></h2>
+<p><strong>Purpose.</strong> Select the runtime posture appropriate to the work happening now without installing new capabilities or rewriting the declarative system definition.</p>
+<p><strong>Boundary.</strong> A mode request cannot grant new authority, bypass capability policy, or silently turn an unavailable capability into an installed one.</p>
+<p><strong>State model.</strong> Desired mode, observed mode, transition guards, reconciliation, and post-transition observation are separate steps. Success requires the observed result to match the requested posture.</p>
+<p>See <a href="runtime-modes.html">Runtime Operating Modes</a>.</p>
+<h2 id="configctl"><a class="header" href="#configctl"><code>configctl</code></a></h2>
+<p><strong>Purpose.</strong> Give applications and users an explicit writable configuration boundary on top of reproducible Nix-managed defaults.</p>
+<p><strong>Boundary.</strong> <code>configctl</code> does not turn mutable user configuration into privileged host policy. Secrets, service authority, system security controls, and host-level declarations remain separate concerns.</p>
+<p><strong>State model.</strong> Managed, local, custom, and adopted layers make ownership and promotion explicit instead of relying on undocumented edits to generated files.</p>
+<p>See <a href="writable-configuration.html">Writable User Configuration</a>.</p>
+<h2 id="capability-gateway"><a class="header" href="#capability-gateway">Capability Gateway</a></h2>
+<p><strong>Purpose.</strong> Separate a request for a consequential capability from authorization and effect execution. The contract makes request identity, state, policy decisions, bounded constraints, and resulting evidence explicit.</p>
+<p><strong>Boundary.</strong> Possessing a transport path or producing a valid request does not itself grant authority. The Gateway is not a general service bus and does not make model output, prior success, or network reachability equivalent to permission.</p>
+<p><strong>Maturity.</strong> Experimental. The published v1 contract and conformance assets establish a portable boundary without claiming that every production effect provider is openly implemented.</p>
+<ul>
+<li><a href="https://github.com/hackelia-micrantha/dubnium-community/blob/main/spec/capability-gateway-v1.md">Capability Gateway v1</a></li>
+<li><a href="https://github.com/hackelia-micrantha/dubnium-community/tree/main/conformance">Conformance assets</a></li>
+</ul>
+<h2 id="supervisor--llm-gateway"><a class="header" href="#supervisor--llm-gateway">Supervisor / LLM Gateway</a></h2>
+<p><strong>Purpose.</strong> Expose a bounded interface for model and specialist execution with explicit capability negotiation, normalized errors, sanitized metadata, and execution lineage.</p>
+<p><strong>Boundary.</strong> Model or specialist output is proposal material, not ambient authority to mutate the host, deploy software, write durable memory, or bypass governance.</p>
+<p><strong>Maturity.</strong> Experimental v1alpha.</p>
+<ul>
+<li><a href="https://github.com/hackelia-micrantha/dubnium-community/blob/main/spec/supervisor-gateway-v1alpha.md">Supervisor / LLM Gateway v1alpha</a></li>
+</ul>
+<h2 id="memory-service"><a class="header" href="#memory-service">Memory Service</a></h2>
+<p><strong>Purpose.</strong> Provide an interoperability boundary for scoped reusable context and memory used by model-assisted and automated workflows.</p>
+<p><strong>Boundary.</strong> Memory is durable application data with scope and governance; it is not authorization, runtime truth, or an implicit channel for privileged effects.</p>
+<p><strong>Maturity.</strong> Experimental v1alpha.</p>
+<ul>
+<li><a href="https://github.com/hackelia-micrantha/dubnium-community/blob/main/spec/memory-service-v1alpha.md">Memory Service v1alpha</a></li>
+</ul>
+<h2 id="scheduler"><a class="header" href="#scheduler">Scheduler</a></h2>
+<p><strong>Purpose.</strong> Represent scheduled and deferred automation through explicit requests and state rather than hidden background behavior.</p>
+<p><strong>Boundary.</strong> Scheduling decides <strong>when</strong> bounded work should be attempted. It does not automatically grant the scheduled task additional authority.</p>
+<p><strong>Maturity.</strong> Experimental v1alpha.</p>
+<ul>
+<li><a href="https://github.com/hackelia-micrantha/dubnium-community/blob/main/spec/scheduler-v1alpha.md">Scheduler v1alpha</a></li>
+</ul>
+<h2 id="how-the-pieces-fit"><a class="header" href="#how-the-pieces-fit">How the pieces fit</a></h2>
+<pre class="mermaid">flowchart LR
+    C[Declarative configuration] --&gt; H[Engineering endpoint]
+    D[dubctl] --&gt; H
+    M[modectl] --&gt; H
+    U[configctl] --&gt; H
+    H --&gt; O[Runtime observation]
+    H --&gt; A[AI and automation]
+    A --&gt; G[Governed capability boundary]
+    A --&gt; S[Memory and scheduling services]
+</pre>
+
+<p>The diagram shows responsibility, not production topology. Published documentation intentionally stops before machine identities, exact service wiring, credentials, resource assignments, policy thresholds, provider-selection heuristics, and privileged operating procedures.</p>
 
                     </main>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
-                            <a rel="prev" href="architecture.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                            <a rel="prev" href="index.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                                 <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
                             </a>
 
-                            <a rel="next prefetch" href="observability.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                            <a rel="next prefetch" href="operator-tooling.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                                 <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
                             </a>
 
@@ -251,11 +274,11 @@ trusted acceleration
             </div>
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
-                    <a rel="prev" href="architecture.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                    <a rel="prev" href="index.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                         <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
                     </a>
 
-                    <a rel="next prefetch" href="observability.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                    <a rel="next prefetch" href="operator-tooling.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                         <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
                     </a>
             </nav>

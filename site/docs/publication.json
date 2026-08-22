@@ -1,7 +1,7 @@
 {
   "schema_version": 2,
-  "publication_id": "dubnium-book-b8ec73410aa0dfe25327",
-  "content_digest": "sha256:b8ec73410aa0dfe253277b04ca35a7e4ba2f5b648b6c5776f43515fafd8782b7",
+  "publication_id": "dubnium-book-01532cd8bfde4ce8659a",
+  "content_digest": "sha256:01532cd8bfde4ce8659a3aa93fe800638a7954089a94e4b2dd890fddb04521bc",
   "generator": "mdbook v0.5.2; mdbook-mermaid 0.17.0",
-  "generated_at": "2026-08-13T09:38:13Z"
+  "generated_at": "2026-08-22T05:18:23Z"
 }

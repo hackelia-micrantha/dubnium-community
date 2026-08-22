@@ -35,10 +35,10 @@
             const path_to_root = "";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "searchindex-6be2a01f.js";
+            window.path_to_searchindex_js = "searchindex-66d7b9f4.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="toc-ab6e6d74.js"></script>
+        <script src="toc-1699cbdc.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -199,6 +199,13 @@
 <li><strong>Runtime observation</strong> reports what is actually happening rather than assuming intended state succeeded.</li>
 <li><strong>Durable state and bounded evidence</strong> preserve exact domain state and reviewable outcomes.</li>
 </ul>
+<h2 id="runtime-posture-and-writable-state"><a class="header" href="#runtime-posture-and-writable-state">Runtime posture and writable state</a></h2>
+<p>Two responsibilities deliberately sit beside declarative configuration rather than inside it:</p>
+<ul>
+<li><a href="runtime-modes.html">Runtime Operating Modes</a> choose which already-declared workload posture should be active now and require post-transition observation before declaring success.</li>
+<li><a href="writable-configuration.html">Writable User Configuration</a> gives legitimate mutable preferences and first-run state an explicit ownership boundary instead of encouraging edits to generated configuration.</li>
+</ul>
+<p>Neither responsibility changes the authority model: a runtime mode cannot install or authorize a missing capability, and writable user configuration cannot redefine privileged host policy.</p>
 <h2 id="source-of-truth-hierarchy"><a class="header" href="#source-of-truth-hierarchy">Source-of-truth hierarchy</a></h2>
 <p>Different questions have different authorities:</p>
 <pre><code class="language-text">declarative intent       -&gt; versioned configuration
@@ -210,8 +217,9 @@ derived understanding    -&gt; reports, dashboards, and journals
 <p>A dashboard does not become runtime truth. A log does not become authorization. A previous successful operation does not grant authority for a future one.</p>
 <h2 id="endpoint-and-central-responsibilities"><a class="header" href="#endpoint-and-central-responsibilities">Endpoint and central responsibilities</a></h2>
 <p>A Dubnium endpoint should remain locally inspectable. Optional central services may aggregate posture, provide shared resources, or coordinate policy, but central state should carry freshness and uncertainty rather than overwrite contradictory endpoint facts.</p>
-<h2 id="public-abstraction-boundary"><a class="header" href="#public-abstraction-boundary">Public abstraction boundary</a></h2>
-<p>The public model intentionally omits machine identities, networks, endpoints, service placement, provider selection, runtime modes, resource assignments, data schemas, policy thresholds, credentials, and recovery procedures. Those are deployment and implementation concerns rather than requirements for understanding the architecture.</p>
+<h2 id="technical-overview-boundary"><a class="header" href="#technical-overview-boundary">Technical-overview boundary</a></h2>
+<p>The published architecture describes responsibilities, invariants, and observable state relationships. It intentionally omits machine identities, networks, ports/endpoints, exact service placement and wiring, provider selection, resource assignments, data schemas that are not published contracts, policy thresholds, credentials, and privileged recovery procedures.</p>
+<p>Those are deployment and implementation concerns rather than requirements for understanding the architecture.</p>
 
                     </main>
 
