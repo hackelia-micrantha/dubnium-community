@@ -4,7 +4,7 @@ Status: experimental
 Content: informative
 Canonical source: this file
 Generated: no
-Reviewed: 2026-08-12
+Reviewed: 2026-08-24
 
 This roadmap describes intended public work. It is not a compatibility promise, a private implementation plan, or a commitment to publish production internals.
 
@@ -22,7 +22,10 @@ The public foundation is in place:
 - canonicalization, error, fixture, conformance, and no-effect reference assets;
 - deterministic contract archive, manifest, checksum, SPDX, attestation, and consumer-verification tooling;
 - a repository-owned tool for applying and checking `main` branch protection and merge policy;
-- downstream v1alpha consumption feedback tracked through public contract issues.
+- downstream v1alpha consumption feedback tracked through public contract issues;
+- an active CloudEvents Event Contract v1 workstream (#54);
+- an active Resource Budget v1 contract/conformance workstream (#57);
+- public operator CLI architecture work that now includes Unix-pipe composability and man-page expectations (#15).
 
 The repository remains incubating. Presence does not imply a stable compatibility commitment. No protected `contract-v*` release has yet been accepted as consumer identity.
 
@@ -36,7 +39,9 @@ Dubnium's public architecture now describes a broader engineering-environment mo
 - bounded organizational posture without requiring indiscriminate workstation log collection;
 - personal reports and journaling as a separate user-owned observability plane;
 - AI and automation that propose work without inheriting ambient effect authority;
-- recovery based on declared configuration plus explicitly classified mutable state.
+- recovery based on declared configuration plus explicitly classified mutable state;
+- public contracts that separate capability/effect authority, event observation, resource budgets, authentication/sender binding, routing, and governance rather than collapsing them into one generic control plane;
+- independently owned CLI tools that remain composable through stable process I/O contracts without requiring a shared implementation framework.
 
 These are directional concepts. They do not imply a production fleet service, endpoint enrollment system, or publication of private implementation.
 
@@ -53,7 +58,7 @@ These are directional concepts. They do not imply a production fleet service, en
 - require the post-publication consumer job to verify checksums, provenance, safe extraction, the embedded manifest, and public conformance;
 - record release and protection evidence on the public tracking issues.
 
-## Next — adopter integration and release maturity
+## Next — adopter integration and active contract expansion
 
 - improve contract integration documentation and synthetic examples;
 - pin the immutable release tag, source commit, archive digest, and verified attestation in each consumer;
@@ -62,6 +67,10 @@ These are directional concepts. They do not imply a production fleet service, en
 - keep transport error documentation and OpenAPI response sets aligned as #29 is resolved;
 - refine compatibility, deprecation, and migration guidance from actual consumer feedback;
 - expand public threat models without disclosing production policy or topology;
+- complete the CloudEvents Event Contract v1 profile, schemas, and conformance fixtures under #54;
+- define Resource Budget v1 grant/usage/reservation semantics under #57, including CAD integer monetary accounting, parent/child narrowing, restart-safe consumed authority, and fail-closed unknown-cost handling;
+- publish operator CLI/process conventions under #15 covering stdin/stdout/stderr separation, stable exit codes, deterministic machine output, pipe safety, SIGPIPE/closed-pipe behavior where relevant, and reproducible man pages;
+- keep the standalone ownership of Micrantha tools explicit: Dubnium may compose them, but this repository does not become the canonical implementation or package owner for unrelated projects;
 - document additional public API families only when interoperability value and disclosure review justify them;
 - complete one supersession or maintenance exercise without replacing published artifacts.
 
@@ -71,7 +80,9 @@ After at least one real release and maintenance cycle, maintainers may consider:
 
 - thin public validation or conformance commands;
 - additional adapters or language bindings justified by real consumers;
-- a stabilized model-gateway compatibility profile when interoperability evidence supports it;
+- a stabilized provider-neutral model-gateway compatibility profile when interoperability evidence supports it;
+- scheduler contracts when ownership, state, and retry semantics can be expressed without exposing private scheduling policy;
+- memory API/result contracts where public semantics are useful without publishing ranking, retention, or stored user data;
 - public fleet or endpoint contracts where they can remain useful without exposing topology, identity, or policy;
 - additional contract slices with clear ownership and disclosure value;
 - repository splits only when independent ownership or release cadence makes the monorepo harmful.
@@ -82,13 +93,15 @@ The following are not part of the public roadmap unless a separate disclosure re
 
 - supervisor or orchestration implementation;
 - production prompts, routing, retries, and fallback behavior;
+- provider credentials, private provider endpoints, live pricing feeds, and operational route-selection policy;
 - production policy, approvals, thresholds, and trusted identities;
 - memory implementation, ranking, retention, or stored data;
 - scheduler ownership and exact state;
 - deployment providers and privileged workers;
 - host or fleet topology, runner configuration, credentials, and runbooks;
 - real operational evidence or measurements;
-- broad multi-language SDK matrices.
+- broad multi-language SDK matrices;
+- canonical package/build ownership for independently maintained Micrantha tools.
 
 ## Roadmap governance
 
