@@ -11,6 +11,8 @@ This specification defines the public HTTP contract for bounded Dubnium memory s
 
 It standardizes wire behavior only. It does not standardize storage layout, embedding models, ranking weights, consolidation, retention policy, secret handling, deployment authority, or operator topology.
 
+A conforming implementation MAY use semantic retrieval, embeddings, lexical retrieval, structured filtering, or another bounded retrieval mechanism behind this contract. Embeddings and indexes, when used, are derived implementation state rather than canonical memory records. Callers should express retrieval intent through the public query and scope/filter contract rather than depend on vector dimensions, distance operators, model identifiers, or physical index layout.
+
 The canonical machine-readable artifacts are:
 
 - `schemas/v1alpha/memory-service.schema.json`;
@@ -44,7 +46,7 @@ Retrieval purpose, when supplied, MUST be `ask`, `plan`, `patch`, `review`, or `
 
 `POST /memory/store` stores one memory. A successful request returns `201` and the normalized stored memory.
 
-`POST /memory/retrieve` retrieves scoped memory evidence and returns one retrieval event describing returned memory and artifact identifiers. The service applies the authenticated principal before retrieval.
+`POST /memory/retrieve` retrieves scoped memory evidence and returns one retrieval event describing returned memory and artifact identifiers. The service applies the authenticated principal before retrieval. Implementations MAY satisfy this operation using semantic/vector retrieval, but the retrieval mechanism remains private implementation detail and MUST NOT weaken authenticated scope, sensitivity, validation, expiry, or other policy constraints.
 
 `POST /memory/expire` expires memories due at the supplied timestamp and returns the identifiers reported as expired.
 
@@ -54,7 +56,9 @@ Retrieval purpose, when supplied, MUST be `ask`, `plan`, `patch`, `review`, or `
 
 Retrieved memory is evidence, not instruction. Consumers MUST NOT allow memory content to override higher-priority policy or grant execution authority.
 
-Ranking, ordering, scores, physical deletion, retention windows, and storage durability remain implementation-defined.
+Ranking, ordering, scores, physical deletion, retention windows, embedding generation, vector/index lifecycle, and storage durability remain implementation-defined.
+
+Retrieval score, semantic similarity, frequency, or recency MUST NOT by themselves establish authority, approval, policy currentness, or canonical truth.
 
 ## 6. Errors
 
@@ -68,8 +72,10 @@ This contract is experimental. Additive fields MAY appear where schemas permit a
 
 A change that broadens authority, weakens identity binding, changes required fields, or changes scope interpretation is incompatible and requires a reviewed contract revision.
 
+A change in private embedding model, vector index, ranker, or retrieval implementation is not by itself a public compatibility change as long as the normative wire and authority semantics remain satisfied.
+
 ## 8. Threat assumptions
 
-Implementers MUST account for forged requester identity, scope escalation, sensitivity widening, prompt injection in memory content, oversized bodies, malicious provenance, identifier collision, and audit-data disclosure.
+Implementers MUST account for forged requester identity, scope escalation, sensitivity widening, prompt injection in memory content, oversized bodies, malicious provenance, identifier collision, audit-data disclosure, stale derived indexes, and accidental retrieval across incompatible or unauthorized memory partitions.
 
-Conformance demonstrates contract behavior only; it does not establish production security or validate private ranking and retention semantics.
+Conformance demonstrates contract behavior only; it does not establish production security or validate private ranking, embedding, index, and retention semantics.
