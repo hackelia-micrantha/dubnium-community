@@ -79,6 +79,12 @@ Reusable validation belongs in `conformance/` or a public package. A contract-sp
 
 Material derived from a private producer MUST use the publication-review template and satisfy `docs/publication-review.md`. Do not preserve private Git history by default. Import only a clean, allowlisted, human-reviewable artifact.
 
+## Community UI
+
+If this repository introduces or materially redesigns user-facing UI, it follows the shared Phyllotaxis community directive by default: **1990s in visual character, not in capability.** Prefer plain, direct, content-first interfaces with obvious browser-native affordances and minimal decorative chrome, while retaining modern accessibility, semantics, responsive behavior, and security.
+
+See the organization-wide [community UI design directive](https://github.com/hackelia-micrantha/.github/blob/main/docs/standards/ui-design.md). Repository-specific deviations should be justified by a concrete product, usability, or accessibility requirement.
+
 ## Pull requests
 
 Pull requests should be narrowly scoped and include:
