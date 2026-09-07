@@ -35,10 +35,10 @@
             const path_to_root = "";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "searchindex-0abcc67e.js";
+            window.path_to_searchindex_js = "searchindex-72bbf3c2.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="toc-1699cbdc.js"></script>
+        <script src="toc-e860212c.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -190,7 +190,13 @@
 <h2 id="deployment-is-compositional"><a class="header" href="#deployment-is-compositional">Deployment is compositional</a></h2>
 <p>Dubnium is not limited to one workstation shape. The same architectural contracts can support smaller client environments, richer interactive workstations, build or compute nodes, remote managed development environments, and stronger security or administrative environments. Each deployment enables only the capabilities it needs.</p>
 <p>AI is one capability of the environment, not the authority for the environment. Deterministic configuration, runtime observation, policy, durable state, and recovery remain useful without a model.</p>
-<h2 id="start-with-the-implemented-surfaces"><a class="header" href="#start-with-the-implemented-surfaces">Start with the implemented surfaces</a></h2>
+<h2 id="start-with-the-system-flow"><a class="header" href="#start-with-the-system-flow">Start with the system flow</a></h2>
+<ul>
+<li><a href="how-dubnium-works.html">How Dubnium Works</a> gives the end-to-end mental model from declared intent through runtime observation and governed effects.</li>
+<li><a href="operator-journey.html">Operator Journey</a> shows how the public operator surfaces fit together without exposing deployment-specific procedures.</li>
+<li><a href="runner-controller.html">Self-Hosted CI Runner Controller</a> explains bounded admission, short-lived workers, canonical status, and reconciliation.</li>
+</ul>
+<p>Then inspect the implemented surfaces:</p>
 <ul>
 <li><a href="components.html">Components</a> describes the major platform pieces, their maturity, state ownership, and intentional boundaries.</li>
 <li><a href="operator-tooling.html">Operator Tooling</a> explains why <code>dubctl</code>, <code>modectl</code>, and <code>configctl</code> remain separate surfaces.</li>
@@ -223,7 +229,7 @@
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
 
-                            <a rel="next prefetch" href="components.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                            <a rel="next prefetch" href="how-dubnium-works.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                                 <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
                             </a>
 
@@ -234,7 +240,7 @@
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
 
-                    <a rel="next prefetch" href="components.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                    <a rel="next prefetch" href="how-dubnium-works.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                         <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
                     </a>
             </nav>

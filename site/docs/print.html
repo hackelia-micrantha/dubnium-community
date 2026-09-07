@@ -36,10 +36,10 @@
             const path_to_root = "";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "searchindex-0abcc67e.js";
+            window.path_to_searchindex_js = "searchindex-72bbf3c2.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="toc-1699cbdc.js"></script>
+        <script src="toc-e860212c.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -191,7 +191,13 @@
 <h2 id="deployment-is-compositional"><a class="header" href="#deployment-is-compositional">Deployment is compositional</a></h2>
 <p>Dubnium is not limited to one workstation shape. The same architectural contracts can support smaller client environments, richer interactive workstations, build or compute nodes, remote managed development environments, and stronger security or administrative environments. Each deployment enables only the capabilities it needs.</p>
 <p>AI is one capability of the environment, not the authority for the environment. Deterministic configuration, runtime observation, policy, durable state, and recovery remain useful without a model.</p>
-<h2 id="start-with-the-implemented-surfaces"><a class="header" href="#start-with-the-implemented-surfaces">Start with the implemented surfaces</a></h2>
+<h2 id="start-with-the-system-flow"><a class="header" href="#start-with-the-system-flow">Start with the system flow</a></h2>
+<ul>
+<li><a href="#how-dubnium-works">How Dubnium Works</a> gives the end-to-end mental model from declared intent through runtime observation and governed effects.</li>
+<li><a href="#operator-journey">Operator Journey</a> shows how the public operator surfaces fit together without exposing deployment-specific procedures.</li>
+<li><a href="#self-hosted-ci-runner-controller">Self-Hosted CI Runner Controller</a> explains bounded admission, short-lived workers, canonical status, and reconciliation.</li>
+</ul>
+<p>Then inspect the implemented surfaces:</p>
 <ul>
 <li><a href="#components">Components</a> describes the major platform pieces, their maturity, state ownership, and intentional boundaries.</li>
 <li><a href="#operator-tooling">Operator Tooling</a> explains why <code>dubctl</code>, <code>modectl</code>, and <code>configctl</code> remain separate surfaces.</li>
@@ -218,6 +224,72 @@
 <p>This overview may therefore publish stable component names, maturity, operator-tool responsibilities, runtime-mode semantics, configuration ownership layers, state-machine invariants, conceptual control flow, and published contracts.</p>
 <p>It deliberately omits machine identities, exact topology, ports/endpoints, service-unit wiring, credentials, hardware/resource assignments, exact policy thresholds, trusted identities, provider-selection or model-routing heuristics, privileged recovery procedures, private prompts/data, and real operational evidence.</p>
 <p>The published Community repository is independently useful for contracts, conformance, references, and documentation. This technical overview is not a sanitized mirror of private operator documentation.</p>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="how-dubnium-works"><a class="header" href="#how-dubnium-works">How Dubnium Works</a></h1>
+<p>Dubnium is easiest to understand as a set of boundaries between <strong>declared intent</strong>, <strong>runtime state</strong>, <strong>observation</strong>, and <strong>governed effects</strong>.</p>
+<p>The project does not treat configuration, automation, or AI output as equivalent kinds of truth. Each answers a different question and carries different authority.</p>
+<h2 id="end-to-end-mental-model"><a class="header" href="#end-to-end-mental-model">End-to-end mental model</a></h2>
+<pre class="mermaid">flowchart LR
+    A[Versioned intent] --&gt; B[Reproducible evaluation]
+    B --&gt; C[Installed capability]
+    C --&gt; D[Selected runtime posture]
+    D --&gt; E[Observed runtime state]
+    E --&gt; F[Operator or automation request]
+    F --&gt; G[Policy and capability boundary]
+    G --&gt; H[Bounded effect]
+    H --&gt; I[Durable state and evidence]
+    I --&gt; E
+</pre>
+
+<p>The important property is not the exact implementation behind each box. It is that crossing from one responsibility to another is explicit and inspectable.</p>
+<h2 id="1-declared-intent-describes-what-may-exist"><a class="header" href="#1-declared-intent-describes-what-may-exist">1. Declared intent describes what may exist</a></h2>
+<p>NixOS, Home Manager, project environments, and reviewed configuration describe the reproducible inputs of an endpoint. This layer answers questions such as:</p>
+<ul>
+<li>which capabilities are present;</li>
+<li>which services or tools may be available;</li>
+<li>which user-environment defaults are managed;</li>
+<li>which resource and security boundaries are declared.</li>
+</ul>
+<p>Declared intent does <strong>not</strong> prove that a service is running, a workload is healthy, or a privileged effect is authorized at this moment.</p>
+<h2 id="2-runtime-posture-selects-from-already-declared-capability"><a class="header" href="#2-runtime-posture-selects-from-already-declared-capability">2. Runtime posture selects from already-declared capability</a></h2>
+<p>An endpoint may need different operating postures over time. Interactive work, media-priority work, and compute-heavy work can place different demands on the same machine.</p>
+<p>A runtime-mode transition selects among capabilities that configuration already permits. It does not install missing capability or create new authority. The transition is only considered successful after the resulting state is observed.</p>
+<p>See <a href="#runtime-operating-modes">Runtime Operating Modes</a>.</p>
+<h2 id="3-observation-reports-what-is-actually-happening"><a class="header" href="#3-observation-reports-what-is-actually-happening">3. Observation reports what is actually happening</a></h2>
+<p>Dubnium keeps intended state and observed state separate. Operator tooling can report service state, runner capacity, runtime posture, configuration ownership, and other bounded facts without pretending that configuration alone proves runtime success.</p>
+<p>This separation also prevents telemetry from becoming policy. A log, metric, dashboard, or previous successful run may be useful evidence, but it does not authorize a future effect.</p>
+<p>See <a href="#observability-and-evidence">Observability and Evidence</a>.</p>
+<h2 id="4-requests-cross-explicit-authority-boundaries"><a class="header" href="#4-requests-cross-explicit-authority-boundaries">4. Requests cross explicit authority boundaries</a></h2>
+<p>A human, workflow, scheduler, or model may request an action. A request is not permission.</p>
+<p>Consequential effects are expected to cross a boundary that can bind identity, capability, policy, lifecycle state, and evidence. A stronger model or richer context can improve a proposal, but it does not widen the caller’s effect authority.</p>
+<p>This same rule applies to retrieved context: similarity or relevance can help reasoning, but retrieval rank does not establish approval, currentness, or operational truth.</p>
+<p>See <a href="#governance-and-safety">Governance and Safety</a> and <a href="#ai-and-automation">AI and Automation</a>.</p>
+<h2 id="5-effects-produce-state-and-evidence"><a class="header" href="#5-effects-produce-state-and-evidence">5. Effects produce state and evidence</a></h2>
+<p>A successful operation should leave enough bounded evidence to answer what happened without indiscriminately capturing private source, prompts, credentials, or unrelated activity.</p>
+<p>Durable workflow state, domain state, and runtime observation remain distinct. That allows retries, reconciliation, replacement, and audit without reconstructing the world from model context or logs.</p>
+<h2 id="invariants-that-hold-across-the-system"><a class="header" href="#invariants-that-hold-across-the-system">Invariants that hold across the system</a></h2>
+<p>Several rules repeat throughout Dubnium:</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Statement</th><th>What it prevents</th></tr>
+</thead>
+<tbody>
+<tr><td>Declared capability is not observed activity</td><td>Configuration being mistaken for runtime truth</td></tr>
+<tr><td>A request is not authority</td><td>Callers authorizing their own effects</td></tr>
+<tr><td>Observation is not policy</td><td>Logs or dashboards silently becoming control planes</td></tr>
+<tr><td>Retrieval is evidence, not authority</td><td>Similarity rank being treated as approval or truth</td></tr>
+<tr><td>Execution success is not promotion</td><td>A candidate artifact activating itself</td></tr>
+<tr><td>A CLI is not the source of truth</td><td>Convenience tooling becoming a second configuration system</td></tr>
+</tbody>
+</table>
+</div>
+<h2 id="local-first-not-isolated"><a class="header" href="#local-first-not-isolated">Local-first, not isolated</a></h2>
+<p>Dubnium favors local execution and local inspectability where they are sufficient. Remote services, stronger models, shared compute, or central coordination may still be used through explicit contracts.</p>
+<p>The important architectural property is that adding a remote dependency does not erase the endpoint’s ability to explain its own declared state, current posture, observed behavior, or authority boundaries.</p>
+<h2 id="what-this-overview-intentionally-does-not-publish"><a class="header" href="#what-this-overview-intentionally-does-not-publish">What this overview intentionally does not publish</a></h2>
+<p>This chapter describes responsibility and behavior, not deployment-sensitive implementation. It intentionally omits exact topology, service-unit wiring, trusted identities, credentials, policy thresholds, routing heuristics, privileged procedures, and production operational evidence.</p>
+<p>The public contract is the separation between responsibilities, not the private mechanics used by one deployment to enforce them.</p>
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="components"><a class="header" href="#components">Components</a></h1>
 <p>Dubnium is composed from bounded components rather than one always-on control plane. The important question for each component is not only what it does, but what authority and state it deliberately does <strong>not</strong> own.</p>
@@ -319,6 +391,98 @@
 
 <p>The diagram shows responsibility, not production topology. Published documentation intentionally stops before machine identities, exact service wiring, credentials, resource assignments, policy thresholds, provider-selection heuristics, and privileged operating procedures.</p>
 <div style="break-before: page; page-break-before: always;"></div>
+<h1 id="operator-journey"><a class="header" href="#operator-journey">Operator Journey</a></h1>
+<p>This chapter shows how the public Dubnium responsibilities fit together from an operator’s point of view. It is an <strong>illustrative workflow</strong>, not a production runbook: exact deployment values, privileged procedures, and private enforcement details remain outside the published surface.</p>
+<h2 id="start-by-discovering-the-installed-surface"><a class="header" href="#start-by-discovering-the-installed-surface">Start by discovering the installed surface</a></h2>
+<p>Dubnium favors discoverable commands and semantic help over memorized implementation details. The operator should be able to identify what is installed before changing anything.</p>
+<p>Representative read-only entry points include:</p>
+<pre><code class="language-sh">dubctl commands
+dubctl service list
+modectl status
+configctl status
+dubctl runners status
+</code></pre>
+<p>Read-only status, list, show, and diagnostic commands should remain side-effect free. Machine-readable forms are useful for automation when a stable JSON contract is available.</p>
+<h2 id="1-inspect-declared-and-observed-state-separately"><a class="header" href="#1-inspect-declared-and-observed-state-separately">1. Inspect declared and observed state separately</a></h2>
+<p>The first question is not “what should be running?” but “what does this endpoint declare, and what is actually running now?”</p>
+<p>An operator may inspect:</p>
+<ul>
+<li>the installed capability surface;</li>
+<li>current runtime posture;</li>
+<li>service and workload state;</li>
+<li>writable configuration ownership and drift;</li>
+<li>self-hosted CI eligibility and active worker state.</li>
+</ul>
+<p>This prevents a common failure mode in managed environments: assuming that a successful build or declaration proves the runtime converged.</p>
+<h2 id="2-change-only-the-responsibility-that-actually-needs-changing"><a class="header" href="#2-change-only-the-responsibility-that-actually-needs-changing">2. Change only the responsibility that actually needs changing</a></h2>
+<p>Dubnium intentionally keeps several operator surfaces separate.</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Need</th><th>Surface</th></tr>
+</thead>
+<tbody>
+<tr><td>Apply reviewed host configuration</td><td><code>dubctl</code> + declarative apply</td></tr>
+<tr><td>Select an already-declared runtime posture</td><td><code>modectl</code></td></tr>
+<tr><td>Reconcile legitimate writable user configuration</td><td><code>configctl</code></td></tr>
+<tr><td>Inspect or administratively gate CI capacity</td><td><code>dubctl runners</code></td></tr>
+</tbody>
+</table>
+</div>
+<p>The separation matters because each action has a different source of truth and authority boundary.</p>
+<p>For example, selecting a runtime mode does not install a capability that was not declared. Likewise, changing a writable preference does not become a way to redefine privileged host policy.</p>
+<h2 id="3-observe-convergence-after-a-change"><a class="header" href="#3-observe-convergence-after-a-change">3. Observe convergence after a change</a></h2>
+<p>A requested transition is only one piece of evidence. After a bounded change, the operator checks the resulting state rather than assuming success.</p>
+<p>A generic control loop looks like:</p>
+<pre><code class="language-text">inspect
+  -&gt; request bounded change
+  -&gt; reconcile
+  -&gt; observe resulting state
+  -&gt; report success, degraded state, or failure
+</code></pre>
+<p>This pattern appears across runtime modes, writable configuration, services, and CI worker lifecycle.</p>
+<h2 id="4-treat-automation-as-another-caller"><a class="header" href="#4-treat-automation-as-another-caller">4. Treat automation as another caller</a></h2>
+<p>Scheduled jobs, workflows, and model-assisted tools follow the same authority rules as an interactive operator.</p>
+<p>Automation may:</p>
+<ul>
+<li>read bounded status;</li>
+<li>propose intent;</li>
+<li>request a capability already available to it;</li>
+<li>consume structured results and evidence.</li>
+</ul>
+<p>Automation may not infer additional authority from previous success, retrieved context, or the fact that a stronger model generated the request.</p>
+<h2 id="5-inspect-self-hosted-ci-without-inferring-from-processes"><a class="header" href="#5-inspect-self-hosted-ci-without-inferring-from-processes">5. Inspect self-hosted CI without inferring from processes</a></h2>
+<p>For self-hosted CI, the controller owns the canonical lifecycle view. An operator can inspect it directly:</p>
+<pre><code class="language-sh">dubctl runners status
+dubctl runners status --json
+</code></pre>
+<p>The important public semantics are eligibility, bounded capacity, occupancy, worker lifecycle, and reconciliation health. An empty worker list can be a healthy idle state when no work is owned; it is not evidence that capacity disappeared.</p>
+<p>See <a href="#self-hosted-ci-runner-controller">Self-Hosted CI Runner Controller</a>.</p>
+<h2 id="6-use-structured-state-for-tooling"><a class="header" href="#6-use-structured-state-for-tooling">6. Use structured state for tooling</a></h2>
+<p>Operator-facing output can remain readable for humans while exposing versioned structured forms for scripts and dashboards. Structured consumers should use the same validated state contract rather than reparsing human-oriented output or reconstructing state from logs.</p>
+<p>That gives the operator and automation the same answer to questions such as:</p>
+<ul>
+<li>what is eligible;</li>
+<li>what is active;</li>
+<li>what is owned;</li>
+<li>what is degraded;</li>
+<li>what requires reconciliation.</li>
+</ul>
+<h2 id="7-escalate-ambiguity-without-widening-authority"><a class="header" href="#7-escalate-ambiguity-without-widening-authority">7. Escalate ambiguity without widening authority</a></h2>
+<p>When a task is ambiguous or difficult, Dubnium may route reasoning to a stronger model or require human review. That changes who helps interpret the request, not what the request is allowed to do.</p>
+<p>The final effect still crosses the same policy and capability boundary.</p>
+<h2 id="what-good-operation-looks-like"><a class="header" href="#what-good-operation-looks-like">What good operation looks like</a></h2>
+<p>A healthy operator workflow has a few recognizable properties:</p>
+<ul>
+<li>inspection precedes mutation;</li>
+<li>commands explain their responsibility and effect;</li>
+<li>requested state and observed state are both visible;</li>
+<li>failures remain explicit rather than being papered over by retries;</li>
+<li>structured evidence is bounded and reusable;</li>
+<li>no convenience surface silently becomes a new source of authority.</li>
+</ul>
+<p>The objective is not to hide system complexity. It is to make the important complexity visible at the correct boundary while keeping implementation-specific machinery replaceable.</p>
+<div style="break-before: page; page-break-before: always;"></div>
 <h1 id="operator-tooling"><a class="header" href="#operator-tooling">Operator Tooling</a></h1>
 <p>Dubnium separates host control, runtime posture, and writable user configuration instead of putting all three responsibilities behind one privileged command.</p>
 <div class="table-wrapper">
@@ -377,6 +541,104 @@ Who owns this user preference?             -&gt; configctl
 What is actually active?                   -&gt; runtime observation
 </code></pre>
 <p>Keeping these questions distinct makes state easier to explain and reduces the chance that a convenience CLI silently becomes a second configuration or authorization system.</p>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="self-hosted-ci-runner-controller"><a class="header" href="#self-hosted-ci-runner-controller">Self-Hosted CI Runner Controller</a></h1>
+<p>Dubnium treats self-hosted CI capacity as a governed runtime resource rather than a collection of permanently waiting runner processes.</p>
+<p>The public design goal is simple: <strong>keep controller authority persistent, but make ordinary job execution short-lived and bounded</strong>.</p>
+<h2 id="responsibility-split"><a class="header" href="#responsibility-split">Responsibility split</a></h2>
+<pre class="mermaid">flowchart LR
+    A[Repository demand] --&gt; B[Runner Controller]
+    B --&gt; C{Admission permitted?}
+    C -- no --&gt; D[Remain waiting or denied]
+    C -- yes --&gt; E[Short-lived worker]
+    E --&gt; F[One job]
+    F --&gt; G[Cleanup and reconciliation]
+    G --&gt; B
+</pre>
+
+<p>The controller owns lifecycle decisions and status. The worker owns one admitted job and then disappears.</p>
+<h2 id="why-not-keep-ordinary-runners-permanently-idle"><a class="header" href="#why-not-keep-ordinary-runners-permanently-idle">Why not keep ordinary runners permanently idle?</a></h2>
+<p>A permanently waiting worker carries more ambient state than Dubnium needs for ordinary CI demand. Short-lived workers reduce the amount of time job execution environments exist and make ownership easier to reason about.</p>
+<p>This does not make untrusted CI safe by itself. It provides a clearer lifecycle boundary that can be combined with reviewed repository policy, bounded resources, credential separation, filesystem isolation, and destination-side controls.</p>
+<h2 id="admission-happens-before-worker-creation"><a class="header" href="#admission-happens-before-worker-creation">Admission happens before worker creation</a></h2>
+<p>A workflow asking for capacity does not get to choose arbitrary authority.</p>
+<p>Before ordinary work is admitted, the controller evaluates already-reviewed eligibility and current host state. Publicly relevant inputs include:</p>
+<ul>
+<li>whether the repository is eligible for local execution;</li>
+<li>whether the requested class of work is already declared;</li>
+<li>whether bounded capacity is available;</li>
+<li>whether administrative policy currently permits work;</li>
+<li>whether existing worker ownership can be explained.</li>
+</ul>
+<p>Only admitted work receives a worker.</p>
+<p>The exact registry, thresholds, credentials, scheduling algorithm, and host-specific resource values are deployment details and are intentionally not published here.</p>
+<h2 id="the-worker-is-intentionally-disposable"><a class="header" href="#the-worker-is-intentionally-disposable">The worker is intentionally disposable</a></h2>
+<p>An admitted worker has a narrow lifecycle:</p>
+<pre><code class="language-text">created
+  -&gt; accepts one admitted assignment
+  -&gt; executes inside bounded job isolation
+  -&gt; reports terminal outcome
+  -&gt; cleanup
+  -&gt; gone
+</code></pre>
+<p>Ordinary workers do not become a durable source of configuration or identity. A future job is admitted again from current policy and current host state.</p>
+<h2 id="controller-credentials-do-not-become-job-credentials"><a class="header" href="#controller-credentials-do-not-become-job-credentials">Controller credentials do not become job credentials</a></h2>
+<p>The controller may need authority to coordinate the runner lifecycle. That authority is not meant to become ambient authority inside the job environment.</p>
+<p>This separation is important because the code under test should not inherit control-plane credentials merely because it runs on the same physical endpoint.</p>
+<p>The public invariant is credential separation; exact credential material and transport remain private.</p>
+<h2 id="capacity-is-a-state-model-not-a-process-count"><a class="header" href="#capacity-is-a-state-model-not-a-process-count">Capacity is a state model, not a process count</a></h2>
+<p>Operators should not infer capacity from the number of visible worker processes.</p>
+<p>A useful conceptual model is:</p>
+<pre><code class="language-text">configured eligibility
+  + administrative permission
+  + bounded host capacity
+  - currently owned work
+  = currently available capacity
+</code></pre>
+<p>The implementation may represent additional states, but this distinction explains an important behavior: <strong>zero active workers can be a healthy idle condition</strong>.</p>
+<p>Likewise, configured capacity does not imply that idle workers must already exist.</p>
+<h2 id="canonical-observation"><a class="header" href="#canonical-observation">Canonical observation</a></h2>
+<p>The controller exposes bounded status through the operator surface:</p>
+<pre><code class="language-sh">dubctl runners status
+dubctl runners status --json
+</code></pre>
+<p>The status model is intended to answer questions such as:</p>
+<ul>
+<li>is self-hosted CI administratively permitted;</li>
+<li>what capacity is currently eligible;</li>
+<li>how much admitted work is owned;</li>
+<li>which workers are active;</li>
+<li>whether controller observation is healthy;</li>
+<li>whether reconciliation is required.</li>
+</ul>
+<p>Scripts and dashboards should consume the structured state rather than derive lifecycle truth from process lists or logs.</p>
+<h2 id="reconciliation-is-explicit"><a class="header" href="#reconciliation-is-explicit">Reconciliation is explicit</a></h2>
+<p>CI state can become stale or partially completed when a process crashes, a job disappears, or cleanup is interrupted. The controller therefore treats reconciliation as a first-class responsibility.</p>
+<p>The goal is not to preserve a worker at all costs. The goal is to restore an explainable relationship between admitted work, owned resources, and observed runtime state.</p>
+<p>Ambiguous ownership should fail safely rather than guessing that an unknown worker can be reused or deleted.</p>
+<h2 id="queue-priority-does-not-create-authority"><a class="header" href="#queue-priority-does-not-create-authority">Queue priority does not create authority</a></h2>
+<p>When multiple already-authorized jobs are waiting for bounded local capacity, ordering may decide which job receives the next available slot.</p>
+<p>Priority changes <strong>order</strong>, not eligibility. A lower-level workflow request cannot use queue manipulation to select another repository’s profile, stronger credentials, or additional capability.</p>
+<h2 id="trust-boundaries"><a class="header" href="#trust-boundaries">Trust boundaries</a></h2>
+<p>The runner design preserves several separations:</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Boundary</th><th>Public invariant</th></tr>
+</thead>
+<tbody>
+<tr><td>Repository demand → admission</td><td>Demand does not imply permission</td></tr>
+<tr><td>Controller → worker</td><td>Lifecycle authority is not inherited by job code</td></tr>
+<tr><td>Worker → host</td><td>Job execution is bounded and disposable</td></tr>
+<tr><td>Queue → policy</td><td>Ordering does not widen eligibility</td></tr>
+<tr><td>Logs → state</td><td>Logs are evidence, not lifecycle authority</td></tr>
+<tr><td>Previous job → next job</td><td>Successful execution grants no future authority</td></tr>
+</tbody>
+</table>
+</div>
+<h2 id="what-is-deliberately-omitted"><a class="header" href="#what-is-deliberately-omitted">What is deliberately omitted</a></h2>
+<p>This overview does not publish exact repository mappings, runner labels, service wiring, credential flows, filesystem paths, resource thresholds, scheduling heuristics, cleanup implementation, or production incident procedures.</p>
+<p>Those details are not required to understand the public contract: reviewed eligibility becomes bounded short-lived execution through an observable controller-owned lifecycle.</p>
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="runtime-operating-modes"><a class="header" href="#runtime-operating-modes">Runtime Operating Modes</a></h1>
 <p>A reproducible endpoint does not need every declared capability active at the same time. Dubnium uses runtime operating modes to select which already-declared workload posture should be active <strong>now</strong> without treating an imperative mode change as a replacement for declarative configuration.</p>
