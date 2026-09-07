@@ -3,7 +3,7 @@
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
-        <title>Writable User Configuration - Dubnium</title>
+        <title>Self-Hosted CI Runner Controller - Dubnium</title>
 
 
         <!-- Custom HTML head -->
@@ -174,74 +174,113 @@
 
                 <div id="mdbook-content" class="content">
                     <main>
-                        <h1 id="writable-user-configuration"><a class="header" href="#writable-user-configuration">Writable User Configuration</a></h1>
-<p>NixOS and Home Manager make managed configuration reproducible, and many managed files are materialized from immutable Nix-store content. Those files should be regenerated rather than edited in place.</p>
-<p>That does <strong>not</strong> mean the user environment is globally read-only.</p>
-<p>Dubnium keeps an explicit writable boundary for application preferences, machine-specific choices, and first-run state that legitimately changes outside a system rebuild. <code>configctl</code> makes ownership and drift visible so mutable user state does not become undocumented configuration history.</p>
-<h2 id="layer-model"><a class="header" href="#layer-model">Layer model</a></h2>
+                        <h1 id="self-hosted-ci-runner-controller"><a class="header" href="#self-hosted-ci-runner-controller">Self-Hosted CI Runner Controller</a></h1>
+<p>Dubnium treats self-hosted CI capacity as a governed runtime resource rather than a collection of permanently waiting runner processes.</p>
+<p>The public design goal is simple: <strong>keep controller authority persistent, but make ordinary job execution short-lived and bounded</strong>.</p>
+<h2 id="responsibility-split"><a class="header" href="#responsibility-split">Responsibility split</a></h2>
+<pre class="mermaid">flowchart LR
+    A[Repository demand] --&gt; B[Runner Controller]
+    B --&gt; C{Admission permitted?}
+    C -- no --&gt; D[Remain waiting or denied]
+    C -- yes --&gt; E[Short-lived worker]
+    E --&gt; F[One job]
+    F --&gt; G[Cleanup and reconciliation]
+    G --&gt; B
+</pre>
+
+<p>The controller owns lifecycle decisions and status. The worker owns one admitted job and then disappears.</p>
+<h2 id="why-not-keep-ordinary-runners-permanently-idle"><a class="header" href="#why-not-keep-ordinary-runners-permanently-idle">Why not keep ordinary runners permanently idle?</a></h2>
+<p>A permanently waiting worker carries more ambient state than Dubnium needs for ordinary CI demand. Short-lived workers reduce the amount of time job execution environments exist and make ownership easier to reason about.</p>
+<p>This does not make untrusted CI safe by itself. It provides a clearer lifecycle boundary that can be combined with reviewed repository policy, bounded resources, credential separation, filesystem isolation, and destination-side controls.</p>
+<h2 id="admission-happens-before-worker-creation"><a class="header" href="#admission-happens-before-worker-creation">Admission happens before worker creation</a></h2>
+<p>A workflow asking for capacity does not get to choose arbitrary authority.</p>
+<p>Before ordinary work is admitted, the controller evaluates already-reviewed eligibility and current host state. Publicly relevant inputs include:</p>
+<ul>
+<li>whether the repository is eligible for local execution;</li>
+<li>whether the requested class of work is already declared;</li>
+<li>whether bounded capacity is available;</li>
+<li>whether administrative policy currently permits work;</li>
+<li>whether existing worker ownership can be explained.</li>
+</ul>
+<p>Only admitted work receives a worker.</p>
+<p>The exact registry, thresholds, credentials, scheduling algorithm, and host-specific resource values are deployment details and are intentionally not published here.</p>
+<h2 id="the-worker-is-intentionally-disposable"><a class="header" href="#the-worker-is-intentionally-disposable">The worker is intentionally disposable</a></h2>
+<p>An admitted worker has a narrow lifecycle:</p>
+<pre><code class="language-text">created
+  -&gt; accepts one admitted assignment
+  -&gt; executes inside bounded job isolation
+  -&gt; reports terminal outcome
+  -&gt; cleanup
+  -&gt; gone
+</code></pre>
+<p>Ordinary workers do not become a durable source of configuration or identity. A future job is admitted again from current policy and current host state.</p>
+<h2 id="controller-credentials-do-not-become-job-credentials"><a class="header" href="#controller-credentials-do-not-become-job-credentials">Controller credentials do not become job credentials</a></h2>
+<p>The controller may need authority to coordinate the runner lifecycle. That authority is not meant to become ambient authority inside the job environment.</p>
+<p>This separation is important because the code under test should not inherit control-plane credentials merely because it runs on the same physical endpoint.</p>
+<p>The public invariant is credential separation; exact credential material and transport remain private.</p>
+<h2 id="capacity-is-a-state-model-not-a-process-count"><a class="header" href="#capacity-is-a-state-model-not-a-process-count">Capacity is a state model, not a process count</a></h2>
+<p>Operators should not infer capacity from the number of visible worker processes.</p>
+<p>A useful conceptual model is:</p>
+<pre><code class="language-text">configured eligibility
+  + administrative permission
+  + bounded host capacity
+  - currently owned work
+  = currently available capacity
+</code></pre>
+<p>The implementation may represent additional states, but this distinction explains an important behavior: <strong>zero active workers can be a healthy idle condition</strong>.</p>
+<p>Likewise, configured capacity does not imply that idle workers must already exist.</p>
+<h2 id="canonical-observation"><a class="header" href="#canonical-observation">Canonical observation</a></h2>
+<p>The controller exposes bounded status through the operator surface:</p>
+<pre><code class="language-sh">dubctl runners status
+dubctl runners status --json
+</code></pre>
+<p>The status model is intended to answer questions such as:</p>
+<ul>
+<li>is self-hosted CI administratively permitted;</li>
+<li>what capacity is currently eligible;</li>
+<li>how much admitted work is owned;</li>
+<li>which workers are active;</li>
+<li>whether controller observation is healthy;</li>
+<li>whether reconciliation is required.</li>
+</ul>
+<p>Scripts and dashboards should consume the structured state rather than derive lifecycle truth from process lists or logs.</p>
+<h2 id="reconciliation-is-explicit"><a class="header" href="#reconciliation-is-explicit">Reconciliation is explicit</a></h2>
+<p>CI state can become stale or partially completed when a process crashes, a job disappears, or cleanup is interrupted. The controller therefore treats reconciliation as a first-class responsibility.</p>
+<p>The goal is not to preserve a worker at all costs. The goal is to restore an explainable relationship between admitted work, owned resources, and observed runtime state.</p>
+<p>Ambiguous ownership should fail safely rather than guessing that an unknown worker can be reused or deleted.</p>
+<h2 id="queue-priority-does-not-create-authority"><a class="header" href="#queue-priority-does-not-create-authority">Queue priority does not create authority</a></h2>
+<p>When multiple already-authorized jobs are waiting for bounded local capacity, ordering may decide which job receives the next available slot.</p>
+<p>Priority changes <strong>order</strong>, not eligibility. A lower-level workflow request cannot use queue manipulation to select another repository’s profile, stronger credentials, or additional capability.</p>
+<h2 id="trust-boundaries"><a class="header" href="#trust-boundaries">Trust boundaries</a></h2>
+<p>The runner design preserves several separations:</p>
 <div class="table-wrapper">
 <table>
 <thead>
-<tr><th>Layer</th><th>Ownership</th><th>Intended use</th></tr>
+<tr><th>Boundary</th><th>Public invariant</th></tr>
 </thead>
 <tbody>
-<tr><td><strong>Managed</strong></td><td>Declarative configuration</td><td>Reviewed defaults and portable configuration; regenerated rather than edited in place</td></tr>
-<tr><td><strong>Local</strong></td><td>User / machine</td><td>Machine-specific overrides that should remain local</td></tr>
-<tr><td><strong>Custom</strong></td><td>User</td><td>Writable fragments that may be useful enough to review and promote</td></tr>
-<tr><td><strong>Adopted</strong></td><td>Reconciliation history</td><td>Fragments already represented by managed configuration and no longer loaded as independent overrides</td></tr>
+<tr><td>Repository demand → admission</td><td>Demand does not imply permission</td></tr>
+<tr><td>Controller → worker</td><td>Lifecycle authority is not inherited by job code</td></tr>
+<tr><td>Worker → host</td><td>Job execution is bounded and disposable</td></tr>
+<tr><td>Queue → policy</td><td>Ordering does not widen eligibility</td></tr>
+<tr><td>Logs → state</td><td>Logs are evidence, not lifecycle authority</td></tr>
+<tr><td>Previous job → next job</td><td>Successful execution grants no future authority</td></tr>
 </tbody>
 </table>
 </div>
-<p>The names describe ownership, not trust level. A writable fragment does not automatically become managed merely because it works locally.</p>
-<h2 id="configctl-responsibility"><a class="header" href="#configctl-responsibility"><code>configctl</code> responsibility</a></h2>
-<p><code>configctl</code> provides a generic reconciliation surface around those layers. Its useful operator vocabulary includes:</p>
-<div class="table-wrapper">
-<table>
-<thead>
-<tr><th>Surface</th><th>Responsibility</th></tr>
-</thead>
-<tbody>
-<tr><td><code>status</code></td><td>Show which configuration layers exist and where unpromoted state remains</td></tr>
-<tr><td><code>adopt</code></td><td>Establish the expected writable layer structure for a supported tool</td></tr>
-<tr><td><code>promote</code></td><td>Move a useful custom fragment into a reviewable declarative path</td></tr>
-<tr><td><code>reconcile</code></td><td>Report drift between local writable state and managed configuration</td></tr>
-<tr><td><code>doctor</code></td><td>Check that the reconciliation environment and contracts are healthy</td></tr>
-<tr><td><code>init</code></td><td>Handle bounded first-run state that cannot be represented by declaring a static file alone</td></tr>
-</tbody>
-</table>
-</div>
-<p>This is an ownership workflow, not an attempt to make every application configuration format identical.</p>
-<h2 id="promotion-rather-than-mutation"><a class="header" href="#promotion-rather-than-mutation">Promotion rather than mutation</a></h2>
-<p>A portable preference can begin as a writable local/custom change. <code>configctl</code> can identify that the change is outside the managed layer and help move it into review. Once the reviewed declarative configuration represents the same intent, a rebuild can make it part of the managed default and the independent custom fragment no longer needs to carry authority.</p>
-<p>That gives Dubnium both properties at once:</p>
-<ul>
-<li>managed defaults remain reproducible and reviewable;</li>
-<li>legitimate application and user preferences still have an explicit writable home.</li>
-</ul>
-<h2 id="first-run-mutable-state"><a class="header" href="#first-run-mutable-state">First-run mutable state</a></h2>
-<p>Some tools need initialization rather than a static configuration file. <code>configctl</code> supports explicit first-run contracts so these changes are inspectable and risk-gated rather than hidden in shell startup, installer side effects, or ad-hoc bootstrap scripts.</p>
-<p>The technical overview intentionally describes the contract shape, not tool-specific mutable paths or operational procedures.</p>
-<h2 id="security-boundary"><a class="header" href="#security-boundary">Security boundary</a></h2>
-<p>Writable configuration is not an escape hatch from host policy. <code>configctl</code> does not grant authority over:</p>
-<ul>
-<li>secrets or credentials;</li>
-<li>privileged system state;</li>
-<li>service authorization;</li>
-<li>host security policy;</li>
-<li>deployment topology;</li>
-<li>governed effects.</li>
-</ul>
-<p>Those concerns remain with their own declarative, runtime, secret-management, and governance boundaries.</p>
+<h2 id="what-is-deliberately-omitted"><a class="header" href="#what-is-deliberately-omitted">What is deliberately omitted</a></h2>
+<p>This overview does not publish exact repository mappings, runner labels, service wiring, credential flows, filesystem paths, resource thresholds, scheduling heuristics, cleanup implementation, or production incident procedures.</p>
+<p>Those details are not required to understand the public contract: reviewed eligibility becomes bounded short-lived execution through an observable controller-owned lifecycle.</p>
 
                     </main>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
-                            <a rel="prev" href="runtime-modes.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                            <a rel="prev" href="operator-tooling.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                                 <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
                             </a>
 
-                            <a rel="next prefetch" href="principles.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                            <a rel="next prefetch" href="runtime-modes.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                                 <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
                             </a>
 
@@ -251,11 +290,11 @@
             </div>
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
-                    <a rel="prev" href="runtime-modes.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                    <a rel="prev" href="operator-tooling.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                         <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
                     </a>
 
-                    <a rel="next prefetch" href="principles.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                    <a rel="next prefetch" href="runtime-modes.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                         <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
                     </a>
             </nav>

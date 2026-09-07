@@ -3,7 +3,7 @@
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
-        <title>Writable User Configuration - Dubnium</title>
+        <title>How Dubnium Works - Dubnium</title>
 
 
         <!-- Custom HTML head -->
@@ -174,74 +174,81 @@
 
                 <div id="mdbook-content" class="content">
                     <main>
-                        <h1 id="writable-user-configuration"><a class="header" href="#writable-user-configuration">Writable User Configuration</a></h1>
-<p>NixOS and Home Manager make managed configuration reproducible, and many managed files are materialized from immutable Nix-store content. Those files should be regenerated rather than edited in place.</p>
-<p>That does <strong>not</strong> mean the user environment is globally read-only.</p>
-<p>Dubnium keeps an explicit writable boundary for application preferences, machine-specific choices, and first-run state that legitimately changes outside a system rebuild. <code>configctl</code> makes ownership and drift visible so mutable user state does not become undocumented configuration history.</p>
-<h2 id="layer-model"><a class="header" href="#layer-model">Layer model</a></h2>
+                        <h1 id="how-dubnium-works"><a class="header" href="#how-dubnium-works">How Dubnium Works</a></h1>
+<p>Dubnium is easiest to understand as a set of boundaries between <strong>declared intent</strong>, <strong>runtime state</strong>, <strong>observation</strong>, and <strong>governed effects</strong>.</p>
+<p>The project does not treat configuration, automation, or AI output as equivalent kinds of truth. Each answers a different question and carries different authority.</p>
+<h2 id="end-to-end-mental-model"><a class="header" href="#end-to-end-mental-model">End-to-end mental model</a></h2>
+<pre class="mermaid">flowchart LR
+    A[Versioned intent] --&gt; B[Reproducible evaluation]
+    B --&gt; C[Installed capability]
+    C --&gt; D[Selected runtime posture]
+    D --&gt; E[Observed runtime state]
+    E --&gt; F[Operator or automation request]
+    F --&gt; G[Policy and capability boundary]
+    G --&gt; H[Bounded effect]
+    H --&gt; I[Durable state and evidence]
+    I --&gt; E
+</pre>
+
+<p>The important property is not the exact implementation behind each box. It is that crossing from one responsibility to another is explicit and inspectable.</p>
+<h2 id="1-declared-intent-describes-what-may-exist"><a class="header" href="#1-declared-intent-describes-what-may-exist">1. Declared intent describes what may exist</a></h2>
+<p>NixOS, Home Manager, project environments, and reviewed configuration describe the reproducible inputs of an endpoint. This layer answers questions such as:</p>
+<ul>
+<li>which capabilities are present;</li>
+<li>which services or tools may be available;</li>
+<li>which user-environment defaults are managed;</li>
+<li>which resource and security boundaries are declared.</li>
+</ul>
+<p>Declared intent does <strong>not</strong> prove that a service is running, a workload is healthy, or a privileged effect is authorized at this moment.</p>
+<h2 id="2-runtime-posture-selects-from-already-declared-capability"><a class="header" href="#2-runtime-posture-selects-from-already-declared-capability">2. Runtime posture selects from already-declared capability</a></h2>
+<p>An endpoint may need different operating postures over time. Interactive work, media-priority work, and compute-heavy work can place different demands on the same machine.</p>
+<p>A runtime-mode transition selects among capabilities that configuration already permits. It does not install missing capability or create new authority. The transition is only considered successful after the resulting state is observed.</p>
+<p>See <a href="runtime-modes.html">Runtime Operating Modes</a>.</p>
+<h2 id="3-observation-reports-what-is-actually-happening"><a class="header" href="#3-observation-reports-what-is-actually-happening">3. Observation reports what is actually happening</a></h2>
+<p>Dubnium keeps intended state and observed state separate. Operator tooling can report service state, runner capacity, runtime posture, configuration ownership, and other bounded facts without pretending that configuration alone proves runtime success.</p>
+<p>This separation also prevents telemetry from becoming policy. A log, metric, dashboard, or previous successful run may be useful evidence, but it does not authorize a future effect.</p>
+<p>See <a href="observability.html">Observability and Evidence</a>.</p>
+<h2 id="4-requests-cross-explicit-authority-boundaries"><a class="header" href="#4-requests-cross-explicit-authority-boundaries">4. Requests cross explicit authority boundaries</a></h2>
+<p>A human, workflow, scheduler, or model may request an action. A request is not permission.</p>
+<p>Consequential effects are expected to cross a boundary that can bind identity, capability, policy, lifecycle state, and evidence. A stronger model or richer context can improve a proposal, but it does not widen the caller’s effect authority.</p>
+<p>This same rule applies to retrieved context: similarity or relevance can help reasoning, but retrieval rank does not establish approval, currentness, or operational truth.</p>
+<p>See <a href="governance.html">Governance and Safety</a> and <a href="ai-and-automation.html">AI and Automation</a>.</p>
+<h2 id="5-effects-produce-state-and-evidence"><a class="header" href="#5-effects-produce-state-and-evidence">5. Effects produce state and evidence</a></h2>
+<p>A successful operation should leave enough bounded evidence to answer what happened without indiscriminately capturing private source, prompts, credentials, or unrelated activity.</p>
+<p>Durable workflow state, domain state, and runtime observation remain distinct. That allows retries, reconciliation, replacement, and audit without reconstructing the world from model context or logs.</p>
+<h2 id="invariants-that-hold-across-the-system"><a class="header" href="#invariants-that-hold-across-the-system">Invariants that hold across the system</a></h2>
+<p>Several rules repeat throughout Dubnium:</p>
 <div class="table-wrapper">
 <table>
 <thead>
-<tr><th>Layer</th><th>Ownership</th><th>Intended use</th></tr>
+<tr><th>Statement</th><th>What it prevents</th></tr>
 </thead>
 <tbody>
-<tr><td><strong>Managed</strong></td><td>Declarative configuration</td><td>Reviewed defaults and portable configuration; regenerated rather than edited in place</td></tr>
-<tr><td><strong>Local</strong></td><td>User / machine</td><td>Machine-specific overrides that should remain local</td></tr>
-<tr><td><strong>Custom</strong></td><td>User</td><td>Writable fragments that may be useful enough to review and promote</td></tr>
-<tr><td><strong>Adopted</strong></td><td>Reconciliation history</td><td>Fragments already represented by managed configuration and no longer loaded as independent overrides</td></tr>
+<tr><td>Declared capability is not observed activity</td><td>Configuration being mistaken for runtime truth</td></tr>
+<tr><td>A request is not authority</td><td>Callers authorizing their own effects</td></tr>
+<tr><td>Observation is not policy</td><td>Logs or dashboards silently becoming control planes</td></tr>
+<tr><td>Retrieval is evidence, not authority</td><td>Similarity rank being treated as approval or truth</td></tr>
+<tr><td>Execution success is not promotion</td><td>A candidate artifact activating itself</td></tr>
+<tr><td>A CLI is not the source of truth</td><td>Convenience tooling becoming a second configuration system</td></tr>
 </tbody>
 </table>
 </div>
-<p>The names describe ownership, not trust level. A writable fragment does not automatically become managed merely because it works locally.</p>
-<h2 id="configctl-responsibility"><a class="header" href="#configctl-responsibility"><code>configctl</code> responsibility</a></h2>
-<p><code>configctl</code> provides a generic reconciliation surface around those layers. Its useful operator vocabulary includes:</p>
-<div class="table-wrapper">
-<table>
-<thead>
-<tr><th>Surface</th><th>Responsibility</th></tr>
-</thead>
-<tbody>
-<tr><td><code>status</code></td><td>Show which configuration layers exist and where unpromoted state remains</td></tr>
-<tr><td><code>adopt</code></td><td>Establish the expected writable layer structure for a supported tool</td></tr>
-<tr><td><code>promote</code></td><td>Move a useful custom fragment into a reviewable declarative path</td></tr>
-<tr><td><code>reconcile</code></td><td>Report drift between local writable state and managed configuration</td></tr>
-<tr><td><code>doctor</code></td><td>Check that the reconciliation environment and contracts are healthy</td></tr>
-<tr><td><code>init</code></td><td>Handle bounded first-run state that cannot be represented by declaring a static file alone</td></tr>
-</tbody>
-</table>
-</div>
-<p>This is an ownership workflow, not an attempt to make every application configuration format identical.</p>
-<h2 id="promotion-rather-than-mutation"><a class="header" href="#promotion-rather-than-mutation">Promotion rather than mutation</a></h2>
-<p>A portable preference can begin as a writable local/custom change. <code>configctl</code> can identify that the change is outside the managed layer and help move it into review. Once the reviewed declarative configuration represents the same intent, a rebuild can make it part of the managed default and the independent custom fragment no longer needs to carry authority.</p>
-<p>That gives Dubnium both properties at once:</p>
-<ul>
-<li>managed defaults remain reproducible and reviewable;</li>
-<li>legitimate application and user preferences still have an explicit writable home.</li>
-</ul>
-<h2 id="first-run-mutable-state"><a class="header" href="#first-run-mutable-state">First-run mutable state</a></h2>
-<p>Some tools need initialization rather than a static configuration file. <code>configctl</code> supports explicit first-run contracts so these changes are inspectable and risk-gated rather than hidden in shell startup, installer side effects, or ad-hoc bootstrap scripts.</p>
-<p>The technical overview intentionally describes the contract shape, not tool-specific mutable paths or operational procedures.</p>
-<h2 id="security-boundary"><a class="header" href="#security-boundary">Security boundary</a></h2>
-<p>Writable configuration is not an escape hatch from host policy. <code>configctl</code> does not grant authority over:</p>
-<ul>
-<li>secrets or credentials;</li>
-<li>privileged system state;</li>
-<li>service authorization;</li>
-<li>host security policy;</li>
-<li>deployment topology;</li>
-<li>governed effects.</li>
-</ul>
-<p>Those concerns remain with their own declarative, runtime, secret-management, and governance boundaries.</p>
+<h2 id="local-first-not-isolated"><a class="header" href="#local-first-not-isolated">Local-first, not isolated</a></h2>
+<p>Dubnium favors local execution and local inspectability where they are sufficient. Remote services, stronger models, shared compute, or central coordination may still be used through explicit contracts.</p>
+<p>The important architectural property is that adding a remote dependency does not erase the endpoint’s ability to explain its own declared state, current posture, observed behavior, or authority boundaries.</p>
+<h2 id="what-this-overview-intentionally-does-not-publish"><a class="header" href="#what-this-overview-intentionally-does-not-publish">What this overview intentionally does not publish</a></h2>
+<p>This chapter describes responsibility and behavior, not deployment-sensitive implementation. It intentionally omits exact topology, service-unit wiring, trusted identities, credentials, policy thresholds, routing heuristics, privileged procedures, and production operational evidence.</p>
+<p>The public contract is the separation between responsibilities, not the private mechanics used by one deployment to enforce them.</p>
 
                     </main>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
-                            <a rel="prev" href="runtime-modes.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                            <a rel="prev" href="index.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                                 <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
                             </a>
 
-                            <a rel="next prefetch" href="principles.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                            <a rel="next prefetch" href="components.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                                 <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
                             </a>
 
@@ -251,11 +258,11 @@
             </div>
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
-                    <a rel="prev" href="runtime-modes.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                    <a rel="prev" href="index.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                         <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
                     </a>
 
-                    <a rel="next prefetch" href="principles.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                    <a rel="next prefetch" href="components.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                         <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
                     </a>
             </nav>
