@@ -35,10 +35,10 @@
             const path_to_root = "";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "searchindex-6be2a01f.js";
+            window.path_to_searchindex_js = "searchindex-0abcc67e.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="toc-ab6e6d74.js"></script>
+        <script src="toc-1699cbdc.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -191,6 +191,10 @@ trusted acceleration
   -&gt; caches, builders, prebuilt artifacts, and remote capacity
 </code></pre>
 <p>The layers can use different tools, but their ownership should remain explicit.</p>
+<h2 id="immutable-managed-configuration-is-not-a-read-only-user-environment"><a class="header" href="#immutable-managed-configuration-is-not-a-read-only-user-environment">Immutable managed configuration is not a read-only user environment</a></h2>
+<p>NixOS and Home Manager deliberately make managed configuration reproducible, and many managed files are materialized from immutable Nix-store content. That does not mean legitimate application preferences and user state must be forced through a system rebuild.</p>
+<p>Dubnium treats writable user configuration as a separate ownership problem. <a href="writable-configuration.html">Writable User Configuration</a> describes the managed, local, custom, and adopted layers and the role of <code>configctl</code> in making drift and promotion visible.</p>
+<p>The important reproducibility invariant is that writable state remains <strong>classified</strong>: a local preference does not silently become the managed source of truth, and a generated managed file is not edited in place merely because it is convenient.</p>
 <h2 id="desired-developer-path"><a class="header" href="#desired-developer-path">Desired developer path</a></h2>
 <p>A project should increasingly be able to approach:</p>
 <pre><code class="language-text">clone

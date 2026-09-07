@@ -3,8 +3,7 @@
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
-        <title>Page not found - Dubnium</title>
-        <base href="/docs/">
+        <title>Runtime Operating Modes - Dubnium</title>
 
 
         <!-- Custom HTML head -->
@@ -175,14 +174,74 @@
 
                 <div id="mdbook-content" class="content">
                     <main>
-                        <h1 id="document-not-found-404"><a class="header" href="#document-not-found-404">Document not found (404)</a></h1>
-<p>This URL is invalid, sorry. Please use the navigation bar or search to continue.</p>
+                        <h1 id="runtime-operating-modes"><a class="header" href="#runtime-operating-modes">Runtime Operating Modes</a></h1>
+<p>A reproducible endpoint does not need every declared capability active at the same time. Dubnium uses runtime operating modes to select which already-declared workload posture should be active <strong>now</strong> without treating an imperative mode change as a replacement for declarative configuration.</p>
+<h2 id="modes-versus-capabilities"><a class="header" href="#modes-versus-capabilities">Modes versus capabilities</a></h2>
+<p>The distinction is intentional:</p>
+<pre><code class="language-text">declarative configuration -&gt; what the endpoint is allowed and able to run
+runtime mode              -&gt; which declared posture should be active now
+observed state             -&gt; what is actually active after reconciliation
+</code></pre>
+<p>A mode switch does not install new capabilities. A declared capability does not imply that its workload is currently active.</p>
+<h2 id="current-mode-model"><a class="header" href="#current-mode-model">Current mode model</a></h2>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Runtime identifier</th><th>Human-facing intent</th><th>Runtime posture</th></tr>
+</thead>
+<tbody>
+<tr><td><code>desktop</code></td><td>Normal interactive engineering</td><td>Graphical and developer-facing workloads take priority; compute-oriented AI workloads remain suppressed by mode policy</td></tr>
+<tr><td><code>studio-local</code></td><td><strong>Media mode</strong></td><td>Desktop remains available while media-priority policy protects latency-sensitive work and suppresses competing compute pressure</td></tr>
+<tr><td><code>compute</code></td><td>Dedicated compute and local AI</td><td>Graphical work is released and compute-oriented services receive the resources required by the declared compute posture</td></tr>
+</tbody>
+</table>
+</div>
+<p><code>studio-local</code> remains the current runtime identifier for media mode. Some implementation identifiers may retain older studio/audio terminology for compatibility; that does not narrow the intended media-mode semantics.</p>
+<h2 id="modectl-responsibility"><a class="header" href="#modectl-responsibility"><code>modectl</code> responsibility</a></h2>
+<p><code>modectl</code> is the operator surface for these transitions. Its observable behavior is a reconciliation loop rather than a collection of arbitrary service toggles:</p>
+<ol>
+<li>record the desired mode;</li>
+<li>observe the current runtime posture;</li>
+<li>validate that the requested transition is allowed;</li>
+<li>run guards that protect active work and resource safety;</li>
+<li>reconcile bounded runtime changes;</li>
+<li>observe again;</li>
+<li>record success, blockage, or failure from the observed result.</li>
+</ol>
+<p>The key invariant is that <strong>attempting a transition is not evidence that the transition succeeded</strong>. Success requires post-transition observation consistent with the requested mode.</p>
+<h2 id="transition-guards"><a class="header" href="#transition-guards">Transition guards</a></h2>
+<p>Disruptive transitions are guarded by categories of runtime evidence such as:</p>
+<ul>
+<li>active workload state;</li>
+<li>CPU/load and memory headroom;</li>
+<li>graphical/display resource ownership;</li>
+<li>protected media activity, including latency-sensitive audio where applicable;</li>
+<li>whether a service can be safely drained before its resources are reassigned.</li>
+</ul>
+<p>Exact guard names, thresholds, service wiring, hardware assignments, and machine-specific exceptions are deployment policy and are intentionally outside this technical overview.</p>
+<h2 id="authority-boundary"><a class="header" href="#authority-boundary">Authority boundary</a></h2>
+<p>A mode request can change runtime posture only within capabilities already declared for the endpoint. It cannot:</p>
+<ul>
+<li>install a missing capability;</li>
+<li>widen authorization;</li>
+<li>bypass a governed-effect decision;</li>
+<li>rewrite the NixOS definition;</li>
+<li>redefine resource or security policy;</li>
+<li>turn a failed observation into success.</li>
+</ul>
+<p>This keeps <code>modectl</code> useful for resource-sensitive work while preserving the separation between declarative intent, runtime control, and observed state.</p>
 
                     </main>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="operator-tooling.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
+                            </a>
 
+                            <a rel="next prefetch" href="writable-configuration.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                            </a>
 
                         <div style="clear: both"></div>
                     </nav>
@@ -190,7 +249,13 @@
             </div>
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="operator-tooling.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
+                    </a>
 
+                    <a rel="next prefetch" href="writable-configuration.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                    </a>
             </nav>
 
         </div>
