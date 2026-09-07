@@ -35,10 +35,10 @@
             const path_to_root = "";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "searchindex-6be2a01f.js";
+            window.path_to_searchindex_js = "searchindex-0abcc67e.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="toc-ab6e6d74.js"></script>
+        <script src="toc-1699cbdc.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -179,6 +179,10 @@
 <h2 id="ai-is-optional-capability"><a class="header" href="#ai-is-optional-capability">AI is optional capability</a></h2>
 <p>A Dubnium environment may use local models, remote models, or no model at all. Deterministic configuration, security boundaries, runtime observation, workflow state, and recovery should continue to work independently.</p>
 <p>Model selection and provider choice are implementation concerns behind a stable caller-facing boundary. Changing a model must not silently widen access to data, tools, credentials, networks, or privileged effects.</p>
+<h2 id="local-first-model-routing"><a class="header" href="#local-first-model-routing">Local-first model routing</a></h2>
+<p>Local execution is the default direction where it is sufficient for the task. A request may use a stronger remote or frontier model only through an explicit bounded escalation path that preserves policy, sanitization, lineage, provider constraints, and traceability.</p>
+<p>Escalation changes available model capability. It does not transfer effect authority, grant additional tools or credentials, or convert unresolved policy into permission. A policy ambiguity or required human decision remains unresolved rather than being “solved” merely by selecting a stronger model.</p>
+<p>The exact production triggers, provider configuration, and routing heuristics remain private implementation concerns.</p>
 <h2 id="reasoning-is-not-an-effect"><a class="header" href="#reasoning-is-not-an-effect">Reasoning is not an effect</a></h2>
 <p>A useful separation is:</p>
 <pre><code class="language-text">reasoning proposes intent
@@ -189,15 +193,21 @@
 -&gt; durable outcome and evidence
 </code></pre>
 <p>Model output can propose an action. It cannot mint its own identity, approve itself, or turn previous success into future authority.</p>
+<h2 id="retrieval-is-evidence-not-authority"><a class="header" href="#retrieval-is-evidence-not-authority">Retrieval is evidence, not authority</a></h2>
+<p>Where semantic memory retrieval is enabled, canonical memory records remain the authoritative stored state while embeddings and indexes are derived, rebuildable retrieval state. Similarity rank does not establish approval, permission, currentness, or operational truth.</p>
+<p>The Memory Service owns retrieval over its own governed memory corpus; it does not become a generic search federation layer. Document or project search, repository state, and live runtime observation remain separate sources that the caller or Supervisor may consult according to the task and source-of-truth boundary.</p>
 <h2 id="stateful-automation-owns-state"><a class="header" href="#stateful-automation-owns-state">Stateful automation owns state</a></h2>
 <p>Scheduled work, durable workflows, memory/context systems, and long-running operations should expose explicit lifecycle and state rather than exist only inside model context.</p>
 <p>That makes retries, recovery, auditing, and replacement possible without asking a model to reconstruct what probably happened.</p>
+<h2 id="training-has-separate-authorities"><a class="header" href="#training-has-separate-authorities">Training has separate authorities</a></h2>
+<p>Model training follows the same governed-effect model as other consequential automation. A backend-neutral training request can describe intent, but execution authority, resource enforcement, evaluation, promotion, catalog binding, and runtime activation remain separate responsibilities.</p>
+<p>A successful training operation yields a candidate artifact. It does not by itself prove evaluation success, authorize promotion, select a production model, or activate that model for inference. Models and specialists cannot authorize their own training or promotion merely because they generated the proposal or candidate.</p>
 <h2 id="resource-aware-operation"><a class="header" href="#resource-aware-operation">Resource-aware operation</a></h2>
-<p>AI inference, builds, tests, background automation, and interactive work can all compete for CPU, memory, storage, network, and accelerators. Dubnium treats resource placement and isolation as operating concerns rather than model-routing side effects.</p>
+<p>AI inference, builds, tests, model training, background automation, and interactive work can all compete for CPU, memory, storage, network, and accelerators. Dubnium treats resource placement and isolation as operating concerns rather than model-routing side effects.</p>
 <h2 id="evidence-remains-bounded"><a class="header" href="#evidence-remains-bounded">Evidence remains bounded</a></h2>
-<p>Automation should produce enough structured evidence to explain outcomes while avoiding indiscriminate capture of source, prompts, credentials, private messages, or unrelated user activity.</p>
+<p>Automation should produce enough structured evidence to explain outcomes while avoiding indiscriminate capture of source, prompts, credentials, private messages, training data, or unrelated user activity.</p>
 <h2 id="public-interoperability"><a class="header" href="#public-interoperability">Public interoperability</a></h2>
-<p>Public Dubnium contracts may describe model-independent request surfaces, capability envelopes, scheduling or state semantics, and conformance behavior when those interfaces are useful to external consumers. Private routing heuristics, production prompts, trusted identities, provider configuration, and stored user data remain outside the public boundary.</p>
+<p>Public Dubnium contracts may describe model-independent request surfaces, capability envelopes, scheduling or state semantics, and conformance behavior when those interfaces are useful to external consumers. Private routing heuristics, production prompts, trusted identities, provider configuration, training implementation, and stored user data remain outside the public boundary.</p>
 
                     </main>
 
