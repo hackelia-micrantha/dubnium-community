@@ -1,0 +1,21 @@
+[book]
+title = "Dubnium"
+authors = ["Dubnium Community"]
+description = "Public overview of Dubnium engineering-environment concepts, contracts, governance, and safety"
+src = "docs/external"
+language = "en"
+
+[build]
+build-dir = "site/docs"
+create-missing = false
+
+[output.html]
+default-theme = "light"
+preferred-dark-theme = "navy"
+site-url = "/docs/"
+additional-js = ["mermaid.min.js", "mermaid-init.js"]
+
+[preprocessor]
+
+[preprocessor.mermaid]
+command = "mdbook-mermaid"

@@ -1,0 +1,61 @@
+name: Build and validate public book
+
+on:
+  pull_request:
+    paths:
+      - "docs/external/**"
+      - "book.toml"
+      - "mermaid.min.js"
+      - "mermaid-init.js"
+      - "scripts/build-public-book.sh"
+      - "scripts/prepare_public_book.py"
+      - "tests/test_prepare_public_book.py"
+      - ".github/workflows/build-public-book.yml"
+  push:
+    branches: [main]
+    paths:
+      - "docs/external/**"
+      - "book.toml"
+      - "mermaid.min.js"
+      - "mermaid-init.js"
+      - "scripts/build-public-book.sh"
+      - "scripts/prepare_public_book.py"
+      - "tests/test_prepare_public_book.py"
+      - ".github/workflows/build-public-book.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: public-book-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+
+      - name: Install Nix
+        uses: DeterminateSystems/nix-installer-action@21a544727d0c62386e78b4befe52d19ad12692e3 # v17
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          extra-conf: |
+            experimental-features = nix-command flakes
+
+      - name: Test publication guard
+        run: python3 -m unittest tests.test_prepare_public_book -v
+
+      - name: Build public book
+        run: scripts/build-public-book.sh
+
+      - name: Validate generated publication
+        run: python3 scripts/validate_publication.py
+
+      - name: Require checked-in artifact
+        run: git diff --exit-code -- site/docs
