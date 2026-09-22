@@ -49,6 +49,10 @@ The generated book is a curated conceptual overview. Its producer uses an explic
 
 See [PUBLICATION_BOUNDARY.md](PUBLICATION_BOUNDARY.md) for the complete ownership and metadata contract.
 
+## Governed-agent integration reference
+
+The [public governed-agent integration reference](docs/governed-agent-integration.md) explains the Anthesis decision boundary, Dubnium's execution-side responsibility, the checks needed to assess bypass resistance, and the separate [public executable Anthesis trial](https://github.com/hackelia-micrantha/anthesis-community/blob/main/docs/product/try-anthesis.md). It is an implementation-safe overview, not an executable public Dubnium distribution or a copy of private operational runbooks.
+
 ## Public/private product boundary
 
 Public contracts can describe an integration boundary without publishing the production implementation behind it.
