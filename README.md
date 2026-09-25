@@ -116,6 +116,19 @@ Content is explicitly marked `experimental`, `v1alpha`, `v1beta`, or `stable`. U
 
 The current experimental slice defines a narrow Capability Gateway envelope with canonicalization, synthetic adversarial fixtures, conformance checks, and a no-effect reference. It does not include a production gateway, privileged providers, deployment implementation, supervisor, memory implementation, or host configuration.
 
+
+## How to help Dubnium
+
+Dubnium is actively looking for contributors and design partners who can improve the public engineering-environment contracts and test them against real operational constraints.
+
+- **Contract and conformance contributors** — review specifications, validators, compatibility rules, synthetic fixtures, adversarial cases, and public reference implementations.
+- **Platform, NixOS, security, and DevEx contributors** — improve reproducibility guidance, threat models, operator ergonomics, documentation, and portable integration patterns within the public boundary.
+- **Design partners and adopters** — bring local/private AI, self-hosted CI, governed automation, workstation reproducibility, or bounded-execution requirements that can challenge the current architecture.
+- **Hardware and infrastructure support** — GPU-capable systems, accelerators, storage, networking equipment, hosted CI/compute, or other resources useful for exercising local AI, runner isolation, builds, recovery, and conformance at broader scale.
+- **Strategic collaboration** — help explore distribution, sustainability, integrations, independent implementations, and practical deployment models without turning public participation into a procurement requirement.
+
+The public community repository is not a contribution path into private production topology, credentials, prompts, policy, operational evidence, or privileged implementation. Use [CONTRIBUTING.md](CONTRIBUTING.md) for public work and [DESIGN_PARTNER_GUIDE.md](DESIGN_PARTNER_GUIDE.md) for deeper validation conversations. Micrantha-wide partnership and co-founder interests are described in the [organization collaboration overview](https://github.com/hackelia-micrantha/.github/blob/main/profile/README.md#looking-for-collaborators).
+
 ## Community, security, and governance
 
 - [ROADMAP.md](ROADMAP.md) — bounded public roadmap.
