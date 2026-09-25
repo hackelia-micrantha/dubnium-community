@@ -4,6 +4,8 @@
 
 Dubnium is a reproducible, observable, governed engineering environment for developer workstations, replaceable client environments, build and compute nodes, and AI-assisted automation. This repository is its public community and interoperability boundary. It is not a mirror of any private production runtime.
 
+**Looking to contribute, provide infrastructure, or validate Dubnium in a real environment?** See [How to help Dubnium](#how-to-help-dubnium).
+
 ## What this repository owns
 
 This monorepo is authoritative for public Dubnium-owned:
@@ -115,7 +117,6 @@ No `contract-v*` release is currently an accepted consumer baseline. Until the f
 Content is explicitly marked `experimental`, `v1alpha`, `v1beta`, or `stable`. Unmarked content is not a compatibility commitment. Compatibility and deprecation rules are defined in [COMPATIBILITY.md](COMPATIBILITY.md).
 
 The current experimental slice defines a narrow Capability Gateway envelope with canonicalization, synthetic adversarial fixtures, conformance checks, and a no-effect reference. It does not include a production gateway, privileged providers, deployment implementation, supervisor, memory implementation, or host configuration.
-
 
 ## How to help Dubnium
 
