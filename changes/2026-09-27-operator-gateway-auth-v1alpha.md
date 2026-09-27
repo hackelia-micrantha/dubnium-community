@@ -15,7 +15,7 @@ The profile requires both a Dubnium-validated client credential and Keylix-verif
 ## Added
 
 - a strict compact-JWS Dubnium client credential profile using Ed25519 / EdDSA;
-- issuer, audience, lifetime, active-client, revocation, token-type, scope, and trusted `cnf.jkt` validation requirements;
+- issuer, audience, active-client, revocation, token-type, scope, and trusted `cnf.jkt` validation requirements, including a one-hour maximum credential lifetime and at most 300 seconds of explicit clock tolerance;
 - exact presented-credential correlation into the Keylix sender-binding boundary;
 - immutable `ValidatedCredential + VerifiedSenderBinding -> CallerIdentity` composition;
 - durable fail-closed replay requirements for the single-verifier deployment profile;

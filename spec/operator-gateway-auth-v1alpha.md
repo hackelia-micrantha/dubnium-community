@@ -119,10 +119,13 @@ Keylix sender-binding composition:
 - exact issuer and audience from trusted host configuration;
 - exact `EdDSA` / Ed25519 signature using the configured `kid`;
 - `token_type == "DPoP"`;
-- `nbf <= now < exp`, subject only to the explicitly configured credential clock
-  tolerance;
-- `iat` is not implausibly in the future;
-- bounded identifiers, lifetime, and scope count/length;
+- the configured credential clock tolerance is a non-negative duration no greater
+  than 300 seconds in v1alpha;
+- `iat <= nbf < exp` and `exp - iat <= 3600` seconds;
+- the credential is not yet valid when `now + tolerance < nbf`;
+- the credential is expired when `now - tolerance >= exp`;
+- `iat > now + tolerance` is rejected as a future-issued credential;
+- bounded identifiers and scope count/length;
 - `cnf.jkt` is a syntactically valid base64url-no-pad 32-byte RFC-7638 SHA-256
   thumbprint;
 - `client_id` exists in the active-client registry and maps to the signed
@@ -133,8 +136,9 @@ Keylix sender-binding composition:
 Missing or unreadable issuer configuration, active-client state, or revocation state
 is an authentication outage, not permission to skip validation.
 
-The v1alpha implementation SHOULD cap credential lifetime to one hour or less.
-A longer maximum requires a separately reviewed deployment profile.
+The v1alpha profile caps the signed credential lifetime at one hour. A deployment
+that requires a different maximum must define a separately versioned and reviewed
+profile rather than widening v1alpha at runtime.
 
 ## Trusted validation result
 
