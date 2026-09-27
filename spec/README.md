@@ -19,5 +19,6 @@ Each specification identifies its stability level, contract version, normative s
 | `memory-service-v1alpha.md` | experimental | `api/memory-service/v1alpha/openapi.json` |
 | `supervisor-gateway-v1alpha.md` | experimental | `api/supervisor-gateway/v1alpha/openapi.json` |
 | `scheduler-v1alpha.md` | experimental | `api/scheduler/v1alpha/openapi.json` |
+| `operator-gateway-auth-v1alpha.md` | experimental | HTTP Authorization + DPoP profile; no route schema |
 
 Experimental HTTP specifications SHOULD be enrolled in `conformance/service-bundles.json` with their schemas and synthetic examples.
