@@ -1,8 +1,8 @@
 # Operator Gateway authentication v1alpha
 
-Status: experimental  
-Content: normative  
-Canonical source: this file  
+Status: experimental
+Content: normative
+Canonical source: this file
 Generated: no
 
 ## Purpose
