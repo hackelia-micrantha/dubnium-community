@@ -2,6 +2,8 @@
 
 This page describes the published product surface and directional architecture only. It is not an internal delivery schedule and does not imply publication of private implementation.
 
+The repository remains in incubation, and no protected `contract-v*` release has yet been accepted as a consumer identity.
+
 ## Current work
 
 - maintaining the Community repository as the authoritative website, documentation, contract, and release surface;
