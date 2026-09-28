@@ -216,6 +216,8 @@ class PreparePublicBookTests(unittest.TestCase):
         workflow = WORKFLOW_PATH.read_text(encoding="utf-8")
         self.assertIn("run: scripts/build-public-book.sh", workflow)
         self.assertIn("run: python3 scripts/validate_publication.py", workflow)
+        self.assertIn("site/docs ':!site/docs/publication.json'", workflow)
+        self.assertIn('"content_digest", "generator"', workflow)
 
 
 if __name__ == "__main__":

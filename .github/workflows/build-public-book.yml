@@ -57,5 +57,22 @@ jobs:
       - name: Validate generated publication
         run: python3 scripts/validate_publication.py
 
-      - name: Require checked-in artifact
-        run: git diff --exit-code -- site/docs
+      - name: Require checked-in artifact content
+        run: git diff --exit-code -- site/docs ':!site/docs/publication.json'
+
+      - name: Require stable publication metadata
+        run: |
+          python3 - <<'PY'
+          import json
+          import subprocess
+          from pathlib import Path
+
+          committed = json.loads(subprocess.check_output(
+              ["git", "show", "HEAD:site/docs/publication.json"], text=True
+          ))
+          generated = json.loads(Path("site/docs/publication.json").read_text(encoding="utf-8"))
+          stable_fields = ("schema_version", "publication_id", "content_digest", "generator")
+          differences = [field for field in stable_fields if committed.get(field) != generated.get(field)]
+          if differences:
+              raise SystemExit("generated publication metadata differs: " + ", ".join(differences))
+          PY

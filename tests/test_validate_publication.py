@@ -203,9 +203,23 @@ class PublicationValidationTests(unittest.TestCase):
     def test_accepts_publication_only_changed_paths(self) -> None:
         self.assertEqual([], MODULE.validate_changed_paths(["site/docs/index.html", "site/docs/publication.json"]))
 
+    def test_accepts_paired_public_book_source_and_artifact_changes(self) -> None:
+        self.assertEqual(
+            [],
+            MODULE.validate_changed_paths([
+                "docs/external/status.md",
+                "site/docs/status.html",
+                "site/docs/publication.json",
+            ]),
+        )
+
+    def test_rejects_public_book_source_without_regenerated_artifact(self) -> None:
+        errors = MODULE.validate_changed_paths(["docs/external/status.md"])
+        self.assertTrue(any("include the regenerated site/docs artifact" in error for error in errors))
+
     def test_rejects_mixed_publication_changes(self) -> None:
         errors = MODULE.validate_changed_paths(["site/docs/index.html", ".github/workflows/pages.yml"])
-        self.assertTrue(any("confined to site/docs" in error for error in errors))
+        self.assertTrue(any("paired docs/external" in error for error in errors))
 
     def test_detects_changed_publication_metadata(self) -> None:
         self.assertTrue(MODULE.publication_metadata_changed(["site/docs/publication.json"]))
