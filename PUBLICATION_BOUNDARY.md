@@ -51,7 +51,7 @@ The landing page must not grow into a substitute for technical documentation. St
 
 ## Generated Technical Overview contract
 
-A generated-documentation pull request may change only `site/docs/**`. It must pass repository tests and destination-side publication validation before merge or deployment.
+A generated-artifact-only pull request may change only `site/docs/**`. A source-content pull request may update allowlisted `docs/external/**` pages only when it includes the matching regenerated `site/docs/**` artifact. The book-build workflow verifies the explicit source allowlist and regenerated content; destination validation permits no other paths. Both forms must pass repository tests and destination-side publication validation before merge or deployment.
 
 The producer must construct the Technical Overview from an explicit reviewed source-file allowlist. Book navigation alone is not an acceptable disclosure boundary because a documentation generator may emit source pages that are not linked from its table of contents. Unlinked or otherwise unreviewed source files must fail closed before generation.
 
@@ -113,7 +113,8 @@ The source-side publisher and this destination repository both validate the arti
 The landing page and generated Technical Overview have separate update paths:
 
 - hand-authored website changes may modify `site/index.html` and site assets through normal review;
-- generated documentation changes are confined to `site/docs/**`;
+- generated-artifact-only changes are confined to `site/docs/**`;
+- source-authored Technical Overview changes may pair allowlisted `docs/external/**` source with the complete regenerated `site/docs/**` artifact;
 - a generated publication cannot modify the landing page, workflow, validator, Wrangler configuration, or repository policy in the same automated change.
 
 A regenerated Technical Overview replaces the complete `site/docs/**` artifact. Stale generated content must not survive merely because a source page was removed.

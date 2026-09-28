@@ -68,15 +68,32 @@ def normalized_changed_paths(paths: list[str]) -> list[str]:
 
 def validate_changed_paths(paths: list[str]) -> list[str]:
     normalized = normalized_changed_paths(paths)
-    if not any(path == "site/docs" or path.startswith("site/docs/") for path in normalized):
+    has_artifact = any(
+        path == "site/docs" or path.startswith("site/docs/") for path in normalized
+    )
+    source_paths = [
+        path for path in normalized
+        if path == "docs/external" or path.startswith("docs/external/")
+    ]
+    if source_paths and not has_artifact:
+        return ["public book source changes must include the regenerated site/docs artifact"]
+    if not has_artifact:
         return []
     unexpected = sorted(
         path for path in normalized
-        if path != "site/docs" and not path.startswith("site/docs/")
+        if not (
+            path == "site/docs"
+            or path.startswith("site/docs/")
+            or path == "docs/external"
+            or path.startswith("docs/external/")
+        )
     )
     if not unexpected:
         return []
-    return ["publication changes must be confined to site/docs/: " + ", ".join(unexpected)]
+    return [
+        "publication changes may include only site/docs/ and paired docs/external/ sources: "
+        + ", ".join(unexpected)
+    ]
 
 
 def publication_metadata_changed(paths: list[str]) -> bool:
