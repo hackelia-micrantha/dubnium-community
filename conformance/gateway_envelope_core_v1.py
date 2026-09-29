@@ -158,10 +158,20 @@ def normalize_status(value: Any) -> dict[str, Any]:
         "updated_at": updated_at,
     }
     operation = status.get("provider_operation")
-    if gateway_state in {"dispatched", "succeeded", "failed", "indeterminate"}:
-        normalized["provider_operation"] = normalize_provider_operation(_require(status, "provider_operation", "capability status"))
+    if gateway_state in {"dispatched", "succeeded", "failed"}:
+        normalized["provider_operation"] = normalize_provider_operation(
+            _require(status, "provider_operation", "capability status")
+        )
+    elif gateway_state == "indeterminate":
+        if operation is not None:
+            normalized["provider_operation"] = normalize_provider_operation(
+                operation
+            )
     elif operation is not None:
-        raise ContractError("status.premature_provider_operation", "provider_operation is not allowed before dispatch")
+        raise ContractError(
+            "status.premature_provider_operation",
+            "provider_operation is not allowed before dispatch",
+        )
     if gateway_state == "succeeded":
         normalized["result"] = normalize_result(_require(status, "result", "capability status"))
         if "error" in status:
@@ -184,7 +194,7 @@ def _phase_is_valid_for_state(state: str, phase: str) -> bool:
     if state == "failed":
         return phase == "failed"
     if state == "indeterminate":
-        return phase == "indeterminate"
+        return phase in {"", "indeterminate"}
     return True
 
 
@@ -199,9 +209,20 @@ def validate_status_transition(previous: Any, current: Any) -> dict[str, Any]:
         raise ContractError("status.phase_mismatch", "provider phase does not match Gateway state")
     previous_operation = before.get("provider_operation")
     current_operation = after.get("provider_operation")
+    if previous_operation is not None and current_operation is None:
+        raise ContractError(
+            "status.operation_disappeared",
+            "provider operation identity disappeared after dispatch",
+        )
     if previous_operation is not None and current_operation is not None:
-        if previous_operation["provider_ref"] != current_operation["provider_ref"] or previous_operation["operation_ref"] != current_operation["operation_ref"]:
-            raise ContractError("status.operation_substitution", "provider operation identity changed")
+        if (
+            previous_operation["provider_ref"] != current_operation["provider_ref"]
+            or previous_operation["operation_ref"] != current_operation["operation_ref"]
+        ):
+            raise ContractError(
+                "status.operation_substitution",
+                "provider operation identity changed",
+            )
     return after
 
 
@@ -212,9 +233,25 @@ def run_envelope_fixture_suite(root: Path) -> list[str]:
     try:
         normalize_submission(load_json(positive / "submission.json"))
         normalize_submission(load_json(positive / "submission-rejected.json"))
-        dispatched = normalize_status(load_json(positive / "status-dispatched.json"))
-        succeeded = normalize_status(load_json(positive / "status-succeeded.json"))
+        dispatched = normalize_status(
+            load_json(positive / "status-dispatched.json")
+        )
+        succeeded = normalize_status(
+            load_json(positive / "status-succeeded.json")
+        )
+        pre_dispatch_indeterminate = normalize_status(
+            load_json(positive / "status-indeterminate-pre-dispatch.json")
+        )
+        post_dispatch_indeterminate = normalize_status(
+            load_json(positive / "status-indeterminate-post-dispatch.json")
+        )
+        if "provider_operation" in pre_dispatch_indeterminate:
+            raise ContractError(
+                "status.premature_provider_operation",
+                "pre-dispatch indeterminate fixture has provider identity",
+            )
         validate_status_transition(dispatched, succeeded)
+        validate_status_transition(dispatched, post_dispatch_indeterminate)
     except (ContractError, OSError) as caught:
         errors.append(f"positive envelope fixture failed: {caught}")
         return errors
