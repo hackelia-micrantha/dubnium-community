@@ -68,7 +68,8 @@
               }
             }
           },
-          "404": {"$ref": "#/components/responses/Problem"}
+          "404": {"$ref": "#/components/responses/Problem"},
+          "503": {"$ref": "#/components/responses/Problem"}
         }
       }
     },
