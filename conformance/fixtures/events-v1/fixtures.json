@@ -103,7 +103,7 @@
       "event": {
         "specversion": "1.0",
         "id": "evt-01J8SYNTHRUNNER0001",
-        "source": "/home/private/runner",
+        "source": "synthetic-invalid-source",
         "type": "org.micrantha.dubnium.github.runner.started.v1",
         "time": "2026-10-05T12:00:00Z",
         "subject": "runner/synthetic-worker-01",
