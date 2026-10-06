@@ -33,12 +33,12 @@
     "type": {
       "type": "string",
       "maxLength": 192,
-      "pattern": "^org\\\\.micrantha\\\\.dubnium\\\\.[a-z0-9]+(?:\\\\.[a-z0-9]+)*\\\\.v1$"
+      "pattern": "^org\\.micrantha\\.dubnium\\.[a-z0-9]+(?:\\.[a-z0-9]+)*\\.v1$"
     },
     "time": {
       "type": "string",
       "maxLength": 32,
-      "pattern": "^\\\\d{4}-\\\\d{2}-\\\\d{2}T\\\\d{2}:\\\\d{2}:\\\\d{2}(?:\\\\.\\\\d{1,9})?Z$"
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d{1,9})?Z$"
     },
     "subject": {
       "type": "string",
@@ -76,6 +76,12 @@
         }
       },
       "additionalProperties": true
+    },
+    "dataschema": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 256,
+      "format": "uri"
     }
   },
   "additionalProperties": true
