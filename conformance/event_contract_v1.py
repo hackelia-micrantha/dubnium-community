@@ -65,6 +65,11 @@ SENSITIVE_EXACT = {
     "api_key",
     "apikey",
     "bearer",
+    "token",
+    "access_token",
+    "refresh_token",
+    "private_key",
+    "signing_key",
     "prompt",
     "completion",
     "memory_content",
@@ -85,6 +90,7 @@ SENSITIVE_SUFFIXES = (
     "_apikey",
     "_authorization",
     "_bearer",
+    "_token",
 )
 
 
