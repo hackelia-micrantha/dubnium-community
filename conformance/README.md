@@ -33,3 +33,19 @@ python3 -m conformance.contract_bundle conformance/service-bundles.json
 `contract_bundle.py` is intentionally generic and fails closed on unknown catalog keys, unsupported schema keywords, remote references, repository escapes, incomplete operation coverage, and canonical/OpenAPI drift.
 
 A new HTTP API SHOULD add data and artifacts, not a per-API script. Contract-specific executable conformance remains appropriate only for behavior that cannot be expressed through schemas, examples, and shared declarative primitives.
+
+
+## Event Contract v1alpha
+
+The public event profile has a dedicated dependency-free conformance runner
+because its bounded/redaction/trace-context rules are behavioral constraints
+beyond ordinary JSON Schema shape validation.
+
+Run the synthetic positive and negative fixtures with:
+
+```text
+python3 conformance/event_contract_v1.py run-fixtures conformance/fixtures/events-v1/fixtures.json
+```
+
+This validates Dubnium profile rules only. Implementations SHOULD use official
+CloudEvents SDKs for CloudEvents serialization and transport bindings.
