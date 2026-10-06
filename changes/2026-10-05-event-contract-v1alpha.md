@@ -8,9 +8,9 @@ Compatibility: additive experimental contract
 
 ## Summary
 
-Adds the public Dubnium CloudEvents Event Contract v1alpha required by
-`ryjen/dubnium#766/#767` and coordinated through the Micrantha observability
-rollout.
+Adds the public Dubnium CloudEvents Event Contract v1alpha required by the
+private Dubnium implementation plan and coordinated through the Micrantha
+observability rollout.
 
 ## Added
 
