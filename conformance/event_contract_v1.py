@@ -9,6 +9,7 @@ import json
 import math
 from pathlib import Path
 import re
+from urllib.parse import urlsplit
 from typing import Any
 
 MAX_EVENT_BYTES = 16 * 1024
@@ -26,6 +27,10 @@ EVENT_TYPE = re.compile(
     r"^org\.micrantha\.dubnium\.[a-z0-9]+(?:\.[a-z0-9]+)*\.v1$"
 )
 ATTRIBUTE_NAME = re.compile(r"^[a-z0-9]{1,20}$")
+TIMESTAMP = re.compile(
+    r"^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d{1,9})?Z$"
+)
+URI_SCHEME = re.compile(r"^[A-Za-z][A-Za-z0-9+.-]*$")
 TRACEPARENT = re.compile(
     r"^(?P<version>[0-9a-f]{2})-"
     r"(?P<trace>[0-9a-f]{32})-"
@@ -81,6 +86,10 @@ SENSITIVE_EXACT = {
     "env",
     "jit_config",
 }
+SENSITIVE_PREFIXES = (
+    "prompt_",
+    "completion_",
+)
 SENSITIVE_SUFFIXES = (
     "_secret",
     "_password",
@@ -91,6 +100,8 @@ SENSITIVE_SUFFIXES = (
     "_authorization",
     "_bearer",
     "_token",
+    "_prompt",
+    "_completion",
 )
 
 
@@ -125,7 +136,11 @@ def _serialized_size(value: Any) -> int:
 
 def _sensitive_key(key: str) -> bool:
     normalized = key.lower().replace("-", "_")
-    return normalized in SENSITIVE_EXACT or normalized.endswith(SENSITIVE_SUFFIXES)
+    return (
+        normalized in SENSITIVE_EXACT
+        or normalized.startswith(SENSITIVE_PREFIXES)
+        or normalized.endswith(SENSITIVE_SUFFIXES)
+    )
 
 
 def _check_data_value(value: Any, *, depth: int, path: str) -> None:
@@ -172,8 +187,11 @@ def _check_data_value(value: Any, *, depth: int, path: str) -> None:
 
 
 def _check_timestamp(value: str) -> None:
-    if len(value) > 32 or not value.endswith("Z"):
-        fail("time.format", "time must be a bounded UTC RFC3339 timestamp")
+    if len(value) > 32 or not TIMESTAMP.fullmatch(value):
+        fail(
+            "time.format",
+            "time must use YYYY-MM-DDTHH:MM:SS[.fraction]Z RFC3339 form",
+        )
     try:
         datetime.fromisoformat(value[:-1] + "+00:00")
     except ValueError as exc:
@@ -260,12 +278,17 @@ def validate_event(event: Any) -> None:
             fail("tracestate.format", "tracestate must be bounded printable ASCII")
 
     dataschema = event.get("dataschema")
-    if dataschema is not None and (
-        not isinstance(dataschema, str)
-        or not dataschema
-        or len(dataschema.encode("utf-8")) > 256
-    ):
-        fail("dataschema.format", "dataschema must be a bounded URI string")
+    if dataschema is not None:
+        if (
+            not isinstance(dataschema, str)
+            or not dataschema
+            or len(dataschema.encode("utf-8")) > 256
+            or any(char.isspace() for char in dataschema)
+        ):
+            fail("dataschema.format", "dataschema must be a bounded absolute URI")
+        parsed = urlsplit(dataschema)
+        if not parsed.scheme or not URI_SCHEME.fullmatch(parsed.scheme):
+            fail("dataschema.format", "dataschema must be a bounded absolute URI")
 
     data = event["data"]
     if not isinstance(data, dict):
