@@ -97,6 +97,7 @@ def run_conformance(root: Path) -> None:
     commands = (
         ["python3", "conformance/capability_gateway_v1.py", "run-fixtures", "conformance/fixtures/v1"],
         ["python3", "conformance/gateway_envelopes_v1.py", "run-fixtures", "conformance/fixtures/v1"],
+        ["python3", "conformance/event_contract_v1.py", "run-fixtures", "conformance/fixtures/events-v1/fixtures.json"],
     )
     for command in commands:
         subprocess.run(command, cwd=root, check=True, timeout=60)
