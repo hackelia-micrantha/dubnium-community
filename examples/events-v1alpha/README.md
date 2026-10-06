@@ -1,5 +1,10 @@
 # Event Contract v1alpha synthetic examples
 
+Status: experimental
+Content: informative
+Canonical source: this file
+Generated: no
+
 These examples are synthetic and contain no production topology, repositories,
 credentials, prompts, memory contents, or operational evidence.
 
