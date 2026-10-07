@@ -49,7 +49,7 @@
       --status-background: #fff8d6;
       --status-border: #8b6d00;
       --section-heading: #e8e8e8;
-      --dubnium-page: #f6f4ed;
+      --dubnium-page: #fff;
       --dubnium-surface-a: #e9f0e7;
       --dubnium-surface-b: #e8eef3;
       --dubnium-surface-c: #f1eadc;
@@ -191,7 +191,7 @@
     .hero {
       padding: var(--phyllotaxis-space-lg) 0 var(--phyllotaxis-space-md);
       border-bottom: 1px solid var(--phyllotaxis-color-border);
-      background: var(--dubnium-surface-a);
+      background: var(--phyllotaxis-color-canvas);
     }
 
     .hero-grid {
@@ -391,14 +391,23 @@
       border-left: 1px solid var(--phyllotaxis-color-border);
       border-radius: 0;
       background: var(--phyllotaxis-color-canvas);
+      transition:
+        background-color 120ms ease-out,
+        border-color 120ms ease-out;
     }
 
-    #status {
+    @media (hover: hover) {
+      .principle:hover,
+      .evidence-card:hover,
+      .roadmap-card:hover,
+      .audience:hover {
+        background-color: var(--dubnium-surface-c);
+        border-color: #8f8879;
+      }
+    }
+
+    main > .section:nth-of-type(odd) {
       background: var(--dubnium-surface-b);
-    }
-
-    #people {
-      background: var(--dubnium-surface-a);
     }
 
     .principle:first-child,
@@ -475,7 +484,7 @@
       padding: .75rem;
       border: 1px solid var(--phyllotaxis-color-border);
       border-radius: 0;
-      background: var(--dubnium-surface-c);
+      background: var(--phyllotaxis-color-canvas);
     }
 
     .overview-band h2 {
@@ -560,6 +569,14 @@
       a,
       a:hover,
       a:active,
+      .principle,
+      .principle:hover,
+      .evidence-card,
+      .evidence-card:hover,
+      .roadmap-card,
+      .roadmap-card:hover,
+      .audience,
+      .audience:hover,
       .button,
       .button:hover,
       .button:active {
