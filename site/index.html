@@ -370,7 +370,7 @@
       display: grid;
       grid-template-columns: repeat(3, minmax(0, 1fr));
       gap: 0;
-      border: 1px solid var(--phyllotaxis-color-border);
+      border: 0;
       border-radius: 0;
       overflow: visible;
     }
@@ -388,39 +388,36 @@
       min-height: 0;
       padding: .65rem .75rem;
       border: 0;
-      border-left: 1px solid var(--phyllotaxis-color-border);
       border-radius: 0;
       background: var(--phyllotaxis-color-canvas);
-      transition:
-        background-color 120ms ease-out,
-        border-color 120ms ease-out;
+      transition: background-color 120ms ease-out;
     }
 
     @media (hover: hover) {
-      .principle:hover,
-      .evidence-card:hover,
-      .roadmap-card:hover,
-      .audience:hover {
+      .principle:nth-child(3n+1):hover,
+      .evidence-card:nth-child(3n+1):hover,
+      .roadmap-card:nth-child(3n+1):hover,
+      .audience:nth-child(3n+1):hover {
+        background-color: var(--dubnium-surface-a);
+      }
+
+      .principle:nth-child(3n+2):hover,
+      .evidence-card:nth-child(3n+2):hover,
+      .roadmap-card:nth-child(3n+2):hover,
+      .audience:nth-child(3n+2):hover {
+        background-color: var(--dubnium-surface-b);
+      }
+
+      .principle:nth-child(3n):hover,
+      .evidence-card:nth-child(3n):hover,
+      .roadmap-card:nth-child(3n):hover,
+      .audience:nth-child(3n):hover {
         background-color: var(--dubnium-surface-c);
-        border-color: #8f8879;
       }
     }
 
     main > .section:nth-of-type(odd) {
       background: var(--dubnium-surface-b);
-    }
-
-    .principle:first-child,
-    .evidence-card:nth-child(odd),
-    .roadmap-card:nth-child(odd),
-    .audience:nth-child(odd) {
-      border-left: 0;
-    }
-
-    .evidence-card:nth-child(n+3),
-    .roadmap-card:nth-child(n+3),
-    .audience:nth-child(n+3) {
-      border-top: 1px solid var(--phyllotaxis-color-border);
     }
 
     .principle p,
