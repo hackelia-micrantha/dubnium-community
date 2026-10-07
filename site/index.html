@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#f4f4f4">
+  <meta name="theme-color" content="#f6f4ed">
   <meta name="description" content="Dubnium is an incubating, reproducible engineering environment for governed automation and public interoperability contracts.">
   <title>Dubnium — Reproducible engineering, bounded automation</title>
   <link rel="icon" href="favicon.svg" type="image/svg+xml">
@@ -49,17 +49,21 @@
       --status-background: #fff8d6;
       --status-border: #8b6d00;
       --section-heading: #e8e8e8;
+      --dubnium-page: #f6f4ed;
+      --dubnium-surface-a: #e9f0e7;
+      --dubnium-surface-b: #e8eef3;
+      --dubnium-surface-c: #f1eadc;
     }
 
     * { box-sizing: border-box; }
 
     html {
-      background: var(--phyllotaxis-color-canvas);
+      background: var(--dubnium-page);
     }
 
     body {
       margin: 0;
-      background: var(--phyllotaxis-color-canvas);
+      background: var(--dubnium-page);
       color: var(--phyllotaxis-color-text);
       font-family: var(--phyllotaxis-font-body);
       font-size: var(--phyllotaxis-type-body-size);
@@ -169,6 +173,7 @@
     .hero {
       padding: var(--phyllotaxis-space-lg) 0 var(--phyllotaxis-space-md);
       border-bottom: 1px solid var(--phyllotaxis-color-border);
+      background: var(--dubnium-surface-a);
     }
 
     .hero-grid {
@@ -209,10 +214,25 @@
       color: var(--phyllotaxis-color-link);
       font-weight: 400;
       text-decoration: underline;
+      transition:
+        background-color 120ms ease-out,
+        border-color 120ms ease-out,
+        transform 120ms ease-out;
     }
 
     .button:visited { color: var(--phyllotaxis-color-link-visited); }
-    .button:hover { background: #e2e2e2; }
+    .button:hover { background-color: var(--dubnium-surface-c); }
+
+    @media (hover: hover) {
+      .button:hover { transform: translateY(-1px); }
+    }
+
+    .button:active {
+      border-color: var(--phyllotaxis-color-focus);
+      outline: 1px solid currentColor;
+      outline-offset: -1px;
+      transform: translateY(0);
+    }
 
     .button-primary {
       border-color: #777;
@@ -222,7 +242,7 @@
     }
 
     .button-primary:hover {
-      background: #d2d2d2;
+      background-color: var(--dubnium-surface-c);
       color: #0000ee;
     }
 
@@ -355,6 +375,27 @@
       background: var(--phyllotaxis-color-canvas);
     }
 
+    .principle:nth-child(3n+1),
+    .evidence-card:nth-child(3n+1),
+    .roadmap-card:nth-child(3n+1),
+    .audience:nth-child(3n+1) {
+      background: var(--dubnium-surface-a);
+    }
+
+    .principle:nth-child(3n+2),
+    .evidence-card:nth-child(3n+2),
+    .roadmap-card:nth-child(3n+2),
+    .audience:nth-child(3n+2) {
+      background: var(--dubnium-surface-b);
+    }
+
+    .principle:nth-child(3n),
+    .evidence-card:nth-child(3n),
+    .roadmap-card:nth-child(3n),
+    .audience:nth-child(3n) {
+      background: var(--dubnium-surface-c);
+    }
+
     .principle:first-child,
     .evidence-card:nth-child(odd),
     .roadmap-card:nth-child(odd),
@@ -429,7 +470,7 @@
       padding: .75rem;
       border: 1px solid var(--phyllotaxis-color-border);
       border-radius: 0;
-      background: var(--phyllotaxis-color-surface);
+      background: var(--dubnium-surface-c);
     }
 
     .overview-band h2 {
@@ -506,9 +547,15 @@
     @media (prefers-reduced-motion: reduce) {
       *, *::before, *::after {
         scroll-behavior: auto !important;
-        animation-duration: .01ms !important;
+        animation-duration: 0ms !important;
         animation-iteration-count: 1 !important;
-        transition-duration: .01ms !important;
+        transition-duration: 0ms !important;
+      }
+
+      .button,
+      .button:hover,
+      .button:active {
+        transform: none;
       }
     }
 
