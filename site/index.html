@@ -78,12 +78,23 @@
     a {
       color: var(--phyllotaxis-color-link);
       text-decoration: underline;
+      text-decoration-thickness: 1px;
       text-underline-offset: .12em;
+      transition:
+        color 120ms ease-out,
+        background-color 120ms ease-out,
+        text-decoration-color 120ms ease-out,
+        text-underline-offset 120ms ease-out;
     }
 
     a:visited { color: var(--phyllotaxis-color-link-visited); }
 
-    a:hover { text-decoration-thickness: 2px; }
+    a:hover {
+      text-decoration-thickness: 2px;
+      text-underline-offset: .2em;
+    }
+
+    a:active { text-underline-offset: .08em; }
 
     a:focus-visible,
     button:focus-visible,
@@ -166,6 +177,13 @@
     .nav-links {
       justify-content: flex-end;
       font-size: var(--phyllotaxis-type-meta-size);
+    }
+
+    .nav-links a:hover,
+    .footer-links a:hover,
+    .evidence-card a:hover,
+    .audience a:hover {
+      background-color: var(--dubnium-surface-c);
     }
 
     main { overflow: visible; }
@@ -552,9 +570,13 @@
         transition-duration: 0ms !important;
       }
 
+      a,
+      a:hover,
+      a:active,
       .button,
       .button:hover,
       .button:active {
+        transition-duration: 0ms !important;
         transform: none;
       }
     }
