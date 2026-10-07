@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#f4f4f4">
+  <meta name="theme-color" content="#f6f4ed">
   <meta name="description" content="Dubnium is an incubating, reproducible engineering environment for governed automation and public interoperability contracts.">
   <title>Dubnium — Reproducible engineering, bounded automation</title>
   <link rel="icon" href="favicon.svg" type="image/svg+xml">
@@ -49,17 +49,21 @@
       --status-background: #fff8d6;
       --status-border: #8b6d00;
       --section-heading: #e8e8e8;
+      --dubnium-page: #fff;
+      --dubnium-surface-a: #e9f0e7;
+      --dubnium-surface-b: #e8eef3;
+      --dubnium-surface-c: #f1eadc;
     }
 
     * { box-sizing: border-box; }
 
     html {
-      background: var(--phyllotaxis-color-canvas);
+      background: var(--dubnium-page);
     }
 
     body {
       margin: 0;
-      background: var(--phyllotaxis-color-canvas);
+      background: var(--dubnium-page);
       color: var(--phyllotaxis-color-text);
       font-family: var(--phyllotaxis-font-body);
       font-size: var(--phyllotaxis-type-body-size);
@@ -74,12 +78,23 @@
     a {
       color: var(--phyllotaxis-color-link);
       text-decoration: underline;
+      text-decoration-thickness: 1px;
       text-underline-offset: .12em;
+      transition:
+        color 120ms ease-out,
+        background-color 120ms ease-out,
+        text-decoration-color 120ms ease-out,
+        text-underline-offset 120ms ease-out;
     }
 
     a:visited { color: var(--phyllotaxis-color-link-visited); }
 
-    a:hover { text-decoration-thickness: 2px; }
+    a:hover {
+      text-decoration-thickness: 2px;
+      text-underline-offset: .2em;
+    }
+
+    a:active { text-underline-offset: .08em; }
 
     a:focus-visible,
     button:focus-visible,
@@ -119,8 +134,7 @@
     }
 
     .topbar {
-      background: var(--phyllotaxis-color-surface);
-      border-bottom: 1px solid var(--phyllotaxis-color-border);
+      background: var(--phyllotaxis-color-canvas);
     }
 
     .nav {
@@ -164,11 +178,18 @@
       font-size: var(--phyllotaxis-type-meta-size);
     }
 
+    .nav-links a:hover,
+    .footer-links a:hover,
+    .evidence-card a:hover,
+    .audience a:hover {
+      background-color: var(--dubnium-surface-c);
+    }
+
     main { overflow: visible; }
 
     .hero {
       padding: var(--phyllotaxis-space-lg) 0 var(--phyllotaxis-space-md);
-      border-bottom: 1px solid var(--phyllotaxis-color-border);
+      background: var(--phyllotaxis-color-canvas);
     }
 
     .hero-grid {
@@ -209,10 +230,25 @@
       color: var(--phyllotaxis-color-link);
       font-weight: 400;
       text-decoration: underline;
+      transition:
+        background-color 120ms ease-out,
+        border-color 120ms ease-out,
+        transform 120ms ease-out;
     }
 
     .button:visited { color: var(--phyllotaxis-color-link-visited); }
-    .button:hover { background: #e2e2e2; }
+    .button:hover { background-color: var(--dubnium-surface-c); }
+
+    @media (hover: hover) {
+      .button:hover { transform: translateY(-1px); }
+    }
+
+    .button:active {
+      border-color: var(--phyllotaxis-color-focus);
+      outline: 1px solid currentColor;
+      outline-offset: -1px;
+      transform: translateY(0);
+    }
 
     .button-primary {
       border-color: #777;
@@ -222,7 +258,7 @@
     }
 
     .button-primary:hover {
-      background: #d2d2d2;
+      background-color: var(--dubnium-surface-c);
       color: #0000ee;
     }
 
@@ -257,10 +293,14 @@
       background: var(--phyllotaxis-color-canvas);
     }
 
-    .model-label,
-    .section-head {
+    .model-label {
       background: var(--section-heading);
       border-bottom: 1px solid var(--phyllotaxis-color-border);
+    }
+
+    .section-head {
+      background: transparent;
+      border-bottom: 0;
     }
 
     .model-label {
@@ -332,7 +372,7 @@
       display: grid;
       grid-template-columns: repeat(3, minmax(0, 1fr));
       gap: 0;
-      border: 1px solid var(--phyllotaxis-color-border);
+      border: 0;
       border-radius: 0;
       overflow: visible;
     }
@@ -350,22 +390,32 @@
       min-height: 0;
       padding: .65rem .75rem;
       border: 0;
-      border-left: 1px solid var(--phyllotaxis-color-border);
       border-radius: 0;
       background: var(--phyllotaxis-color-canvas);
+      transition: background-color 120ms ease-out;
     }
 
-    .principle:first-child,
-    .evidence-card:nth-child(odd),
-    .roadmap-card:nth-child(odd),
-    .audience:nth-child(odd) {
-      border-left: 0;
-    }
+    @media (hover: hover) {
+      .principle:nth-child(3n+1):hover,
+      .evidence-card:nth-child(3n+1):hover,
+      .roadmap-card:nth-child(3n+1):hover,
+      .audience:nth-child(3n+1):hover {
+        background-color: var(--dubnium-surface-a);
+      }
 
-    .evidence-card:nth-child(n+3),
-    .roadmap-card:nth-child(n+3),
-    .audience:nth-child(n+3) {
-      border-top: 1px solid var(--phyllotaxis-color-border);
+      .principle:nth-child(3n+2):hover,
+      .evidence-card:nth-child(3n+2):hover,
+      .roadmap-card:nth-child(3n+2):hover,
+      .audience:nth-child(3n+2):hover {
+        background-color: var(--dubnium-surface-b);
+      }
+
+      .principle:nth-child(3n):hover,
+      .evidence-card:nth-child(3n):hover,
+      .roadmap-card:nth-child(3n):hover,
+      .audience:nth-child(3n):hover {
+        background-color: var(--dubnium-surface-c);
+      }
     }
 
     .principle p,
@@ -429,7 +479,7 @@
       padding: .75rem;
       border: 1px solid var(--phyllotaxis-color-border);
       border-radius: 0;
-      background: var(--phyllotaxis-color-surface);
+      background: var(--phyllotaxis-color-canvas);
     }
 
     .overview-band h2 {
@@ -448,7 +498,6 @@
     footer {
       margin-top: var(--phyllotaxis-space-md);
       padding: var(--phyllotaxis-space-md) 0;
-      border-top: 1px solid var(--phyllotaxis-color-border);
       color: var(--phyllotaxis-color-text-muted);
       font-size: var(--phyllotaxis-type-caption-size);
     }
@@ -478,21 +527,6 @@
         grid-template-columns: 1fr;
       }
 
-      .principle,
-      .evidence-card,
-      .roadmap-card,
-      .audience {
-        border-left: 0;
-        border-top: 1px solid var(--phyllotaxis-color-border);
-      }
-
-      .principle:first-child,
-      .evidence-card:first-child,
-      .roadmap-card:first-child,
-      .audience:first-child {
-        border-top: 0;
-      }
-
       .section-head > div,
       .section-intro { display: block; }
 
@@ -506,9 +540,27 @@
     @media (prefers-reduced-motion: reduce) {
       *, *::before, *::after {
         scroll-behavior: auto !important;
-        animation-duration: .01ms !important;
+        animation-duration: 0ms !important;
         animation-iteration-count: 1 !important;
-        transition-duration: .01ms !important;
+        transition-duration: 0ms !important;
+      }
+
+      a,
+      a:hover,
+      a:active,
+      .principle,
+      .principle:hover,
+      .evidence-card,
+      .evidence-card:hover,
+      .roadmap-card,
+      .roadmap-card:hover,
+      .audience,
+      .audience:hover,
+      .button,
+      .button:hover,
+      .button:active {
+        transition-duration: 0ms !important;
+        transform: none;
       }
     }
 
