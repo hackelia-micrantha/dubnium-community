@@ -134,8 +134,7 @@
     }
 
     .topbar {
-      background: var(--phyllotaxis-color-surface);
-      border-bottom: 1px solid var(--phyllotaxis-color-border);
+      background: var(--phyllotaxis-color-canvas);
     }
 
     .nav {
@@ -190,7 +189,6 @@
 
     .hero {
       padding: var(--phyllotaxis-space-lg) 0 var(--phyllotaxis-space-md);
-      border-bottom: 1px solid var(--phyllotaxis-color-border);
       background: var(--phyllotaxis-color-canvas);
     }
 
@@ -295,10 +293,14 @@
       background: var(--phyllotaxis-color-canvas);
     }
 
-    .model-label,
-    .section-head {
+    .model-label {
       background: var(--section-heading);
       border-bottom: 1px solid var(--phyllotaxis-color-border);
+    }
+
+    .section-head {
+      background: transparent;
+      border-bottom: 0;
     }
 
     .model-label {
@@ -416,10 +418,6 @@
       }
     }
 
-    main > .section:nth-of-type(odd) {
-      background: var(--dubnium-surface-b);
-    }
-
     .principle p,
     .evidence-card p,
     .roadmap-card p,
@@ -500,7 +498,6 @@
     footer {
       margin-top: var(--phyllotaxis-space-md);
       padding: var(--phyllotaxis-space-md) 0;
-      border-top: 1px solid var(--phyllotaxis-color-border);
       color: var(--phyllotaxis-color-text-muted);
       font-size: var(--phyllotaxis-type-caption-size);
     }
