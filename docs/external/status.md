@@ -33,6 +33,14 @@ Directional themes include:
 
 These themes are architecture, not a claim that a production fleet service, every model lifecycle transition, or every deployment form is currently available.
 
+## Interface and execution transitions under qualification
+
+The current interface direction separates **MCP transport**, **tool semantics**, and **effect authority**. OpenAI Secure MCP Tunnel is the first selected remote-transport qualification path for a provider-neutral native HTTP MCP interface, beginning with read-only runner status. The existing Desktop Commander Remote path remains transitional until an independently validated replacement covers legitimate operator tasks; no tunnel activation or retirement is represented as complete.
+
+For self-hosted CI, ongoing improvements include a small shared JIT execution substrate, project-owned flakes, signed Nix binary-cache substitution, and explicit cache publisher/trust separation. Signed-cache positive and negative smoke validation has passed on a source candidate, but full CI acceptance, publication, worker adoption, retention and performance evidence are separate completion gates.
+
+Capability Gateway modules being developed or evaluated include typed OCI integration-test admission, governed Nix operations, exact-repository effects, and optional cross-language provider packaging. The `capctl` CLI remains a client, while Anthesis, Keylix and host execution enforcement retain their distinct responsibilities. None of these planned provider paths is claimed as generally available through the experimental public Gateway contract.
+
 ## Next published work
 
 - keep generated publication and destination validation aligned with the explicit source allowlist;
