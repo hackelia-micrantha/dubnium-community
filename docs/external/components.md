@@ -75,6 +75,12 @@ See [Writable User Configuration](writable-configuration.md).
 - [Capability Gateway v1](https://github.com/hackelia-micrantha/dubnium-community/blob/main/spec/capability-gateway-v1.md)
 - [Conformance assets](https://github.com/hackelia-micrantha/dubnium-community/tree/main/conformance)
 
+### Extensible capabilities
+
+Dubnium's capability model can support separately scoped operations for repository work, reproducible environments, integration testing, and selected administrative tasks. Each operation should remain explicit, reviewable, and independently verifiable rather than inheriting unrestricted host permissions from the calling tool.
+
+A small dedicated client, `capctl`, is being developed for interacting with the Capability Gateway. Initial work targets inspection; effect-producing modules are at different stages of design and qualification. The public contract does not promise that all described capability families are installed, enabled, or available to external clients.
+
 ## Supervisor / LLM Gateway
 
 **Purpose.** Expose a bounded interface for model and specialist execution with explicit capability negotiation, normalized errors, sanitized metadata, and execution lineage. The control-plane direction is local-first, with stronger remote or frontier execution treated as an explicit bounded escalation rather than an ambient fallback.

@@ -35,7 +35,7 @@
             const path_to_root = "";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "searchindex-29b46c85.js";
+            window.path_to_searchindex_js = "searchindex-f67ace54.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="toc-3a702404.js"></script>
@@ -227,6 +227,9 @@
 <li><a href="https://github.com/hackelia-micrantha/dubnium-community/blob/main/spec/capability-gateway-v1.md">Capability Gateway v1</a></li>
 <li><a href="https://github.com/hackelia-micrantha/dubnium-community/tree/main/conformance">Conformance assets</a></li>
 </ul>
+<h3 id="extensible-capabilities"><a class="header" href="#extensible-capabilities">Extensible capabilities</a></h3>
+<p>Dubnium’s capability model can support separately scoped operations for repository work, reproducible environments, integration testing, and selected administrative tasks. Each operation should remain explicit, reviewable, and independently verifiable rather than inheriting unrestricted host permissions from the calling tool.</p>
+<p>A small dedicated client, <code>capctl</code>, is being developed for interacting with the Capability Gateway. Initial work targets inspection; effect-producing modules are at different stages of design and qualification. The public contract does not promise that all described capability families are installed, enabled, or available to external clients.</p>
 <h2 id="supervisor--llm-gateway"><a class="header" href="#supervisor--llm-gateway">Supervisor / LLM Gateway</a></h2>
 <p><strong>Purpose.</strong> Expose a bounded interface for model and specialist execution with explicit capability negotiation, normalized errors, sanitized metadata, and execution lineage. The control-plane direction is local-first, with stronger remote or frontier execution treated as an explicit bounded escalation rather than an ambient fallback.</p>
 <p><strong>Boundary.</strong> Model or specialist output is proposal material, not ambient authority to mutate the host, deploy software, write durable memory, train or promote models, or bypass governance. Escalating model capability does not escalate effect authority.</p>

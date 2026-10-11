@@ -36,7 +36,7 @@
             const path_to_root = "";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "searchindex-29b46c85.js";
+            window.path_to_searchindex_js = "searchindex-f67ace54.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="toc-3a702404.js"></script>
@@ -344,6 +344,9 @@
 <li><a href="https://github.com/hackelia-micrantha/dubnium-community/blob/main/spec/capability-gateway-v1.md">Capability Gateway v1</a></li>
 <li><a href="https://github.com/hackelia-micrantha/dubnium-community/tree/main/conformance">Conformance assets</a></li>
 </ul>
+<h3 id="extensible-capabilities"><a class="header" href="#extensible-capabilities">Extensible capabilities</a></h3>
+<p>Dubnium’s capability model can support separately scoped operations for repository work, reproducible environments, integration testing, and selected administrative tasks. Each operation should remain explicit, reviewable, and independently verifiable rather than inheriting unrestricted host permissions from the calling tool.</p>
+<p>A small dedicated client, <code>capctl</code>, is being developed for interacting with the Capability Gateway. Initial work targets inspection; effect-producing modules are at different stages of design and qualification. The public contract does not promise that all described capability families are installed, enabled, or available to external clients.</p>
 <h2 id="supervisor--llm-gateway"><a class="header" href="#supervisor--llm-gateway">Supervisor / LLM Gateway</a></h2>
 <p><strong>Purpose.</strong> Expose a bounded interface for model and specialist execution with explicit capability negotiation, normalized errors, sanitized metadata, and execution lineage. The control-plane direction is local-first, with stronger remote or frontier execution treated as an explicit bounded escalation rather than an ambient fallback.</p>
 <p><strong>Boundary.</strong> Model or specialist output is proposal material, not ambient authority to mutate the host, deploy software, write durable memory, train or promote models, or bypass governance. Escalating model capability does not escalate effect authority.</p>
@@ -523,6 +526,9 @@ dubctl runners status --json
 <p><code>dubctl runners</code> exposes bounded observation and control for self-hosted CI capacity. Its read-only status and watch surfaces report controller-owned state such as effective eligibility, capacity and occupancy, worker lifecycle, and reconciliation health instead of asking operators to infer runner state from labels or process lists.</p>
 <p>Runner admission remains policy-bound. Repository identity, capability profile, credentials, and resource envelope come from reviewed configuration; workflow-controlled input cannot select a stronger profile or another repository’s authority. Admitted jobs execute in short-lived workers and do not inherit the controller’s long-lived credentials.</p>
 <p>Administrative runner controls affect whether already-declared capacity may accept work. They do not edit the underlying registry, mint new capability, or turn a workflow request into authorization.</p>
+<h2 id="capability-clients"><a class="header" href="#capability-clients">Capability clients</a></h2>
+<p>A developing <code>capctl</code> interface provides a focused way to inspect the Capability Gateway without duplicating its policy decisions. Future clients, including approved MCP tools, may request a narrow governed capability rather than receiving blanket shell or host access.</p>
+<p>This is an evolving interface. The book does not present the client or external MCP access as a completed production integration.</p>
 <h2 id="modectl-1"><a class="header" href="#modectl-1"><code>modectl</code></a></h2>
 <p><code>modectl</code> manages the current runtime posture. It records requested mode, observes current state, applies transition guards, reconciles bounded runtime changes, and verifies the result.</p>
 <p>This is intentionally different from <code>dubctl apply</code>: declarative configuration determines what the endpoint can run; <code>modectl</code> determines which already-declared posture should be active now.</p>
@@ -619,6 +625,12 @@ dubctl runners status --json
 <h2 id="queue-priority-does-not-create-authority"><a class="header" href="#queue-priority-does-not-create-authority">Queue priority does not create authority</a></h2>
 <p>When multiple already-authorized jobs are waiting for bounded local capacity, ordering may decide which job receives the next available slot.</p>
 <p>Priority changes <strong>order</strong>, not eligibility. A lower-level workflow request cannot use queue manipulation to select another repository’s profile, stronger credentials, or additional capability.</p>
+<h2 id="faster-reproducible-ci-through-caching"><a class="header" href="#faster-reproducible-ci-through-caching">Faster reproducible CI through caching</a></h2>
+<p>A short-lived runner works best when its shared execution environment is small and each project declares its own language runtimes, development tools, and tests. This helps new workloads remain reproducible without continuously expanding the base runner image.</p>
+<p>Dubnium is evaluating <strong>verified Nix binary-cache reuse</strong> to reduce repeated downloads and builds across disposable workers. Cache consumers should be able to reuse trusted outputs without becoming publishers or acquiring broader permissions. Integrity validation, isolation, and bounded fallback behaviour are more important than maximizing cache hits.</p>
+<p>Initial source-level signing and rejection tests have passed, while end-to-end worker adoption and representative performance measurements remain unfinished. No particular cache service or production rollout is promised by this overview.</p>
+<h2 id="governed-integration-tests"><a class="header" href="#governed-integration-tests">Governed integration tests</a></h2>
+<p>A related workstream explores running bounded integration tests through the platform’s existing capability boundary rather than giving CI jobs unrestricted host or container access. This remains under implementation and qualification, not a generally available CI feature.</p>
 <h2 id="trust-boundaries"><a class="header" href="#trust-boundaries">Trust boundaries</a></h2>
 <p>The runner design preserves several separations:</p>
 <div class="table-wrapper">
@@ -962,6 +974,10 @@ trusted acceleration
 <p>Local execution is the default direction where it is sufficient for the task. A request may use a stronger remote or frontier model only through an explicit bounded escalation path that preserves policy, sanitization, lineage, provider constraints, and traceability.</p>
 <p>Escalation changes available model capability. It does not transfer effect authority, grant additional tools or credentials, or convert unresolved policy into permission. A policy ambiguity or required human decision remains unresolved rather than being “solved” merely by selecting a stronger model.</p>
 <p>The exact production triggers, provider configuration, and routing heuristics remain private implementation concerns.</p>
+<h2 id="connecting-external-ai-tools"><a class="header" href="#connecting-external-ai-tools">Connecting external AI tools</a></h2>
+<p>Dubnium is developing a native Model Context Protocol (MCP) interface so approved assistants and engineering tools can request <strong>bounded, observable operations</strong> without gaining general host access. OpenAI’s Secure MCP Tunnel is a candidate transport for connecting ChatGPT to a private MCP service without making that transport an authorization decision.</p>
+<p>The initial focus is <strong>read-only engineering status</strong>, beginning with CI runner observation. Governed write operations are a separate future capability: a tool request alone cannot approve an effect, choose its own privileges, or substitute for independent verification.</p>
+<p><strong>Status:</strong> MCP interoperability and transport qualification are in progress. The public overview does not imply that the ChatGPT integration, privileged tools, or a supported remote-control service is deployed.</p>
 <h2 id="reasoning-is-not-an-effect"><a class="header" href="#reasoning-is-not-an-effect">Reasoning is not an effect</a></h2>
 <p>A useful separation is:</p>
 <pre><code class="language-text">reasoning proposes intent
@@ -1090,6 +1106,25 @@ trusted acceleration
 <li>recovery and replacement based on declared configuration plus classified mutable state.</li>
 </ul>
 <p>These themes are architecture, not a claim that a production fleet service, every model lifecycle transition, or every deployment form is currently available.</p>
+<h2 id="current-engineering-themes"><a class="header" href="#current-engineering-themes">Current engineering themes</a></h2>
+<p>Recent work spans several related outcomes:</p>
+<ul>
+<li><strong>Reproducible, self-hosted CI:</strong> more predictable short-lived workers, smaller reusable runner foundations, and verified Nix output reuse. Cache adoption and performance qualification remain ongoing.</li>
+<li><strong>AI-assisted engineering interfaces:</strong> read-only MCP access is being qualified for external clients, including ChatGPT, with governed effects remaining distinct from transport and tool invocation.</li>
+<li><strong>Governed capabilities:</strong> scoped client interfaces and additional domain operations are being developed incrementally; public contracts are ahead of some production integrations.</li>
+<li><strong>Observable automation:</strong> portable event interoperability, operational status, and traceable outcomes are being expanded without making telemetry an authorization source.</li>
+<li><strong>Resource-aware AI:</strong> bounded usage concepts and local inference evaluations are active areas of exploration, not promised performance or deployed model offerings.</li>
+</ul>
+<p>The strongest public artifacts are versioned contracts, synthetic examples, conformance tests, and reproducible demonstrations. Private infrastructure, operational incidents, implementation wiring, unpublished benchmark data, and policy internals are outside this book.</p>
+<h2 id="public-validation-opportunities"><a class="header" href="#public-validation-opportunities">Public validation opportunities</a></h2>
+<p>The following are <strong>candidates for independent community validation</strong>, not release promises:</p>
+<ul>
+<li><strong>Portable event interoperability:</strong> mature synthetic <a href="https://github.com/hackelia-micrantha/dubnium-community/issues/54">CloudEvents conformance examples</a> without publishing real operational events or producer topology.</li>
+<li><strong>Reproducible workstation demonstration:</strong> make a small <a href="https://github.com/hackelia-micrantha/dubnium-community/issues/43">local AI engineering demo</a> buildable by an outside contributor, with a documented failure case and no private dependencies.</li>
+<li><strong>Resource-aware automation:</strong> explain visible usage limits and accountable execution at a conceptual level; detailed budget state machines, ledgers, provider routing and policy are not book material.</li>
+<li><strong>Read-only tool integration and CI performance evidence:</strong> consider synthetic MCP examples and reproducible cache benchmarks after their integration and measurement gates pass, avoiding private endpoints, runner inventories, and host-specific measurements.</li>
+</ul>
+<p>The book is a conceptual entry point; public specifications are published separately only when reviewed as intentional interoperability commitments.</p>
 <h2 id="next-published-work"><a class="header" href="#next-published-work">Next published work</a></h2>
 <ul>
 <li>keep generated publication and destination validation aligned with the explicit source allowlist;</li>

@@ -16,6 +16,14 @@ Escalation changes available model capability. It does not transfer effect autho
 
 The exact production triggers, provider configuration, and routing heuristics remain private implementation concerns.
 
+## Connecting external AI tools
+
+Dubnium is developing a native Model Context Protocol (MCP) interface so approved assistants and engineering tools can request **bounded, observable operations** without gaining general host access. OpenAI's Secure MCP Tunnel is a candidate transport for connecting ChatGPT to a private MCP service without making that transport an authorization decision.
+
+The initial focus is **read-only engineering status**, beginning with CI runner observation. Governed write operations are a separate future capability: a tool request alone cannot approve an effect, choose its own privileges, or substitute for independent verification.
+
+**Status:** MCP interoperability and transport qualification are in progress. The public overview does not imply that the ChatGPT integration, privileged tools, or a supported remote-control service is deployed.
+
 ## Reasoning is not an effect
 
 A useful separation is:

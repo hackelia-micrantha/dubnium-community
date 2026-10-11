@@ -33,6 +33,29 @@ Directional themes include:
 
 These themes are architecture, not a claim that a production fleet service, every model lifecycle transition, or every deployment form is currently available.
 
+## Current engineering themes
+
+Recent work spans several related outcomes:
+
+- **Reproducible, self-hosted CI:** more predictable short-lived workers, smaller reusable runner foundations, and verified Nix output reuse. Cache adoption and performance qualification remain ongoing.
+- **AI-assisted engineering interfaces:** read-only MCP access is being qualified for external clients, including ChatGPT, with governed effects remaining distinct from transport and tool invocation.
+- **Governed capabilities:** scoped client interfaces and additional domain operations are being developed incrementally; public contracts are ahead of some production integrations.
+- **Observable automation:** portable event interoperability, operational status, and traceable outcomes are being expanded without making telemetry an authorization source.
+- **Resource-aware AI:** bounded usage concepts and local inference evaluations are active areas of exploration, not promised performance or deployed model offerings.
+
+The strongest public artifacts are versioned contracts, synthetic examples, conformance tests, and reproducible demonstrations. Private infrastructure, operational incidents, implementation wiring, unpublished benchmark data, and policy internals are outside this book.
+
+## Public validation opportunities
+
+The following are **candidates for independent community validation**, not release promises:
+
+- **Portable event interoperability:** mature synthetic [CloudEvents conformance examples](https://github.com/hackelia-micrantha/dubnium-community/issues/54) without publishing real operational events or producer topology.
+- **Reproducible workstation demonstration:** make a small [local AI engineering demo](https://github.com/hackelia-micrantha/dubnium-community/issues/43) buildable by an outside contributor, with a documented failure case and no private dependencies.
+- **Resource-aware automation:** explain visible usage limits and accountable execution at a conceptual level; detailed budget state machines, ledgers, provider routing and policy are not book material.
+- **Read-only tool integration and CI performance evidence:** consider synthetic MCP examples and reproducible cache benchmarks after their integration and measurement gates pass, avoiding private endpoints, runner inventories, and host-specific measurements.
+
+The book is a conceptual entry point; public specifications are published separately only when reviewed as intentional interoperability commitments.
+
 ## Next published work
 
 - keep generated publication and destination validation aligned with the explicit source allowlist;

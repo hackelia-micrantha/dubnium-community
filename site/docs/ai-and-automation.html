@@ -35,7 +35,7 @@
             const path_to_root = "";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "searchindex-29b46c85.js";
+            window.path_to_searchindex_js = "searchindex-f67ace54.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="toc-3a702404.js"></script>
@@ -183,6 +183,10 @@
 <p>Local execution is the default direction where it is sufficient for the task. A request may use a stronger remote or frontier model only through an explicit bounded escalation path that preserves policy, sanitization, lineage, provider constraints, and traceability.</p>
 <p>Escalation changes available model capability. It does not transfer effect authority, grant additional tools or credentials, or convert unresolved policy into permission. A policy ambiguity or required human decision remains unresolved rather than being “solved” merely by selecting a stronger model.</p>
 <p>The exact production triggers, provider configuration, and routing heuristics remain private implementation concerns.</p>
+<h2 id="connecting-external-ai-tools"><a class="header" href="#connecting-external-ai-tools">Connecting external AI tools</a></h2>
+<p>Dubnium is developing a native Model Context Protocol (MCP) interface so approved assistants and engineering tools can request <strong>bounded, observable operations</strong> without gaining general host access. OpenAI’s Secure MCP Tunnel is a candidate transport for connecting ChatGPT to a private MCP service without making that transport an authorization decision.</p>
+<p>The initial focus is <strong>read-only engineering status</strong>, beginning with CI runner observation. Governed write operations are a separate future capability: a tool request alone cannot approve an effect, choose its own privileges, or substitute for independent verification.</p>
+<p><strong>Status:</strong> MCP interoperability and transport qualification are in progress. The public overview does not imply that the ChatGPT integration, privileged tools, or a supported remote-control service is deployed.</p>
 <h2 id="reasoning-is-not-an-effect"><a class="header" href="#reasoning-is-not-an-effect">Reasoning is not an effect</a></h2>
 <p>A useful separation is:</p>
 <pre><code class="language-text">reasoning proposes intent

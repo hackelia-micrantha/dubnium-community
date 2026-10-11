@@ -44,6 +44,12 @@ Runner admission remains policy-bound. Repository identity, capability profile, 
 
 Administrative runner controls affect whether already-declared capacity may accept work. They do not edit the underlying registry, mint new capability, or turn a workflow request into authorization.
 
+## Capability clients
+
+A developing `capctl` interface provides a focused way to inspect the Capability Gateway without duplicating its policy decisions. Future clients, including approved MCP tools, may request a narrow governed capability rather than receiving blanket shell or host access.
+
+This is an evolving interface. The book does not present the client or external MCP access as a completed production integration.
+
 ## `modectl`
 
 `modectl` manages the current runtime posture. It records requested mode, observes current state, applies transition guards, reconciles bounded runtime changes, and verifies the result.

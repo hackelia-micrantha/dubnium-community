@@ -116,6 +116,18 @@ When multiple already-authorized jobs are waiting for bounded local capacity, or
 
 Priority changes **order**, not eligibility. A lower-level workflow request cannot use queue manipulation to select another repository's profile, stronger credentials, or additional capability.
 
+## Faster reproducible CI through caching
+
+A short-lived runner works best when its shared execution environment is small and each project declares its own language runtimes, development tools, and tests. This helps new workloads remain reproducible without continuously expanding the base runner image.
+
+Dubnium is evaluating **verified Nix binary-cache reuse** to reduce repeated downloads and builds across disposable workers. Cache consumers should be able to reuse trusted outputs without becoming publishers or acquiring broader permissions. Integrity validation, isolation, and bounded fallback behaviour are more important than maximizing cache hits.
+
+Initial source-level signing and rejection tests have passed, while end-to-end worker adoption and representative performance measurements remain unfinished. No particular cache service or production rollout is promised by this overview.
+
+## Governed integration tests
+
+A related workstream explores running bounded integration tests through the platform's existing capability boundary rather than giving CI jobs unrestricted host or container access. This remains under implementation and qualification, not a generally available CI feature.
+
 ## Trust boundaries
 
 The runner design preserves several separations:
