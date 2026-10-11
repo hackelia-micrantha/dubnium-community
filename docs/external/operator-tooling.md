@@ -44,6 +44,12 @@ Runner admission remains policy-bound. Repository identity, capability profile, 
 
 Administrative runner controls affect whether already-declared capacity may accept work. They do not edit the underlying registry, mint new capability, or turn a workflow request into authorization.
 
+## `capctl` and external tool clients
+
+`capctl` is a planned **sealed Capability Gateway client**, not an alternative policy engine and not an unrestricted host shell. Its initial candidate exposes bounded read-only health and exact-request status operations; mutating commands require separately implemented, authenticated and authorized domain providers. A Desktop Commander command adapter may translate only explicitly supported syntax into a typed request. Familiar CLI spelling does not transfer the underlying tool's ambient privileges.
+
+The external ChatGPT path is moving toward a **Dubnium-native Streamable HTTP MCP interface**, with an OpenAI Secure MCP Tunnel considered for transport. The first qualified tool target is read-only runner status. Desktop Commander Remote remains usable during transition, while native tools and `capctl` still need end-to-end authorization, parity and reliability evidence before vendor-bridge retirement. See [AI and Automation](ai-and-automation.md) for the trust-flow diagrams and maturity caveats.
+
 ## `modectl`
 
 `modectl` manages the current runtime posture. It records requested mode, observes current state, applies transition guards, reconciles bounded runtime changes, and verifies the result.
