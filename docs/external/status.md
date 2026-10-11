@@ -33,13 +33,17 @@ Directional themes include:
 
 These themes are architecture, not a claim that a production fleet service, every model lifecycle transition, or every deployment form is currently available.
 
-## Interface and execution transitions under qualification
+## Current engineering themes
 
-The current interface direction separates **MCP transport**, **tool semantics**, and **effect authority**. OpenAI Secure MCP Tunnel is the first selected remote-transport qualification path for a provider-neutral native HTTP MCP interface, beginning with read-only runner status. The existing Desktop Commander Remote path remains transitional until an independently validated replacement covers legitimate operator tasks; no tunnel activation or retirement is represented as complete.
+Recent work spans several related outcomes:
 
-For self-hosted CI, ongoing improvements include a small shared JIT execution substrate, project-owned flakes, signed Nix binary-cache substitution, and explicit cache publisher/trust separation. Signed-cache positive and negative smoke validation has passed on a source candidate, but full CI acceptance, publication, worker adoption, retention and performance evidence are separate completion gates.
+- **Reproducible, self-hosted CI:** more predictable short-lived workers, smaller reusable runner foundations, and verified Nix output reuse. Cache adoption and performance qualification remain ongoing.
+- **AI-assisted engineering interfaces:** read-only MCP access is being qualified for external clients, including ChatGPT, with governed effects remaining distinct from transport and tool invocation.
+- **Governed capabilities:** scoped client interfaces and additional domain operations are being developed incrementally; public contracts are ahead of some production integrations.
+- **Observable automation:** portable event interoperability, operational status, and traceable outcomes are being expanded without making telemetry an authorization source.
+- **Resource-aware AI:** bounded usage concepts and local inference evaluations are active areas of exploration, not promised performance or deployed model offerings.
 
-Capability Gateway modules being developed or evaluated include typed OCI integration-test admission, governed Nix operations, exact-repository effects, and optional cross-language provider packaging. The `capctl` CLI remains a client, while Anthesis, Keylix and host execution enforcement retain their distinct responsibilities. None of these planned provider paths is claimed as generally available through the experimental public Gateway contract.
+The strongest public artifacts are versioned contracts, synthetic examples, conformance tests, and reproducible demonstrations. Private infrastructure, operational incidents, implementation wiring, unpublished benchmark data, and policy internals are outside this book.
 
 ## Next published work
 
