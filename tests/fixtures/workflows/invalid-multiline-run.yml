@@ -1,0 +1,16 @@
+name: Invalid multiline run fixture
+on:
+  pull_request:
+permissions:
+  contents: read
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Reproduce malformed quoted shell string
+        run: |
+          if printf '%s
+' "$changed_paths" | grep -q '^docs/external/'; then
+            echo "changed"
+          fi
