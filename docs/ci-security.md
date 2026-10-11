@@ -40,7 +40,7 @@ Classifies changed paths as contract, implementation, site, policy, or build-sys
 
 ### `policy-and-workflows`
 
-Validates required repository policy, content markers, dependency boundaries, private-coordinate leakage, action pinning, runner selection, checkout credentials, permissions, and timeouts.
+Validates required repository policy, content markers, dependency boundaries, private-coordinate leakage, action pinning, runner selection, checkout credentials, permissions, and timeouts. It additionally runs checksum-verified `actionlint` v1.7.7 against every `.github/workflows/*.yml` and `*.yaml` file, including a malformed multiline-shell regression fixture; syntax failures block the existing aggregate gate before merge.
 
 ### `contract-static`
 
@@ -72,6 +72,7 @@ New package ecosystems require:
 python3 scripts/classify_changes.py --stdin
 python3 scripts/check_repository_policy.py
 python3 scripts/check_workflow_security.py
+bash scripts/check_workflow_syntax.sh # Linux x86_64, requires curl, Python 3, sha256sum
 python3 scripts/check_contract_tree.py
 python3 -m unittest discover -s tests -v
 ```
