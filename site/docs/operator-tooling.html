@@ -35,7 +35,7 @@
             const path_to_root = "";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "searchindex-29b46c85.js";
+            window.path_to_searchindex_js = "searchindex-f67ace54.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="toc-3a702404.js"></script>
@@ -214,6 +214,9 @@
 <p><code>dubctl runners</code> exposes bounded observation and control for self-hosted CI capacity. Its read-only status and watch surfaces report controller-owned state such as effective eligibility, capacity and occupancy, worker lifecycle, and reconciliation health instead of asking operators to infer runner state from labels or process lists.</p>
 <p>Runner admission remains policy-bound. Repository identity, capability profile, credentials, and resource envelope come from reviewed configuration; workflow-controlled input cannot select a stronger profile or another repository’s authority. Admitted jobs execute in short-lived workers and do not inherit the controller’s long-lived credentials.</p>
 <p>Administrative runner controls affect whether already-declared capacity may accept work. They do not edit the underlying registry, mint new capability, or turn a workflow request into authorization.</p>
+<h2 id="capability-clients"><a class="header" href="#capability-clients">Capability clients</a></h2>
+<p>A developing <code>capctl</code> interface provides a focused way to inspect the Capability Gateway without duplicating its policy decisions. Future clients, including approved MCP tools, may request a narrow governed capability rather than receiving blanket shell or host access.</p>
+<p>This is an evolving interface. The book does not present the client or external MCP access as a completed production integration.</p>
 <h2 id="modectl"><a class="header" href="#modectl"><code>modectl</code></a></h2>
 <p><code>modectl</code> manages the current runtime posture. It records requested mode, observes current state, applies transition guards, reconciles bounded runtime changes, and verifies the result.</p>
 <p>This is intentionally different from <code>dubctl apply</code>: declarative configuration determines what the endpoint can run; <code>modectl</code> determines which already-declared posture should be active now.</p>

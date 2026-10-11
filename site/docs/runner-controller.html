@@ -35,7 +35,7 @@
             const path_to_root = "";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "searchindex-29b46c85.js";
+            window.path_to_searchindex_js = "searchindex-f67ace54.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="toc-3a702404.js"></script>
@@ -251,6 +251,12 @@ dubctl runners status --json
 <h2 id="queue-priority-does-not-create-authority"><a class="header" href="#queue-priority-does-not-create-authority">Queue priority does not create authority</a></h2>
 <p>When multiple already-authorized jobs are waiting for bounded local capacity, ordering may decide which job receives the next available slot.</p>
 <p>Priority changes <strong>order</strong>, not eligibility. A lower-level workflow request cannot use queue manipulation to select another repository’s profile, stronger credentials, or additional capability.</p>
+<h2 id="faster-reproducible-ci-through-caching"><a class="header" href="#faster-reproducible-ci-through-caching">Faster reproducible CI through caching</a></h2>
+<p>A short-lived runner works best when its shared execution environment is small and each project declares its own language runtimes, development tools, and tests. This helps new workloads remain reproducible without continuously expanding the base runner image.</p>
+<p>Dubnium is evaluating <strong>verified Nix binary-cache reuse</strong> to reduce repeated downloads and builds across disposable workers. Cache consumers should be able to reuse trusted outputs without becoming publishers or acquiring broader permissions. Integrity validation, isolation, and bounded fallback behaviour are more important than maximizing cache hits.</p>
+<p>Initial source-level signing and rejection tests have passed, while end-to-end worker adoption and representative performance measurements remain unfinished. No particular cache service or production rollout is promised by this overview.</p>
+<h2 id="governed-integration-tests"><a class="header" href="#governed-integration-tests">Governed integration tests</a></h2>
+<p>A related workstream explores running bounded integration tests through the platform’s existing capability boundary rather than giving CI jobs unrestricted host or container access. This remains under implementation and qualification, not a generally available CI feature.</p>
 <h2 id="trust-boundaries"><a class="header" href="#trust-boundaries">Trust boundaries</a></h2>
 <p>The runner design preserves several separations:</p>
 <div class="table-wrapper">
