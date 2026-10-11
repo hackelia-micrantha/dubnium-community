@@ -116,6 +116,32 @@ When multiple already-authorized jobs are waiting for bounded local capacity, or
 
 Priority changes **order**, not eligibility. A lower-level workflow request cannot use queue manipulation to select another repository's profile, stronger credentials, or additional capability.
 
+## Project-owned toolchains and binary-cache reuse
+
+Ordinary short-lived workers provide a **small execution substrate**. Repository-owned flakes declare browser, language, SDK, and test dependencies; adding a workload does not implicitly expand the shared runner image or the authority of other repositories.
+
+Repeated realization of large Nix closures is addressed through the standard **Nix binary-cache data plane**, separate from the runner control plane:
+
+```text
+project-owned flake / derivation
+    -> trusted builder and constrained publisher
+    -> signed content-addressed Nix cache
+    -> read-only verified substitution
+    -> isolated short-lived job worker
+```
+
+An ordinary job may consume a verified cache object but must not overwrite the canonical cache, publish under the trusted signing identity, or write to another worker's store. Signature and trust-root checks apply even when the cache is local. A cache miss or invalid signature must be handled by declared, bounded build policy or rejection, **never** by silently using ambient host tools. Redis, model memory, and a general capability bus do not replace Nix content-addressed substitution.
+
+Caching has two independent concerns: **data movement** uses Nix substituters and immutable artifacts; **authority to publish, manage retention, or change trust configuration** belongs to a reviewed host capability or administrative workflow. Capability-backed orchestration may authorize those bounded operations but must not convert worker input into cache-publisher authority.
+
+**Maturity:** generic image reduction and initial signed-cache negative/positive validation have implementation evidence. End-to-end read-only JIT substitution, governed publication, cache retention, and representative cold/warm performance qualification remain active work; they are not asserted as deployed.
+
+## CI jobs and the Capability Gateway
+
+A workflow request, even from an eligible repository, is not a reusable privilege grant. The planned `ci.integration-test` provider is a **typed Capability Gateway module** for bounded OCI-based integration tests. It reuses the existing authenticated actor, Anthesis policy/approval, request ledger and execution-authority boundaries rather than adding a second OCI admission service.
+
+Its intended constraints include exact CI-job provenance, an immutable authorized execution plan, reviewed image and test profiles, rootless containment, resource bounds, lifecycle observation and terminal evidence. Controller identity and worker-job identity remain distinct. A passing unit fixture or policy denial is not proof of a completed live container test.
+
 ## Trust boundaries
 
 The runner design preserves several separations:
