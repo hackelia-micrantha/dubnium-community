@@ -51,7 +51,7 @@ The following are **candidates for independent community validation**, not relea
 
 - **Portable event interoperability:** mature synthetic [CloudEvents conformance examples](https://github.com/hackelia-micrantha/dubnium-community/issues/54) without publishing real operational events or producer topology.
 - **Reproducible workstation demonstration:** make a small [local AI engineering demo](https://github.com/hackelia-micrantha/dubnium-community/issues/43) buildable by an outside contributor, with a documented failure case and no private dependencies.
-- **Resource-budget interoperability:** evaluate a [small, implementation-neutral contract](https://github.com/hackelia-micrantha/dubnium-community/issues/57) only when independently useful; private accounting and provider routing remain out of scope.
+- **Resource-aware automation:** explain visible usage limits and accountable execution at a conceptual level; detailed budget state machines, ledgers, provider routing and policy are not book material.
 - **Read-only tool integration and CI performance evidence:** consider synthetic MCP examples and reproducible cache benchmarks after their integration and measurement gates pass, avoiding private endpoints, runner inventories, and host-specific measurements.
 
 The book is a conceptual entry point; public specifications are published separately only when reviewed as intentional interoperability commitments.
