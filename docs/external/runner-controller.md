@@ -116,31 +116,17 @@ When multiple already-authorized jobs are waiting for bounded local capacity, or
 
 Priority changes **order**, not eligibility. A lower-level workflow request cannot use queue manipulation to select another repository's profile, stronger credentials, or additional capability.
 
-## Project-owned toolchains and binary-cache reuse
+## Faster reproducible CI through caching
 
-Ordinary short-lived workers provide a **small execution substrate**. Repository-owned flakes declare browser, language, SDK, and test dependencies; adding a workload does not implicitly expand the shared runner image or the authority of other repositories.
+A short-lived runner works best when its shared execution environment is small and each project declares its own language runtimes, development tools, and tests. This helps new workloads remain reproducible without continuously expanding the base runner image.
 
-Repeated realization of large Nix closures is addressed through the standard **Nix binary-cache data plane**, separate from the runner control plane:
+Dubnium is evaluating **verified Nix binary-cache reuse** to reduce repeated downloads and builds across disposable workers. Cache consumers should be able to reuse trusted outputs without becoming publishers or acquiring broader permissions. Integrity validation, isolation, and bounded fallback behaviour are more important than maximizing cache hits.
 
-```text
-project-owned flake / derivation
-    -> trusted builder and constrained publisher
-    -> signed content-addressed Nix cache
-    -> read-only verified substitution
-    -> isolated short-lived job worker
-```
+Initial source-level signing and rejection tests have passed, while end-to-end worker adoption and representative performance measurements remain unfinished. No particular cache service or production rollout is promised by this overview.
 
-An ordinary job may consume a verified cache object but must not overwrite the canonical cache, publish under the trusted signing identity, or write to another worker's store. Signature and trust-root checks apply even when the cache is local. A cache miss or invalid signature must be handled by declared, bounded build policy or rejection, **never** by silently using ambient host tools. Redis, model memory, and a general capability bus do not replace Nix content-addressed substitution.
+## Governed integration tests
 
-Caching has two independent concerns: **data movement** uses Nix substituters and immutable artifacts; **authority to publish, manage retention, or change trust configuration** belongs to a reviewed host capability or administrative workflow. Capability-backed orchestration may authorize those bounded operations but must not convert worker input into cache-publisher authority.
-
-**Maturity:** generic image reduction and initial signed-cache negative/positive validation have implementation evidence. End-to-end read-only JIT substitution, governed publication, cache retention, and representative cold/warm performance qualification remain active work; they are not asserted as deployed.
-
-## CI jobs and the Capability Gateway
-
-A workflow request, even from an eligible repository, is not a reusable privilege grant. The planned `ci.integration-test` provider is a **typed Capability Gateway module** for bounded OCI-based integration tests. It reuses the existing authenticated actor, Anthesis policy/approval, request ledger and execution-authority boundaries rather than adding a second OCI admission service.
-
-Its intended constraints include exact CI-job provenance, an immutable authorized execution plan, reviewed image and test profiles, rootless containment, resource bounds, lifecycle observation and terminal evidence. Controller identity and worker-job identity remain distinct. A passing unit fixture or policy denial is not proof of a completed live container test.
+A related workstream explores running bounded integration tests through the platform's existing capability boundary rather than giving CI jobs unrestricted host or container access. This remains under implementation and qualification, not a generally available CI feature.
 
 ## Trust boundaries
 
