@@ -16,6 +16,39 @@ Escalation changes available model capability. It does not transfer effect autho
 
 The exact production triggers, provider configuration, and routing heuristics remain private implementation concerns.
 
+## External AI clients: native MCP, tunneling, and Desktop Commander
+
+The intended external-tool interface is a **Dubnium-owned, provider-neutral MCP server using native Streamable HTTP**. An approved client may reach that same interface through a separately qualified private-network connection or the **OpenAI Secure MCP Tunnel**. The tunnel supplies a transport path; it is not a gateway for policy decisions, credential delegation, repository writes, or shell execution.
+
+The initial OpenAI integration is deliberately read-only:
+
+```text
+ChatGPT / authorized MCP client
+    -> OpenAI Secure MCP Tunnel (transport only)
+    -> private native HTTP MCP tool interface
+    -> runner.status
+    -> authenticated canonical runner observation
+```
+
+`runner.status` is a bounded view over the existing runner-status authority, not another independent fleet state store. The current reference read originates from the Operator Gateway; **the MCP interface itself does not depend on routing all future tools through the Operator Gateway**. Other clients may use the same native MCP contract with separately reviewed transport and identity bindings. Direct reachability, a valid MCP request, tunnel registration, and a model's tool invocation each remain insufficient to authorize a consequential effect.
+
+A later governed-effect tool follows a separate path:
+
+```text
+approved MCP client / typed intent
+    -> authenticated actor and constrained tool request
+    -> Capability Gateway
+    -> Anthesis decision / required approval
+    -> bounded provider effect
+    -> verification and evidence
+```
+
+Identity binding and policy cannot be delegated to the model or tunnel. The tool catalog must distinguish inspection from mutation; arbitrary shell, unconstrained filesystem writes, HTTP-to-stdio adapters, and ambient host-control credentials are not substitutes for typed capabilities.
+
+**Desktop Commander transition.** The existing Desktop Commander Remote integration is a *transitional client path*, not an execution-authority plane. The architectural goal is for native MCP tools plus governed capability clients to replace dependence on the vendor Remote bridge. Retirement is **conditional** on demonstrating equivalent or better authorized repository inspection, candidate editing, bounded validation, identity attribution, recovery and availability; no replacement is claimed complete simply because a tunnel or MCP fixture exists.
+
+**Maturity:** HTTP-only tool definitions, transport qualification and integration fixtures are under review. This overview does not claim an activated tunnel, production ChatGPT pairing, approved mutating MCP catalog, or completed Desktop Commander retirement.
+
 ## Reasoning is not an effect
 
 A useful separation is:
