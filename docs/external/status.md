@@ -45,6 +45,17 @@ Recent work spans several related outcomes:
 
 The strongest public artifacts are versioned contracts, synthetic examples, conformance tests, and reproducible demonstrations. Private infrastructure, operational incidents, implementation wiring, unpublished benchmark data, and policy internals are outside this book.
 
+## Public validation opportunities
+
+The following are **candidates for independent community validation**, not release promises:
+
+- **Portable event interoperability:** mature synthetic [CloudEvents conformance examples](https://github.com/hackelia-micrantha/dubnium-community/issues/54) without publishing real operational events or producer topology.
+- **Reproducible workstation demonstration:** make a small [local AI engineering demo](https://github.com/hackelia-micrantha/dubnium-community/issues/43) buildable by an outside contributor, with a documented failure case and no private dependencies.
+- **Resource-budget interoperability:** evaluate a [small, implementation-neutral contract](https://github.com/hackelia-micrantha/dubnium-community/issues/57) only when independently useful; private accounting and provider routing remain out of scope.
+- **Read-only tool integration and CI performance evidence:** consider synthetic MCP examples and reproducible cache benchmarks after their integration and measurement gates pass, avoiding private endpoints, runner inventories, and host-specific measurements.
+
+The book is a conceptual entry point; public specifications are published separately only when reviewed as intentional interoperability commitments.
+
 ## Next published work
 
 - keep generated publication and destination validation aligned with the explicit source allowlist;
