@@ -75,6 +75,22 @@ See [Writable User Configuration](writable-configuration.md).
 - [Capability Gateway v1](https://github.com/hackelia-micrantha/dubnium-community/blob/main/spec/capability-gateway-v1.md)
 - [Conformance assets](https://github.com/hackelia-micrantha/dubnium-community/tree/main/conformance)
 
+### Domain modules and client interfaces
+
+The Capability Gateway is an **authorization and dispatch boundary**, not a monolithic collection of privileged commands. Narrow modules/providers may implement domain-specific effects after authenticated actor resolution, exact-request authorization, immutable scope narrowing and execution-time enforcement.
+
+| Interface / module | Intended scope | Current maturity |
+| --- | --- | --- |
+| `capctl` | Sealed client for bounded request/status inspection and, later, typed effect submission; useful to CLI and Desktop Commander consumers | Read-only client candidate validated; effect/actor integration pending |
+| `ci.integration-test` | OCI integration-test admission and bounded worker orchestration, reusing existing Gateway/Anthesis decisions | Designed; live qualification pending |
+| `nix.*` | Reviewed Nix operations through narrow typed requests and bounded workers, not direct unrestricted Nix authority for chat tools | Proposed provider module |
+| Repository provider | Exact-repository operations such as governed signed commits with minimum provider-held credentials | Planned effect integration |
+| Cross-language provider runtime | Optional packaging/isolation of providers (including a Podman reference) behind a stable language-neutral boundary | Exploratory; not a prerequisite for initial statically registered modules |
+
+A module cannot add a new grant source, relax the authorized manifest, impersonate an actor, or treat cache reuse as publication authority. The Gateway does not replace Anthesis governance, Keylix identity binding, or the host's resource and execution enforcement.
+
+Native MCP tools, Desktop Commander and local CLIs are **clients** of these boundaries, not alternate effect authorities. Read-only service observation may have an independent authenticated source-of-truth API; it need not round-trip through the Capability Gateway. Experimental public contracts do not imply these production effect modules have been activated.
+
 ## Supervisor / LLM Gateway
 
 **Purpose.** Expose a bounded interface for model and specialist execution with explicit capability negotiation, normalized errors, sanitized metadata, and execution lineage. The control-plane direction is local-first, with stronger remote or frontier execution treated as an explicit bounded escalation rather than an ambient fallback.
