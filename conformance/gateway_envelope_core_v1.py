@@ -158,8 +158,10 @@ def normalize_status(value: Any) -> dict[str, Any]:
         "updated_at": updated_at,
     }
     operation = status.get("provider_operation")
-    if gateway_state in {"dispatched", "succeeded", "failed", "indeterminate"}:
+    if gateway_state in {"dispatched", "succeeded", "failed"}:
         normalized["provider_operation"] = normalize_provider_operation(_require(status, "provider_operation", "capability status"))
+    elif gateway_state == "indeterminate" and operation is not None:
+        normalized["provider_operation"] = normalize_provider_operation(operation)
     elif operation is not None:
         raise ContractError("status.premature_provider_operation", "provider_operation is not allowed before dispatch")
     if gateway_state == "succeeded":
@@ -199,6 +201,8 @@ def validate_status_transition(previous: Any, current: Any) -> dict[str, Any]:
         raise ContractError("status.phase_mismatch", "provider phase does not match Gateway state")
     previous_operation = before.get("provider_operation")
     current_operation = after.get("provider_operation")
+    if previous_operation is not None and current_operation is None:
+        raise ContractError("status.operation_lost", "dispatched provider identity must persist")
     if previous_operation is not None and current_operation is not None:
         if previous_operation["provider_ref"] != current_operation["provider_ref"] or previous_operation["operation_ref"] != current_operation["operation_ref"]:
             raise ContractError("status.operation_substitution", "provider operation identity changed")
