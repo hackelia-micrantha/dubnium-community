@@ -36,6 +36,18 @@ class GatewayEnvelopeV1Tests(unittest.TestCase):
             self.module.validate_status(candidate)
         self.assertEqual(caught.exception.code, "status.error_on_success")
 
+    def test_predispatch_indeterminate_has_no_provider_operation(self):
+        candidate = self.module.core.load_json(self.fixtures / "positive" / "status-indeterminate-pre-policy.json")
+        normalized = self.module.validate_status(candidate)
+        self.assertNotIn("provider_operation", normalized)
+
+    def test_postdispatch_provider_reference_cannot_be_lost(self):
+        dispatched = self.module.core.load_json(self.fixtures / "positive" / "status-dispatched.json")
+        no_provider = self.module.core.load_json(self.fixtures / "positive" / "status-indeterminate-pre-restart.json")
+        with self.assertRaises(self.module.core.ContractError) as caught:
+            self.module.validate_status_transition(dispatched, no_provider)
+        self.assertEqual(caught.exception.code, "status.operation_lost")
+
     def test_dispatched_to_succeeded_transition_is_valid(self):
         dispatched = self.module.core.load_json(self.fixtures / "positive" / "status-dispatched.json")
         succeeded = self.module.core.load_json(self.fixtures / "positive" / "status-succeeded.json")
