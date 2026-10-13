@@ -197,12 +197,12 @@ def validate_status_transition(previous: Any, current: Any) -> dict[str, Any]:
         raise ContractError("status.identity_mismatch", "status transition changes request identity")
     if before["gateway_state"] in TERMINAL_STATES and before != after:
         raise ContractError("status.terminal_mutation", "terminal status is immutable")
-    if not _phase_is_valid_for_state(after["gateway_state"], after.get("provider_operation", {}).get("phase", "")):
-        raise ContractError("status.phase_mismatch", "provider phase does not match Gateway state")
     previous_operation = before.get("provider_operation")
     current_operation = after.get("provider_operation")
     if previous_operation is not None and current_operation is None:
         raise ContractError("status.operation_lost", "dispatched provider identity must persist")
+    if not _phase_is_valid_for_state(after["gateway_state"], after.get("provider_operation", {}).get("phase", "")):
+        raise ContractError("status.phase_mismatch", "provider phase does not match Gateway state")
     if previous_operation is not None and current_operation is not None:
         if previous_operation["provider_ref"] != current_operation["provider_ref"] or previous_operation["operation_ref"] != current_operation["operation_ref"]:
             raise ContractError("status.operation_substitution", "provider operation identity changed")
