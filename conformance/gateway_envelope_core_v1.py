@@ -219,6 +219,12 @@ def run_envelope_fixture_suite(root: Path) -> list[str]:
         dispatched = normalize_status(load_json(positive / "status-dispatched.json"))
         succeeded = normalize_status(load_json(positive / "status-succeeded.json"))
         validate_status_transition(dispatched, succeeded)
+        for name in ("status-indeterminate-pre-policy.json", "status-indeterminate-pre-manifest.json", "status-indeterminate-pre-restart.json"):
+            candidate = normalize_status(load_json(positive / name))
+            if "provider_operation" in candidate:
+                errors.append(f"{name}: pre-dispatch uncertainty impersonated provider")
+        post = normalize_status(load_json(positive / "status-indeterminate-post-restart.json"))
+        validate_status_transition(dispatched, post)
     except (ContractError, OSError) as caught:
         errors.append(f"positive envelope fixture failed: {caught}")
         return errors
