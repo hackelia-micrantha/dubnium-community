@@ -186,7 +186,8 @@ def _phase_is_valid_for_state(state: str, phase: str) -> bool:
     if state == "failed":
         return phase == "failed"
     if state == "indeterminate":
-        return phase == "indeterminate"
+        # Pre-dispatch uncertainty has no provider operation or provider phase.
+        return phase in {"", "indeterminate"}
     return True
 
 
