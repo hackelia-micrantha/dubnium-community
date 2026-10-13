@@ -35,9 +35,12 @@
   },
   "allOf": [
     {
-      "if": {"properties": {"gateway_state": {"enum": ["dispatched", "succeeded", "failed", "indeterminate"]}}, "required": ["gateway_state"]},
-      "then": {"required": ["provider_operation"]},
-      "else": {"not": {"required": ["provider_operation"]}}
+      "if": {"properties": {"gateway_state": {"enum": ["dispatched", "succeeded", "failed"]}}, "required": ["gateway_state"]},
+      "then": {"required": ["provider_operation"]}
+    },
+    {
+      "if": {"properties": {"gateway_state": {"enum": ["received", "validated", "policy-pending", "denied", "authorized"]}}, "required": ["gateway_state"]},
+      "then": {"not": {"required": ["provider_operation"]}}
     },
     {
       "if": {"properties": {"gateway_state": {"const": "succeeded"}}, "required": ["gateway_state"]},

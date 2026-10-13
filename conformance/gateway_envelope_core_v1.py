@@ -158,8 +158,10 @@ def normalize_status(value: Any) -> dict[str, Any]:
         "updated_at": updated_at,
     }
     operation = status.get("provider_operation")
-    if gateway_state in {"dispatched", "succeeded", "failed", "indeterminate"}:
+    if gateway_state in {"dispatched", "succeeded", "failed"}:
         normalized["provider_operation"] = normalize_provider_operation(_require(status, "provider_operation", "capability status"))
+    elif gateway_state == "indeterminate" and operation is not None:
+        normalized["provider_operation"] = normalize_provider_operation(operation)
     elif operation is not None:
         raise ContractError("status.premature_provider_operation", "provider_operation is not allowed before dispatch")
     if gateway_state == "succeeded":
@@ -184,7 +186,8 @@ def _phase_is_valid_for_state(state: str, phase: str) -> bool:
     if state == "failed":
         return phase == "failed"
     if state == "indeterminate":
-        return phase == "indeterminate"
+        # Pre-dispatch uncertainty has no provider operation or provider phase.
+        return phase in {"", "indeterminate"}
     return True
 
 
@@ -195,10 +198,12 @@ def validate_status_transition(previous: Any, current: Any) -> dict[str, Any]:
         raise ContractError("status.identity_mismatch", "status transition changes request identity")
     if before["gateway_state"] in TERMINAL_STATES and before != after:
         raise ContractError("status.terminal_mutation", "terminal status is immutable")
-    if not _phase_is_valid_for_state(after["gateway_state"], after.get("provider_operation", {}).get("phase", "")):
-        raise ContractError("status.phase_mismatch", "provider phase does not match Gateway state")
     previous_operation = before.get("provider_operation")
     current_operation = after.get("provider_operation")
+    if previous_operation is not None and current_operation is None:
+        raise ContractError("status.operation_lost", "dispatched provider identity must persist")
+    if not _phase_is_valid_for_state(after["gateway_state"], after.get("provider_operation", {}).get("phase", "")):
+        raise ContractError("status.phase_mismatch", "provider phase does not match Gateway state")
     if previous_operation is not None and current_operation is not None:
         if previous_operation["provider_ref"] != current_operation["provider_ref"] or previous_operation["operation_ref"] != current_operation["operation_ref"]:
             raise ContractError("status.operation_substitution", "provider operation identity changed")
@@ -215,6 +220,12 @@ def run_envelope_fixture_suite(root: Path) -> list[str]:
         dispatched = normalize_status(load_json(positive / "status-dispatched.json"))
         succeeded = normalize_status(load_json(positive / "status-succeeded.json"))
         validate_status_transition(dispatched, succeeded)
+        for name in ("status-indeterminate-pre-policy.json", "status-indeterminate-pre-manifest.json", "status-indeterminate-pre-restart.json"):
+            candidate = normalize_status(load_json(positive / name))
+            if "provider_operation" in candidate:
+                errors.append(f"{name}: pre-dispatch uncertainty impersonated provider")
+        post = normalize_status(load_json(positive / "status-indeterminate-post-restart.json"))
+        validate_status_transition(dispatched, post)
     except (ContractError, OSError) as caught:
         errors.append(f"positive envelope fixture failed: {caught}")
         return errors
