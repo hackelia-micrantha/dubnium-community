@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import importlib.util
+import io
 from copy import deepcopy
 from pathlib import Path
 import unittest
@@ -79,9 +80,8 @@ class ContractTagRulesetTests(unittest.TestCase):
 
     def test_network_client_is_read_only(self):
         with patch.object(checker.urllib.request, "urlopen") as mock_open:
-            mock_open.return_value.__enter__.return_value = object()
-            with self.assertRaises(TypeError):
-                checker.get("placeholder", "/repos/hackelia-micrantha/dubnium-community/rulesets")
+            mock_open.return_value.__enter__.return_value = io.BytesIO(b"[]")
+            self.assertEqual([], checker.get("placeholder", "/repos/hackelia-micrantha/dubnium-community/rulesets"))
             req = mock_open.call_args.args[0]
             self.assertEqual(req.get_method(), "GET")
             self.assertTrue(req.full_url.startswith("https://api.github.com/"))
