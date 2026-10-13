@@ -42,6 +42,24 @@ class GatewayEnvelopeV1Tests(unittest.TestCase):
         normalized = self.module.validate_status(candidate)
         self.assertNotIn("provider_operation", normalized)
 
+    def test_null_provider_operation_rejected_consistently(self):
+        for state in ("indeterminate", "policy-pending"):
+            with self.subTest(state=state):
+                if state == "indeterminate":
+                    candidate = self.module.core.load_json(
+                        self.fixtures / "positive" / "status-indeterminate-pre-restart.json"
+                    )
+                else:
+                    candidate = self.module.core.load_json(
+                        self.fixtures / "positive" / "status-indeterminate-pre-restart.json"
+                    )
+                    candidate["gateway_state"] = "policy-pending"
+                    candidate.pop("error")
+                candidate["provider_operation"] = None
+                with self.assertRaises(self.module.core.ContractError) as caught:
+                    self.module.validate_status(candidate)
+                self.assertEqual(caught.exception.code, "status.invalid_provider_operation")
+
     def test_public_schema_matches_provider_dispatch_boundary(self):
         schema = json.loads((ROOT / "schemas/v1/capability-status.schema.json").read_text())
         self.assertIn("indeterminate", schema["properties"]["gateway_state"]["enum"])
