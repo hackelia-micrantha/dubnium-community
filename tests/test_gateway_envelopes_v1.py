@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from pathlib import Path
+import json
 import unittest
 
 from conformance import gateway_envelopes_v1 as envelopes
@@ -40,6 +41,54 @@ class GatewayEnvelopeV1Tests(unittest.TestCase):
         candidate = self.module.core.load_json(self.fixtures / "positive" / "status-indeterminate-pre-policy.json")
         normalized = self.module.validate_status(candidate)
         self.assertNotIn("provider_operation", normalized)
+
+    def test_public_schema_matches_provider_dispatch_boundary(self):
+        schema = json.loads((ROOT / "schemas/v1/capability-status.schema.json").read_text())
+        self.assertIn("indeterminate", schema["properties"]["gateway_state"]["enum"])
+        rules = schema["allOf"]
+        required = next(
+            rule for rule in rules
+            if rule.get("then") == {"required": ["provider_operation"]}
+        )
+        self.assertEqual(
+            set(required["if"]["properties"]["gateway_state"]["enum"]),
+            {"dispatched", "succeeded", "failed"},
+        )
+        forbidden = next(
+            rule for rule in rules
+            if rule.get("then") == {"not": {"required": ["provider_operation"]}}
+        )
+        self.assertEqual(
+            set(forbidden["if"]["properties"]["gateway_state"]["enum"]),
+            {"received", "validated", "policy-pending", "denied", "authorized"},
+        )
+        # An indeterminate status must not be constrained by either rule;
+        # its dispatch history (not the single-document schema) decides.
+        self.assertNotIn("indeterminate", required["if"]["properties"]["gateway_state"]["enum"])
+        self.assertNotIn("indeterminate", forbidden["if"]["properties"]["gateway_state"]["enum"])
+
+    def test_predispatch_indeterminate_transition_without_provider(self):
+        indeterminate = self.module.core.load_json(
+            self.fixtures / "positive" / "status-indeterminate-pre-restart.json"
+        )
+        pending = dict(indeterminate)
+        pending["gateway_state"] = "policy-pending"
+        pending.pop("error")
+        pending["updated_at"] = "2026-08-05T20:00:02Z"
+        result = self.module.validate_status_transition(pending, indeterminate)
+        self.assertNotIn("provider_operation", result)
+
+    def test_indeterminate_after_dispatch_keeps_same_provider(self):
+        dispatched = self.module.core.load_json(
+            self.fixtures / "positive" / "status-dispatched.json"
+        )
+        after = self.module.core.load_json(
+            self.fixtures / "positive" / "status-indeterminate-post-restart.json"
+        )
+        self.assertEqual(
+            self.module.validate_status_transition(dispatched, after)["provider_operation"]["operation_ref"],
+            dispatched["provider_operation"]["operation_ref"],
+        )
 
     def test_postdispatch_provider_reference_cannot_be_lost(self):
         dispatched = self.module.core.load_json(self.fixtures / "positive" / "status-dispatched.json")
