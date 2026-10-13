@@ -147,6 +147,8 @@ When a capability-specific constraint profile is configured, manifest validation
 
 `api/capability-gateway/v1/openapi.json` is the portable OpenAPI 3.1.2 message binding. It defines submission, status inspection, health, and RFC 9457 errors only. Authentication, listener profiles, sockets, policy adapters, provider routing, and deployment remain private runtime concerns.
 
+Status inspection MUST reserve `404` for an unknown or no-longer-retained request identity. Temporary inability to inspect otherwise valid status state due to bounded ledger/runtime unavailability MUST use `503 Service Unavailable` with the portable RFC 9457 `Problem` envelope and `retryable: true`; it MUST NOT be represented as `404`.
+
 ## Compatibility
 
 This contract is experimental v1alpha.

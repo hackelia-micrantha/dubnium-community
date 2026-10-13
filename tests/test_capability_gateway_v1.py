@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from datetime import datetime, timezone
 from pathlib import Path
+import json
 import unittest
 
 from conformance import capability_gateway_v1 as contract
@@ -98,6 +99,24 @@ class CapabilityGatewayV1Tests(unittest.TestCase):
         encoded = contract.canonical_json_bytes({"z": "caf\u00e9", "a": 1})
         self.assertEqual(encoded, b'{"a":1,"z":"caf\xc3\xa9"}')
         self.assertFalse(encoded.endswith(b"\n"))
+
+    def test_status_inspection_declares_retryable_unavailability(self):
+        openapi = json.loads(
+            (
+                ROOT / "api/capability-gateway/v1/openapi.json"
+            ).read_text(encoding="utf-8")
+        )
+        responses = openapi["paths"][
+            "/v1/capability-requests/{request_id}"
+        ]["get"]["responses"]
+        self.assertEqual(
+            responses["404"],
+            {"$ref": "#/components/responses/Problem"},
+        )
+        self.assertEqual(
+            responses["503"],
+            {"$ref": "#/components/responses/Problem"},
+        )
 
     def test_cli_fixture_command(self):
         self.assertEqual(contract.main(["run-fixtures", str(self.fixtures)]), 0)
