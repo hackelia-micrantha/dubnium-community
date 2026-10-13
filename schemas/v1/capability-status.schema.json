@@ -10,7 +10,7 @@
     "contract_version": {"const": "1.0"},
     "request_id": {"$ref": "common.schema.json#/$defs/requestId"},
     "request_digest": {"$ref": "common.schema.json#/$defs/digest"},
-    "gateway_state": {"enum": ["received", "validated", "policy-pending", "denied", "authorized", "dispatched", "succeeded", "failed", "indeterminate"]},
+    "gateway_state": {"enum": ["received", "validated", "policy-pending", "denied", "authorized", "dispatched", "succeeded", "failed"]},
     "provider_operation": {
       "type": "object",
       "additionalProperties": false,
