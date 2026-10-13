@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import importlib.util
 from pathlib import Path
+import re
 import unittest
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -27,6 +28,23 @@ class RepositoryPolicyTests(unittest.TestCase):
             sorted(policy.REQUIRED_CHECKS),
             sorted(protection["required_status_checks"]["contexts"]),
         )
+
+    def test_required_contexts_are_real_unique_github_job_names(self) -> None:
+        # GitHub requires the actual job/check-run name, not "workflow / job".
+        # Pin the three intended aggregate gates, rejecting typo/unpublished
+        # contexts that could block every subsequent pull request.
+        jobs = {
+            "contract-gate": ".github/workflows/contract-ci.yml",
+            "consume-release": ".github/workflows/release-ci.yml",
+            "public-boundary": ".github/workflows/repository-policy.yml",
+        }
+        self.assertEqual(set(jobs), set(policy.REQUIRED_CHECKS))
+        self.assertEqual(len(jobs), len(policy.REQUIRED_CHECKS))
+        for name, workflow in jobs.items():
+            with self.subTest(context=name):
+                text = (ROOT / workflow).read_text(encoding="utf-8")
+                actual_job_names = re.findall(r"^    name: ([A-Za-z0-9_-]+)\s*$", text, re.M)
+                self.assertIn(name, actual_job_names)
 
     def test_main_fails_closed_without_impossible_approval_count(self) -> None:
         protection = policy.branch_protection()

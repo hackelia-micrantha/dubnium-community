@@ -10,7 +10,7 @@ GitHub repository settings, not committed workflow files, enforce branch protect
 ## Required `main` controls
 
 - changes enter through pull requests;
-- `Contract CI / contract-gate`, `Contract Release CI / consume-release`, and `Repository Policy` are required and current;
+- the **actual GitHub Actions check-run contexts** `contract-gate` (Contract CI), `consume-release` (Contract Release CI), and `public-boundary` (Repository Policy) are required and current;
 - force pushes and branch deletion are disabled;
 - strict status checks require branches to be current before merge;
 - squash merge is the only enabled merge method;
@@ -32,6 +32,10 @@ The repository must not require an impossible approval while only one qualified 
 - a documented self-review of the complete diff.
 
 This is a temporary governance constraint, not equivalent to independent review.
+
+## Required-check name verification
+
+GitHub branch protection requires check-run **job names**, not `Workflow title / job name` display strings. Before enabling required checks, compare `scripts/apply_repository_policy.py plan` with the exact names in the current workflow files and GitHub's completed check runs. The policy regression test checks the three intended job names against their workflow definitions. Do not enable unobserved status-context names, because they may permanently block normal merges. For reference, GitHub documents the naming rules in [Troubleshooting required status checks](https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/managing-rulesets/troubleshooting-rules#troubleshooting-required-status-checks).
 
 ## Administrative application
 

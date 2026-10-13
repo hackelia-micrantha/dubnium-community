@@ -14,9 +14,9 @@ from typing import Any
 API = "https://api.github.com"
 DEFAULT_REPOSITORY = "hackelia-micrantha/dubnium-community"
 REQUIRED_CHECKS = [
-    "Contract CI / contract-gate",
-    "Contract Release CI / consume-release",
-    "Repository Policy",
+    "contract-gate",
+    "consume-release",
+    "public-boundary",
 ]
 
 
