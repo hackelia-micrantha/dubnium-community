@@ -157,7 +157,10 @@ def normalize_status(value: Any) -> dict[str, Any]:
         "gateway_state": gateway_state,
         "updated_at": updated_at,
     }
+    operation_present = "provider_operation" in status
     operation = status.get("provider_operation")
+    if operation_present and operation is None:
+        raise ContractError("status.invalid_provider_operation", "provider_operation must be an object when present")
     if gateway_state in {"dispatched", "succeeded", "failed"}:
         normalized["provider_operation"] = normalize_provider_operation(_require(status, "provider_operation", "capability status"))
     elif gateway_state == "indeterminate" and operation is not None:
