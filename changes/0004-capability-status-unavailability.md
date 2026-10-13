@@ -1,6 +1,9 @@
 # Declare retryable status-inspection unavailability
 
 Status: v1alpha
+Content: normative
+Canonical source: this file
+Generated: no
 Compatibility: compatible
 Contracts: spec/capability-gateway-v1.md, api/capability-gateway/v1/openapi.json
 
