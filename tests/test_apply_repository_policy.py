@@ -43,7 +43,7 @@ class RepositoryPolicyTests(unittest.TestCase):
         for name, workflow in jobs.items():
             with self.subTest(context=name):
                 text = (ROOT / workflow).read_text(encoding="utf-8")
-                actual_job_names = re.findall(r"^    name: ([A-Za-z0-9_-]+)\\s*$", text, re.M)
+                actual_job_names = re.findall(r"^    name: ([A-Za-z0-9_-]+)\s*$", text, re.M)
                 self.assertIn(name, actual_job_names)
 
     def test_main_fails_closed_without_impossible_approval_count(self) -> None:
