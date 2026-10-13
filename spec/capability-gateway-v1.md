@@ -129,7 +129,7 @@ failed
 indeterminate
 ```
 
-Every status MUST bind the exact request ID and digest. Provider operation identity becomes available only after dispatch and MUST NOT change. Terminal statuses are immutable. `succeeded` MUST contain a result and no error; `denied`, `failed`, and `indeterminate` MUST contain an error and no result; nonterminal states MUST contain neither.
+Every status MUST bind the exact request ID and digest. Provider operation identity becomes available only after dispatch and MUST NOT change. For pre-dispatch `indeterminate`, `provider_operation` MUST be absent; request ID, digest and bounded `error` provide attribution without pretending a provider was invoked. For post-dispatch `indeterminate`, `provider_operation` MUST be present with immutable provider and operation references. A transition from a status carrying `provider_operation` MUST NOT remove it. Standalone status validation permits either form of `indeterminate` because it lacks transition history; a consumer MUST enforce the post-dispatch requirement using persisted dispatch history. Terminal statuses are immutable. `succeeded` MUST contain a result and no error; `denied`, `failed`, and `indeterminate` MUST contain an error and no result; nonterminal states MUST contain neither.
 
 ## Authorized manifest
 
