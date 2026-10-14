@@ -66,6 +66,33 @@ If the script is missing locally, confirm that the checkout is this repository, 
 
 Before tagging, an administrator must also apply and verify immutable tag protection for `contract-v*` through GitHub repository rulesets or an equivalent audited control. The release process must not rely on a tag that can be silently moved or deleted.
 
+## Immutable tag ruleset preflight (read-only)
+
+The `contract-v*` release tag must be created by a separately authorized owner and must not be mutable afterward. A creator bypass granted on a *single* ruleset also bypasses its update/deletion rules, so use **two independent active tag rulesets**, both targeting the exact full ref pattern `refs/tags/contract-v*` and with no exclusions:
+
+| Ruleset name | Rules | Bypass |
+| --- | --- | --- |
+| `contract-v-creation` | Restrict creations | Exactly one narrowly authorized `User`, `Team`, or `Integration` actor (`always`), chosen by the release owner |
+| `contract-v-immutability` | Restrict updates; restrict deletions | None |
+
+In repository **Settings → Rules → Rulesets**, create the **immutability** tag ruleset first, then the **creation** tag ruleset. Use `Active` enforcement, not `Disabled`. Independent non-author review and an administrator's authorization are required before either setting is applied. Do not use a broad organization-admin or repository-role bypass for routine creation. An owner can still change the ruleset settings themselves; audit and protect that administrative route.
+
+To prepare a JSON configuration for review **without changing any GitHub setting**, select the *actual authorized* release creator and run:
+
+```sh
+python3 scripts/check_contract_tag_rulesets.py plan --creator-type User --creator-id <GITHUB_NUMERIC_ID>
+```
+
+Use `Team` or `Integration` for an explicitly authorized team or GitHub App, respectively. The placeholder is *not* an actor ID; supply the actual numeric ID. An authenticated live read-back is then required, using a token whose ruleset permissions allow GitHub to return `bypass_actors`:
+
+```sh
+GH_TOKEN="$(gh auth token)" python3 scripts/check_contract_tag_rulesets.py check --creator-type User --creator-id <GITHUB_NUMERIC_ID>
+```
+
+The script makes **GET requests only**. It fails if either ruleset is missing/inactive, an operation or pattern differs, a bypass actor is incorrect/hidden, or another active tag ruleset is present without explicit review. For any mismatch, inspect the live rulesets rather than forcing a release through. Retain sanitized rule names, IDs, effective scopes, bypass information and the successful check output on issue #17; never record credentials.
+
+This preflight does not authorize creating tags, prove a published artifact exists, or replace GitHub's post-publication provenance and consumer verification. After qualification, the first versioned tag must be `contract-v$(cat release/contract-bundle-version.txt)` at the current protected `main` commit.
+
 ## Release procedure
 
 1. Merge reviewed release implementation and contract changes through protected `main`.
