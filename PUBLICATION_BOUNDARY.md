@@ -23,6 +23,23 @@ No private implementation repository is a public website host or public document
 
 Reader-facing documentation uses **Technical Overview** rather than “Public Guide.” “Public” remains a repository-visibility and publication-boundary term.
 
+## Tracked-source credential publication guard
+
+The public repository runs a separate read-only credential publication check
+on every pull request, merge-queue commit and push to main, regardless of
+the changed paths. It rejects tracked local environment files, private keys,
+keystores, databases, symlinks and PEM/PGP private-key armor even when
+embedded in files with unusual extensions. Only file paths and rule names
+are logged. Public conformance proofs and source contracts remain permitted.
+
+Run `python3 scripts/check_source_publication.py` and
+`python3 -m unittest discover -s tests -p test_source_publication.py` locally.
+
+This guard supplements, but does not replace, repository policy, generated
+Technical Overview publication digests, explicit private-to-public review
+and Cloudflare deployment approval. It does not scan historical commits,
+GitHub releases, Actions artifacts, or external caches.
+
 ## Deployment contract
 
 Every pull request that changes the public site, publication validator, Wrangler configuration, or site-validation workflow must pass:

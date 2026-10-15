@@ -1,0 +1,28 @@
+name: Tracked Source Publication
+
+on:
+  pull_request:
+  merge_group:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: tracked-source-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  source-publication:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Check out public tree
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Verify tracked public-source credential boundary
+        run: python3 scripts/check_source_publication.py
+      - name: Test source boundary rules
+        run: python3 -m unittest discover -s tests -p 'test_source_publication.py'
