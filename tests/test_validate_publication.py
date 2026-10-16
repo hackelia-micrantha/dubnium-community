@@ -1,6 +1,8 @@
 from __future__ import annotations
 
 import importlib.util
+import hashlib
+from unittest.mock import patch
 import json
 import tempfile
 import unittest
@@ -224,6 +226,62 @@ class PublicationValidationTests(unittest.TestCase):
     def test_detects_changed_publication_metadata(self) -> None:
         self.assertTrue(MODULE.publication_metadata_changed(["site/docs/publication.json"]))
         self.assertFalse(MODULE.publication_metadata_changed(["site/docs/index.html"]))
+
+
+    def test_streamed_digest_matches_existing_v2_format(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            docs = self.make_book(root)
+            payload = (docs / "index.html").read_bytes()
+            expected = hashlib.sha256()
+            rel = b"index.html"
+            expected.update(len(rel).to_bytes(8, "big"))
+            expected.update(rel)
+            expected.update(len(payload).to_bytes(8, "big"))
+            expected.update(payload)
+            # The new code must not use a whole-file read, even for small files.
+            with patch.object(Path, "read_bytes", side_effect=AssertionError("whole-file read")):
+                self.assertEqual(MODULE.calculate_content_digest(docs), expected.hexdigest())
+            self.assertEqual([], MODULE.validate(root))
+
+    def test_symlinked_artifact_fails_digest_before_content_read(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            docs = self.make_book(root)
+            outside = root / "synthetic-outside"
+            outside.write_bytes(b"synthetic data never belongs in the book")
+            index = docs / "index.html"
+            index.unlink()
+            index.symlink_to(outside)
+            with self.assertRaisesRegex(ValueError, "symlink"):
+                MODULE.calculate_content_digest(docs)
+            errors = MODULE.validate(root)
+            self.assertTrue(any("symlinks are not allowed" in error for error in errors))
+            self.assertTrue(any("content digest unavailable" in error for error in errors))
+
+    def test_metadata_symlink_is_not_loaded_as_json(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            docs = self.make_book(root)
+            metadata = docs / "publication.json"
+            metadata.unlink()
+            outside = root / "synthetic-metadata"
+            outside.write_text('{"schema_version":2}', encoding="utf-8")
+            metadata.symlink_to(outside)
+            errors = MODULE.validate(root)
+            self.assertTrue(any("publication.json must not be a symlink" in error for error in errors))
+
+    def test_large_asset_is_rejected_before_whole_file_read(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            docs = self.make_book(root)
+            oversized = docs / "oversized.html"
+            oversized.write_bytes(b"x" * (MODULE.MAX_FILE_BYTES + 1))
+            with self.assertRaisesRegex(ValueError, "exceeds byte limit"):
+                MODULE.calculate_content_digest(docs)
+            errors = MODULE.validate(root)
+            self.assertTrue(any("content digest unavailable" in error for error in errors))
+            self.assertTrue(any("oversized.html" in error for error in errors))
 
 
 if __name__ == "__main__":
