@@ -284,5 +284,17 @@ class PublicationValidationTests(unittest.TestCase):
             self.assertTrue(any("oversized.html" in error for error in errors))
 
 
+    def test_oversized_publication_metadata_fails_before_parse(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            docs = self.make_book(root)
+            (docs / "publication.json").write_bytes(
+                b" " * (MODULE.MAX_METADATA_BYTES + 1)
+            )
+            errors = MODULE.validate(root)
+            self.assertTrue(any("invalid publication.json: ValueError" in error for error in errors))
+            self.assertFalse(any("Traceback" in error for error in errors))
+
+
 if __name__ == "__main__":
     unittest.main()
