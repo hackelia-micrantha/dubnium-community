@@ -13,6 +13,7 @@ from pathlib import Path
 MAX_FILES = 1_000
 MAX_TOTAL_BYTES = 25_000_000
 MAX_FILE_BYTES = 5_000_000
+MAX_METADATA_BYTES = 16_384
 MAX_PATH_LENGTH = 240
 ALLOWED_SUFFIXES = {
     ".html", ".css", ".js", ".json", ".svg", ".png", ".jpg", ".jpeg",
@@ -120,16 +121,46 @@ def should_scan_private(relative: Path, label: str) -> bool:
 
 
 def calculate_content_digest(docs: Path) -> str:
+    """Hash the same canonical bytes as v2, without reading untrusted files whole.
+
+    Validate output shape before opening a generated file. In particular,
+    symlinks must not be dereferenced during the metadata integrity check.
+    """
     digest = hashlib.sha256()
+    file_count = 0
+    total_bytes = 0
     for path in sorted(docs.rglob("*")):
+        if path.is_symlink():
+            raise ValueError("publication contains a symlink")
         if not path.is_file() or path.name == "publication.json":
             continue
+
         relative = path.relative_to(docs).as_posix().encode("utf-8")
-        content = path.read_bytes()
+        published_name = "site/docs/" + path.relative_to(docs).as_posix()
+        if len(published_name) > MAX_PATH_LENGTH:
+            raise ValueError("publication path exceeds limit")
+        size = path.stat().st_size
+        if size > MAX_FILE_BYTES:
+            raise ValueError("publication file exceeds byte limit")
+        file_count += 1
+        total_bytes += size
+        if file_count > MAX_FILES or total_bytes > MAX_TOTAL_BYTES:
+            raise ValueError("publication exceeds artifact budget")
+
         digest.update(len(relative).to_bytes(8, "big"))
         digest.update(relative)
-        digest.update(len(content).to_bytes(8, "big"))
-        digest.update(content)
+        digest.update(size.to_bytes(8, "big"))
+        # The size is fixed before reading. Any concurrent change fails closed.
+        with path.open("rb") as stream:
+            remaining = size
+            while remaining:
+                chunk = stream.read(min(65_536, remaining))
+                if not chunk:
+                    raise ValueError("publication changed during digest")
+                digest.update(chunk)
+                remaining -= len(chunk)
+            if stream.read(1):
+                raise ValueError("publication changed during digest")
     return digest.hexdigest()
 
 
@@ -155,7 +186,11 @@ def validate_public_metadata(metadata: dict[object, object], docs: Path, errors:
     if not SHA256_RE.fullmatch(content_digest):
         fail(errors, "publication.json content_digest must be sha256:<64 lowercase hex characters>")
 
-    calculated = calculate_content_digest(docs)
+    try:
+        calculated = calculate_content_digest(docs)
+    except (OSError, ValueError) as exc:
+        fail(errors, "publication.json content digest unavailable: " + type(exc).__name__)
+        return
     expected_digest = f"sha256:{calculated}"
     expected_publication_id = f"dubnium-book-{calculated[:20]}"
     if SHA256_RE.fullmatch(content_digest) and content_digest != expected_digest:
@@ -201,11 +236,16 @@ def validate(root: Path, *, require_public_schema: bool = False) -> list[str]:
             fail(errors, f"missing required file: {path.relative_to(root)}")
 
     metadata_path = docs / "publication.json"
-    if metadata_path.is_file():
+    if metadata_path.is_symlink():
+        fail(errors, "publication.json must not be a symlink")
+    elif metadata_path.is_file():
         try:
+            if metadata_path.stat().st_size > MAX_METADATA_BYTES:
+                raise ValueError("metadata exceeds byte budget")
             metadata = json.loads(metadata_path.read_text(encoding="utf-8"))
-        except (OSError, UnicodeDecodeError, json.JSONDecodeError) as exc:
-            fail(errors, f"invalid publication.json: {exc}")
+        except (OSError, UnicodeDecodeError, json.JSONDecodeError, ValueError) as exc:
+            # Do not echo malformed JSON or other generated metadata into CI logs.
+            fail(errors, "invalid publication.json: " + type(exc).__name__)
         else:
             if not isinstance(metadata, dict):
                 fail(errors, "publication.json must contain a JSON object")
