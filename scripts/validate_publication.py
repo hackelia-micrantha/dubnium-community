@@ -13,6 +13,7 @@ from pathlib import Path
 MAX_FILES = 1_000
 MAX_TOTAL_BYTES = 25_000_000
 MAX_FILE_BYTES = 5_000_000
+MAX_METADATA_BYTES = 16_384
 MAX_PATH_LENGTH = 240
 ALLOWED_SUFFIXES = {
     ".html", ".css", ".js", ".json", ".svg", ".png", ".jpg", ".jpeg",
@@ -239,9 +240,12 @@ def validate(root: Path, *, require_public_schema: bool = False) -> list[str]:
         fail(errors, "publication.json must not be a symlink")
     elif metadata_path.is_file():
         try:
+            if metadata_path.stat().st_size > MAX_METADATA_BYTES:
+                raise ValueError("metadata exceeds byte budget")
             metadata = json.loads(metadata_path.read_text(encoding="utf-8"))
-        except (OSError, UnicodeDecodeError, json.JSONDecodeError) as exc:
-            fail(errors, f"invalid publication.json: {exc}")
+        except (OSError, UnicodeDecodeError, json.JSONDecodeError, ValueError) as exc:
+            # Do not echo malformed JSON or other generated metadata into CI logs.
+            fail(errors, "invalid publication.json: " + type(exc).__name__)
         else:
             if not isinstance(metadata, dict):
                 fail(errors, "publication.json must contain a JSON object")
