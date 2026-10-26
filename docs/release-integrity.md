@@ -5,7 +5,7 @@ Content: normative
 Canonical source: this file
 Generated: no
 
-The first real Capability Gateway contract bundle and its deterministic release tooling are implemented. Issue #17 remains open because release activation is not complete: protected `main` must be verified, immutable `contract-v*` tag controls must be established, and the first published artifact must pass post-publication consumer verification.
+The first real Capability Gateway contract bundle was released as [`contract-v0.1.0-alpha.1`](https://github.com/hackelia-micrantha/dubnium-community/releases/tag/contract-v0.1.0-alpha.1) from protected `main@e6eeec4df704679d1b728701db87f6410272f046`. Immutable tag controls, reproducible release generation, attestations, published-artifact checksums and the independent GitHub consumer job were verified by [release workflow #38492311515](https://github.com/hackelia-micrantha/dubnium-community/actions/runs/38492311515). Issue #17 remains open for the private-source provenance disclosure decision and private Dubnium's exact released-asset/digest consumption qualification, not because publication is missing.
 
 The repository MUST NOT publish or attest empty scaffolding merely to exercise release automation. The presence of release scripts and green pull-request CI does not establish an active consumer release.
 
@@ -20,7 +20,7 @@ The repository currently provides:
 - a tag-triggered publication, attestation, and post-publication verification workflow;
 - a repository-owned tool for applying and checking `main` branch protection.
 
-Before the first release tag is created, maintainers MUST also verify that:
+Before **each new** release tag is created, maintainers MUST verify that:
 
 - `scripts/apply_repository_policy.py check` succeeds against active GitHub settings;
 - only squash merges are enabled and required checks protect `main`;
@@ -63,7 +63,7 @@ Tagged distributable releases MUST include:
 - exact monorepo version, contract versions, source commit, toolchain versions, and compatibility profile;
 - release notes derived from reviewed change records.
 
-The release workflow implements these outputs, but they become release evidence only after a real immutable tag is published and the consumer verification job succeeds.
+The first public release provides evidence of these outputs. Each subsequent version requires its own exact-tag build, published attestation and downloaded-artifact consumer verification. Version identifiers containing a SemVer prerelease component (such as `-alpha.1`) must also be classified as GitHub prereleases; stable version identifiers must not be classified as prereleases.
 
 An attestation establishes build provenance under its trust model. It does not establish security, correctness, endorsement, or production suitability.
 
