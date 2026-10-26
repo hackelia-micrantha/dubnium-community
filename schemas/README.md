@@ -11,4 +11,4 @@ A public wire shape has one editable schema owner. OpenAPI components SHOULD ref
 
 Schema documents use JSON Schema 2020-12, local reviewed references, stable `$id` values, bounded files, and no remote resolution.
 
-The experimental memory, supervisor, and scheduler schemas are under `schemas/v1alpha/`.
+The experimental memory, supervisor, scheduler, and event-profile schemas are under `schemas/v1alpha/`.
