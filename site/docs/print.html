@@ -36,7 +36,7 @@
             const path_to_root = "";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "searchindex-f67ace54.js";
+            window.path_to_searchindex_js = "searchindex-dbcbb107.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="toc-3a702404.js"></script>
@@ -1040,6 +1040,20 @@ trusted acceleration
 </ul>
 <h2 id="identity-and-posture-are-policy-inputs"><a class="header" href="#identity-and-posture-are-policy-inputs">Identity and posture are policy inputs</a></h2>
 <p>Network reachability, authenticated identity, endpoint posture, and attestation can constrain a decision. They are not universal permission for privileged effects. Unsupported or stale posture should remain visible rather than being treated as success.</p>
+<h2 id="optional-public-network-privacy-layer"><a class="header" href="#optional-public-network-privacy-layer">Optional public-network privacy layer</a></h2>
+<p>For users working from untrusted networks such as public Wi-Fi, a <strong>separately operated, Headscale-managed exit node</strong> can be an additional network-security layer around a Dubnium engineering endpoint. This is an <strong>optional deployment pattern under qualification</strong>, not a default Dubnium feature or a claim that every client platform is leak-proof.</p>
+<p>Conceptually:</p>
+<pre><code class="language-text">Dubnium client on untrusted Wi-Fi
+  -&gt; encrypted Tailscale-compatible data-plane tunnel
+  -&gt; explicitly authorized home/router exit node
+  -&gt; Internet
+       |
+       +-- DNS resolved through the tunnel, subject to client policy
+</code></pre>
+<p>Headscale coordinates peer identity and route policy; it is <strong>not</strong> the ordinary browsing-traffic proxy. Network reachability and tailnet membership do not grant Dubnium capabilities, host access, runner authority, or private LAN permissions. The exit node must be explicitly authorized, with forwarding and firewall policy isolated from unrelated networks.</p>
+<p><strong>What this can protect:</strong> a public Wi-Fi operator should not see DNS queries or destination traffic carried <em>inside an established, correctly routed encrypted tunnel</em>. It can still see VPN connection metadata and traffic timing. The home ISP and any upstream DNS resolver retain visibility appropriate to the home egress and DNS configuration; an exit node does <strong>not</strong> provide anonymity.</p>
+<p><strong>What remains to qualify:</strong> DNS and IPv4/IPv6 leak behavior, client/browser resolver bypass, tunnel disconnect and reconnect, captive-portal bootstrap, mobile VPN-on-demand limits, exit-node recovery and rollback. Merely selecting an exit node is not a universal kill switch. If fail-closed routing cannot be enforced on a particular platform, users need that limitation stated rather than a guarantee of no leaks.</p>
+<p>This layer is intentionally independent of Dubnium’s capability authorization and of optional encrypted DNS upstream from the home network. Production-specific router topology, policy values, addresses, and activation procedures belong in private operator documentation.</p>
 <h2 id="public-versus-private-governance"><a class="header" href="#public-versus-private-governance">Public versus private governance</a></h2>
 <p>Public contracts may define request envelopes, decision references, authorized manifests, errors, evidence shapes, and compatibility rules.</p>
 <p>Production policy, approval rules, thresholds, trusted identities, prompts, fallback behavior, provider wiring, audit records, and recovery procedures remain private. Publishing a contract does not publish the implementation or policy behind it.</p>
