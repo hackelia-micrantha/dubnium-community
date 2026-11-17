@@ -1,7 +1,7 @@
 {
   "schema_version": 2,
-  "publication_id": "dubnium-book-aa00620d0a788f3d716d",
-  "content_digest": "sha256:aa00620d0a788f3d716d4694990749da92ce682e2ba523fb4c373cb96e99d5b5",
-  "generator": "mdbook mdbook v0.5.2; mdbook-mermaid mdbook-mermaid 0.17.0",
-  "generated_at": "2026-10-29T20:42:47Z"
+  "publication_id": "dubnium-book-6f21faba1a23116968ee",
+  "content_digest": "sha256:6f21faba1a23116968ee3467624042f91da015696e9080a138eec702de3e0816",
+  "generator": "mdbook mdbook v0.5.4; mdbook-mermaid mdbook-mermaid 0.17.1",
+  "generated_at": "2026-10-29T20:09:35Z"
 }

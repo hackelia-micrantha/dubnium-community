@@ -2,7 +2,7 @@
 
 This page describes the published product surface and directional architecture only. It is not an internal delivery schedule and does not imply publication of private implementation.
 
-The repository remains in incubation. The first [Capability Gateway alpha contract bundle](https://github.com/hackelia-micrantha/dubnium-community/releases/tag/contract-v0.1.0-alpha.1) is published and independently verifiable. Release acceptance, downstream integration qualification, and production readiness remain separate gates. No stable consumer compatibility baseline has been accepted.
+The repository remains in incubation, and no protected `contract-v*` release has yet been accepted as a consumer identity.
 
 ## Current work
 
@@ -11,7 +11,7 @@ The repository remains in incubation. The first [Capability Gateway alpha contra
 - hardening short-lived self-hosted CI admission, controller-owned status, and deterministic reconciliation boundaries;
 - maturing local-first AI control boundaries, including bounded model escalation, scoped retrieval semantics, and governed model lifecycle transitions;
 - expanding synthetic conformance, adversarial fixtures, validators, and no-effect references;
-- maintaining an explicit public-book source allowlist, generated-artifact parity, and independent publication validation;
+- maintaining an explicit source allowlist and guarded private-to-published documentation flow;
 - improving architecture, governance, compatibility, security, and release guidance.
 
 ## Current architectural direction
@@ -60,7 +60,7 @@ The book is a conceptual entry point; public specifications are published separa
 
 - keep generated publication and destination validation aligned with the explicit source allowlist;
 - improve adopter documentation and contract integration examples;
-- complete release acceptance and verify immutable release consumption in downstream implementations;
+- consume published contract releases immutably from downstream implementations;
 - mature release checksums, software bills of materials, attestations, and deprecation guidance;
 - document threat models and compatibility guarantees at stable interoperability boundaries;
 - publish additional contracts only after their semantics are useful outside private implementation and have survived enough operational use to justify a compatibility commitment.
