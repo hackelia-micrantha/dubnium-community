@@ -28,6 +28,8 @@ Published contracts may eventually cover additional capability, scheduling, stat
 
 Published contracts are versioned and classified by stability. Consumers should pin immutable releases, verify digests and provenance, and exercise conformance tests at their integration boundary.
 
+The first [Capability Gateway alpha contract bundle](https://github.com/hackelia-micrantha/dubnium-community/releases/tag/contract-v0.1.0-alpha.1) includes a downloadable archive, manifest, software bill of materials, and checksums. It is experimental: publishing and verifying the bundle does not establish release acceptance, downstream qualification, or a stable compatibility promise. See the [release acceptance tracker](https://github.com/hackelia-micrantha/dubnium-community/issues/17) for the remaining gates.
+
 A contract describes observable behavior. It does not promise a particular internal architecture, service layout, implementation language, deployment model, or provider.
 
 ## Disclosure model
