@@ -62,10 +62,16 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           set -euo pipefail
+          version="$(cat release/contract-bundle-version.txt)"
+          release_flags=()
+          if [[ "$version" == *-* ]]; then
+            release_flags+=(--prerelease)
+          fi
           gh release create "$GITHUB_REF_NAME" dist/* \
             --repo "$GITHUB_REPOSITORY" \
-            --title "Capability Gateway contracts $(cat release/contract-bundle-version.txt)" \
+            --title "Capability Gateway contracts $version" \
             --notes "Experimental public contract bundle. Verify SHA256SUMS and GitHub artifact attestations before consumption." \
+            "${release_flags[@]}" \
             --verify-tag
 
   verify-published-release:
