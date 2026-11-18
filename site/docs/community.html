@@ -35,10 +35,10 @@
             const path_to_root = "";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "searchindex-03526b3f.js";
+            window.path_to_searchindex_js = "searchindex-b3b0eed8.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="toc-3a702404.js"></script>
+        <script src="toc-dfaa8dec.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -184,12 +184,19 @@
 <li>compatibility, security, governance, contribution, and release policies;</li>
 <li>the bounded roadmap.</li>
 </ul>
+<h2 id="choose-an-entry-point"><a class="header" href="#choose-an-entry-point">Choose an entry point</a></h2>
+<ul>
+<li><strong>Engineering teams and employers:</strong> examine the <a href="architecture.html">system architecture</a>, <a href="runner-controller.html">runner design</a>, and <a href="governance.html">governance model</a> to understand the engineering decisions and trade-offs.</li>
+<li><strong>Open-source contributors:</strong> start with the <a href="https://github.com/hackelia-micrantha/dubnium-community/tree/main/conformance">conformance suites</a>, <a href="https://github.com/hackelia-micrantha/dubnium-community/tree/main/reference">no-effect reference</a> and <a href="https://github.com/hackelia-micrantha/dubnium-community/blob/main/CONTRIBUTING.md">contribution guide</a>.</li>
+<li><strong>Design and integration partners:</strong> use the <a href="https://github.com/hackelia-micrantha/dubnium-community/blob/main/DESIGN_PARTNER_GUIDE.md">design-partner guide</a> to identify real reproducibility, isolation, private AI or integration constraints.</li>
+<li><strong>Investors and strategic collaborators:</strong> explore the <a href="https://github.com/hackelia-micrantha/dubnium-community/blob/main/COMMUNITY_COMMERCIAL_BOUNDARY.md">community and commercial boundary</a> and <a href="https://github.com/hackelia-micrantha/.github/blob/main/profile/README.md#looking-for-collaborators">Micrantha collaboration overview</a>. Potential supported products and services are opportunities for validation, not existing offers.</li>
+</ul>
 <h2 id="contribution-boundary"><a class="header" href="#contribution-boundary">Contribution boundary</a></h2>
 <p>Contributions should target published contracts, conformance, examples, conceptual documentation, release integrity, and independently useful tooling. A contribution must not depend on private source, private services, private registries, credentials, host configuration, operator data, or production policy.</p>
 <p>Private-to-public imports receive additional review because publication is irreversible. Review covers ownership, licensing, patents, trade secrets, third-party provenance, secrets, operational disclosure, synthetic test data, generated metadata, and Git history.</p>
 <h2 id="documentation-ownership"><a class="header" href="#documentation-ownership">Documentation ownership</a></h2>
 <p>The Technical Overview is curated rather than mirrored. Every source file that enters the generated artifact must be explicitly allowlisted, and every Markdown page must be part of the reviewed navigation. Unlinked source files are not a supported disclosure mechanism.</p>
-<p>Generated Technical Overview content is proposed into <code>site/docs/</code> through a guarded publication workflow and validated again in the Community repository before deployment. The hand-maintained landing page and generated Technical Overview are separate artifacts with the same publication boundary but different detail levels.</p>
+<p>The Community repository owns both the reviewed source and generated Technical Overview. Source changes and regenerated output are proposed together, with reproducibility and disclosure checks before deployment. The hand-maintained landing page and generated Technical Overview are separate artifacts with the same publication boundary but different detail levels.</p>
 <h2 id="reporting-security-issues"><a class="header" href="#reporting-security-issues">Reporting security issues</a></h2>
 <p>Use the private reporting process documented in the Community repository. Do not open a public issue containing a vulnerability, secret, sensitive topology, exploit evidence, or private implementation detail.</p>
 
@@ -197,7 +204,7 @@
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
-                            <a rel="prev" href="status.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                            <a rel="prev" href="public-contracts.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                                 <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
                             </a>
 
@@ -208,7 +215,7 @@
             </div>
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
-                    <a rel="prev" href="status.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                    <a rel="prev" href="public-contracts.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                         <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
                     </a>
 
