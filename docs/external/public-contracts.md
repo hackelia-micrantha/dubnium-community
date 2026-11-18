@@ -15,6 +15,20 @@ Dubnium publishes contracts when interoperability is useful and disclosure does 
 
 Published contracts may eventually cover additional capability, scheduling, state, or model-independent interfaces when there is a stable interoperability need. Publication follows usefulness and disclosure review rather than mirroring internal APIs by default.
 
+## Public service interfaces
+
+These specifications are available for review, with distinct scope and maturity:
+
+| Interface | Published scope |
+| --- | --- |
+| [Capability Gateway](https://github.com/hackelia-micrantha/dubnium-community/blob/main/spec/capability-gateway-v1.md) | Experimental governed invocation and lifecycle; alpha bundle available |
+| [Supervisor Gateway](https://github.com/hackelia-micrantha/dubnium-community/blob/main/spec/supervisor-gateway-v1alpha.md) | Experimental model-independent request and response boundary |
+| [Memory Service](https://github.com/hackelia-micrantha/dubnium-community/blob/main/spec/memory-service-v1alpha.md) | Experimental scoped memory operations |
+| [Scheduler API](https://github.com/hackelia-micrantha/dubnium-community/blob/main/spec/scheduler-v1alpha.md) | Experimental inspection and control of declared schedules on an administrative boundary |
+| [Operator Gateway authentication](https://github.com/hackelia-micrantha/dubnium-community/blob/main/spec/operator-gateway-auth-v1alpha.md) | Experimental client credential and DPoP composition, not a complete operator route API |
+
+See [the specification index](https://github.com/hackelia-micrantha/dubnium-community/tree/main/spec) for current contract status. The interfaces are not a claim that corresponding services are remotely available or operationally qualified.
+
 ## Material that remains private
 
 - production planning, prompts, routing, retries, and fallbacks;

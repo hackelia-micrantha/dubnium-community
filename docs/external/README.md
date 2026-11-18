@@ -26,6 +26,23 @@ Dubnium addresses these concerns through four complementary system qualities:
 
 These are use cases to validate, not claims of enterprise availability or measured benefits. [Vision and Deployment Model](vision.md) explains the deployment assumptions and limitations.
 
+## Platform capabilities
+
+The platform brings together eight complementary areas:
+
+| Area | Engineering focus |
+| --- | --- |
+| [Governed capabilities](governance.md) | Identity-bound requests, policy decisions, execution constraints and evidence |
+| [Operator experience](operator-tooling.md) | Composable CLI and evolving mobile, web and operator API surfaces |
+| [Local-first intelligence](ai-and-automation.md) | Model serving, constrained routing, classification and prediction |
+| [Memory and automation](components.md) | Scoped memory and scheduled work through explicit interfaces |
+| [Adaptive CI/CD](runner-controller.md) | Short-lived workers, dynamic planning, cache reuse and resource-aware admission |
+| [Runtime and isolation](runtime-modes.md) | Workload posture and layered execution boundaries |
+| [Connectivity and deployment](vision.md) | Private services, optional edge routing and virtual appliances |
+| [Observability and data sovereignty](observability.md) | Local-first telemetry, purpose-limited sharing and accountable data access |
+
+These are engineering areas, not an availability matrix. Some interfaces already have public specifications; others describe implementation or integration under qualification. See [Status and Direction](status.md).
+
 ## Explore the engineering
 
 - **Product direction:** [Vision and Deployment Model](vision.md) and [Status and Direction](status.md).

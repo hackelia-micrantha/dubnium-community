@@ -44,6 +44,12 @@ clone
 
 without depending on undocumented machine history.
 
+## Project dependencies and read-only foundations
+
+Project-local Nix environments declare compilers, SDKs and dependencies independently of the workstation's base closure. This makes it possible to enter different projects without globally installing every tool, and to reuse immutable store outputs across builds. Verified binary caches can improve setup and rebuild time without letting a cache consumer become a publisher.
+
+Read-only managed inputs are compatible with writable user and application state; they are not a promise that an entire running system is read-only. Disposable workers and virtual appliances can use the same separation between immutable foundations and explicitly owned mutable layers. End-to-end cache performance and worker adoption remain qualification work.
+
 ## Reproducible does not mean trusted
 
 A perfectly reproducible malicious dependency is still malicious. Supply-chain policy may therefore include:

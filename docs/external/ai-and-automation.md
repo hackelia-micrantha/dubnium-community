@@ -16,6 +16,18 @@ Escalation changes available model capability. It does not transfer effect autho
 
 The exact production triggers, provider configuration, and routing heuristics remain private implementation concerns.
 
+## Model serving and token efficiency
+
+The serving direction includes multiple local model surfaces, heterogeneous accelerators and multi-GPU configurations where they improve useful workload capacity. A routing decision must first respect model eligibility, data boundaries, available resources and quality requirements. Efficiency can then be evaluated through model selection, reuse of relevant context and avoiding unnecessary calls or generated tokens.
+
+Cost and token savings are objectives, not guarantees. Comparisons need matched task quality and end-to-end costs including classification, retries, escalation and verification. Source-level composition is not proof of simultaneous physical model residency or a production serving profile.
+
+## Classification and prediction
+
+Classification can help identify the kind of work or reasoning capability a task requires. Predictive capabilities can help anticipate workload transitions, likely failures or whether a proposed action warrants more evidence. These are distinct from generation, and from each other.
+
+The experimental direction is to evaluate these signals under conservative or shadow-mode conditions before allowing them to influence planning or routing. Neither a prediction nor a classifier may authorize an effect, override a hard guard, increase a budget, or substitute for deterministic validation. Effectiveness and runtime integration remain under qualification.
+
 ## Connecting external AI tools
 
 Dubnium is developing a native Model Context Protocol (MCP) interface so approved assistants and engineering tools can request **bounded, observable operations** without gaining general host access. OpenAI's Secure MCP Tunnel is a candidate transport for connecting ChatGPT to a private MCP service without making that transport an authorization decision.
@@ -50,6 +62,12 @@ The Memory Service owns retrieval over its own governed memory corpus; it does n
 Scheduled work, durable workflows, memory/context systems, and long-running operations should expose explicit lifecycle and state rather than exist only inside model context.
 
 That makes retries, recovery, auditing, and replacement possible without asking a model to reconstruct what probably happened.
+
+## Memory and scheduling interfaces
+
+The [Memory Service v1alpha](https://github.com/hackelia-micrantha/dubnium-community/blob/main/spec/memory-service-v1alpha.md) publishes scoped storage, retrieval and expiry semantics; retrieved evidence is not automatically trusted or current. The [Scheduler API v1alpha](https://github.com/hackelia-micrantha/dubnium-community/blob/main/spec/scheduler-v1alpha.md) publishes inspection and control of declared schedules within an administrative boundary. It is not a public arbitrary-job endpoint or a grant of execution authority.
+
+A local-first data strategy should let operators retain control of durable context, schedules, source and evidence, and make external sharing or inference an explicit decision. Model selection and data residency remain separate questions; local inference alone does not prove confidentiality or compliance.
 
 ## Training has separate authorities
 

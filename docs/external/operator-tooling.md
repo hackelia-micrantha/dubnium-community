@@ -66,6 +66,26 @@ It reports ownership and drift, establishes writable layers, supports reviewable
 
 See [Writable User Configuration](writable-configuration.md).
 
+## Mobile, web and programmatic operators
+
+The remote operator direction separates the interface from authority. A mobile or web console should be able to inspect bounded status and request typed operations through the Operator Gateway, without inheriting an arbitrary shell, host credentials or administrative permissions. A remote client is not a trusted operator simply because it can reach the network.
+
+The [experimental Operator Gateway authentication contract](https://github.com/hackelia-micrantha/dubnium-community/blob/main/spec/operator-gateway-auth-v1alpha.md) defines the identity and sender-binding requirement, not the complete set of remote operations or an available client distribution. Client deployment and effect authorization remain separate qualification work.
+
+## Composable tools, not a monolithic CLI
+
+Dubnium aims to compose small, independently owned tools through explicit command and process contracts. Alongside the host tools above, the ecosystem direction includes:
+
+| Tool or project | Intended boundary |
+| --- | --- |
+| `capctl` | Capability inspection and bounded invocation |
+| `repoctl` | Repository-oriented tooling and workflows |
+| Invokrum | Deterministic context and prompt composition |
+| Keylix | Cryptographic identity and sender-constrained authorization primitives |
+| Anthesis | Policy and approval semantics for governed effects |
+
+The [Micrantha ecosystem](https://github.com/hackelia-micrantha/.github/blob/main/profile/README.md) describes related projects and their distinct responsibilities. Composability means clear inputs, outputs, diagnostics and exit semantics, not a mandatory wrapper or shared implementation framework. Passing a result over a Unix pipe does not transfer identity or authorization. Integration and release maturity differ across these tools.
+
 ## Why the tools stay separate
 
 The separation gives each question a clear authority:

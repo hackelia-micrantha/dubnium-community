@@ -124,6 +124,14 @@ Dubnium is evaluating **verified Nix binary-cache reuse** to reduce repeated dow
 
 Initial source-level signing and rejection tests have passed, while end-to-end worker adoption and representative performance measurements remain unfinished. No particular cache service or production rollout is promised by this overview.
 
+## Resource-adaptive CI/CD and dynamic planning
+
+A self-hosted worker shares a real machine with development, interactive media and AI workloads. The controller should admit work against the declared resource envelope, available capacity and current operating posture rather than assume all compute is always available. [Runtime Operating Modes](runtime-modes.md) explains how resource-sensitive transitions protect existing work.
+
+Dynamic CI planning explores selecting relevant builds and tests from a proposed change instead of mechanically running every possible workload. AI may assist with analysis and test selection, but deterministic eligibility, required checks and security policy remain authoritative. A proposed plan must not omit required assurance or authorize a privileged deployment. Unknown impact should cause conservative verification rather than silent omission.
+
+Registry-free ordinary runner onboarding is a separate development direction: reduce per-repository registration overhead where verified organization and job identity, policy and capacity allow it. It does not mean that jobs can self-authorize, that governance disappears, or that container registries are forbidden. Adaptive planning and registry-free admission are not yet qualified defaults.
+
 ## Governed integration tests
 
 A related workstream explores running bounded integration tests through the platform's existing capability boundary rather than giving CI jobs unrestricted host or container access. This remains under implementation and qualification, not a generally available CI feature.

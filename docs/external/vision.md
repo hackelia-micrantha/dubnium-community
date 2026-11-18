@@ -32,6 +32,24 @@ A small managed VM can make project setup, replacement, credential cleanup, and 
 
 A VM on an unmanaged physical host is **not** a confidentiality boundary against that host. If the host itself is outside the trust model, sensitive source, data, or credentials may require a managed endpoint or remote execution environment instead of stronger claims about the guest.
 
+## Layered execution environments
+
+Different workloads need different isolation boundaries. Technology families to evaluate or compose include Incus-managed virtual machines or containers, NixOS environments and containers, Podman containers, and Nono-style process-level sandboxing for agent tools. Declarative packaging, container isolation, virtual-machine isolation and restrictions on individual tool processes solve different problems.
+
+Select the weakest sufficient boundary for the workload's threat model, and qualify actual filesystem, network, credential and resource restrictions. None of these technologies is by itself a universal containment guarantee. Integration completeness and operational qualification vary; this is a description of design options, not a live deployment inventory.
+
+## Private connectivity and edge networking
+
+Private service access can use encrypted overlay networking, including Tailscale-compatible networks and optional self-managed coordination through Headscale. The direction also includes OpenWrt-based edge and exit-node integration for controlled Internet egress. See [Governance and Safety](governance.md) for the public-network threat model and limitations.
+
+Private reachability is complementary to application authentication and capability authorization. It is not a substitute for either, and does not automatically grant access to a local network. Router recovery, exit-node behavior and client qualification must be established before a deployment is described as supported.
+
+## Virtual appliance distribution
+
+An experimental QCOW2 client-image direction explores replaceable VM environments and independent writable state. Reproducible image output, lifecycle and recovery qualification are still required before a released appliance can be claimed.
+
+Cloud distribution is a separate later possibility, including an AWS-compatible AMI target. QCOW2 is a virtual-disk format, not a claim of a native AWS release; cloud image preparation, security, supply-chain verification and demand must be assessed independently. There is no current commitment to a published cloud appliance or marketplace listing.
+
 ## Identity, posture, and authority stay separate
 
 The architecture intentionally distinguishes:

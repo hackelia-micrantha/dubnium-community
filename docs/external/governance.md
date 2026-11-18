@@ -43,6 +43,14 @@ Public Dubnium work emphasizes:
 
 Network reachability, authenticated identity, endpoint posture, and attestation can constrain a decision. They are not universal permission for privileged effects. Unsupported or stale posture should remain visible rather than being treated as success.
 
+## Governed capabilities and cryptographic identity
+
+The [Capability Gateway contract](https://github.com/hackelia-micrantha/dubnium-community/blob/main/spec/capability-gateway-v1.md) defines an explicit request and effect boundary. Public alpha conformance can be exercised with synthetic examples and a no-effect reference; it is not proof that every privileged execution path is governed.
+
+The [experimental Operator Gateway authentication profile](https://github.com/hackelia-micrantha/dubnium-community/blob/main/spec/operator-gateway-auth-v1alpha.md) composes an application credential with Keylix-verified DPoP (Demonstrating Proof of Possession) for an exact HTTP request. Separately, SSH key-backed identity and signatures can provide attributable provenance in tool and artifact workflows where supported. These are distinct cryptographic mechanisms: an SSH key is not automatically a DPoP proof key, and neither a signature nor sender binding alone grants effect authority.
+
+The broader identity direction is explicit principal binding and attributable evidence throughout the data and tooling pipeline. Each boundary must validate its own required identity, scope and current authority; universal end-to-end identity integration is not yet a qualified claim.
+
 ## Optional public-network privacy layer
 
 For users working from untrusted networks such as public Wi-Fi, a **separately operated, Headscale-managed exit node** can be an additional network-security layer around a Dubnium engineering endpoint. This is an **optional deployment pattern under qualification**, not a default Dubnium feature or a claim that every client platform is leak-proof.

@@ -13,6 +13,7 @@ Maturity labels describe the current implementation surface, not a compatibility
 | `configctl` | Writable user-configuration layers, first-run contracts, and drift/reconciliation beside declarative configuration | Active |
 | Capability Gateway | Governed request, authorization, lifecycle, and bounded-effect contract | Experimental; v1 contract |
 | Supervisor / LLM Gateway | Bounded model and specialist interface with explicit capability and lineage semantics | Experimental; v1alpha contract |
+| Operator Gateway | Experimental authentication boundary for mobile, web and desktop clients | Experimental; v1alpha authentication contract |
 | Memory Service | Scoped reusable-context and memory interoperability boundary | Experimental; v1alpha contract |
 | Scheduler | Scheduled and deferred automation interoperability boundary | Experimental; v1alpha contract |
 
@@ -91,6 +92,16 @@ A small dedicated client, `capctl`, is being developed for interacting with the 
 
 - [Supervisor / LLM Gateway v1alpha](https://github.com/hackelia-micrantha/dubnium-community/blob/main/spec/supervisor-gateway-v1alpha.md)
 
+## Operator Gateway
+
+**Purpose.** Give client applications a common application-authentication and bounded operator interface, rather than duplicating host control in each mobile or web client.
+
+**Boundary.** The published authentication profile requires a valid application credential and Keylix-verified sender binding. Authentication is distinct from permission to inspect or perform a consequential operation. Client-visible operations and capability authorization need separate contracts and validation.
+
+**Maturity.** Experimental authentication specification; broader operator API and mobile/web operational integration are under development and qualification.
+
+- [Operator Gateway authentication v1alpha](https://github.com/hackelia-micrantha/dubnium-community/blob/main/spec/operator-gateway-auth-v1alpha.md)
+
 ## Memory Service
 
 **Purpose.** Provide an interoperability boundary for scoped reusable context and memory used by model-assisted and automated workflows.
@@ -103,11 +114,11 @@ A small dedicated client, `capctl`, is being developed for interacting with the 
 
 ## Scheduler
 
-**Purpose.** Represent scheduled and deferred automation through explicit requests and state rather than hidden background behavior.
+**Purpose.** Represent scheduled and deferred automation through explicit requests and state rather than hidden background behavior. The published experimental API describes inspection and control of already-declared schedules; it is not a general workflow-authoring API.
 
 **Boundary.** Scheduling decides **when** bounded work should be attempted. It does not automatically grant the scheduled task additional authority.
 
-**Maturity.** Experimental v1alpha.
+**Maturity.** Experimental v1alpha. The specified administrative interface must not be directly exposed to untrusted clients; operational authentication and deployment qualification are separate concerns.
 
 - [Scheduler v1alpha](https://github.com/hackelia-micrantha/dubnium-community/blob/main/spec/scheduler-v1alpha.md)
 

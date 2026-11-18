@@ -15,6 +15,18 @@ The repository remains in incubation. The first [Capability Gateway alpha contra
 
 The distinction matters: architectural documentation can explain a working implementation without making it independently installable, and contract conformance does not establish production security assurance.
 
+## Additional capability directions
+
+| Area | Current public description |
+| --- | --- |
+| Operator access and identity | Authentication v1alpha specification; complete mobile/web operational integration and effect-time composition remain to qualify |
+| Memory and scheduling | Experimental public API specifications; deployed integration and administrative access are separate concerns |
+| Adaptive CI/CD | Short-lived worker design and conformance direction; dynamic test planning, registry-free onboarding and cache adoption under evaluation |
+| Intelligence | Local model interfaces; multi-GPU serving, token efficiency, classification and prediction require further runtime and quality evidence |
+| Isolation and connectivity | Runtime modes and layered isolation design; edge routing, VPN service integration and sandbox backends have separate qualification needs |
+| Distributable environments | Experimental VM direction; portable reproducible QCOW2 images and future cloud appliances are not released offerings |
+| Telemetry and sovereignty | Local-first observation and OpenTelemetry direction; end-to-end integration and data-flow qualification remain deployment-specific |
+
 ## Current priorities
 
 - qualify reproducible, bounded execution and the first published contract release;

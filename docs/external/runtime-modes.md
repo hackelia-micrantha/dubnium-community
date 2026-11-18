@@ -50,6 +50,12 @@ Disruptive transitions are guarded by categories of runtime evidence such as:
 
 Exact guard names, thresholds, service wiring, hardware assignments, and machine-specific exceptions are deployment policy and are intentionally outside this technical overview.
 
+## Resource allocation and execution isolation
+
+Operating modes provide a product-level resource-allocation boundary: interactive development, latency-sensitive media and compute-heavy work have different needs. A transition should coordinate service activation and resource placement with observed workload state, not simply optimize for utilization at the expense of active work.
+
+CI workers, local inference and sandboxed tools should respect the same declared resource and authority constraints. A mode can change available capacity, but must never broaden a job's authorization or bypass a sandbox. See [Self-Hosted CI Runner Controller](runner-controller.md) and [Vision and Deployment Model](vision.md).
+
 ## Authority boundary
 
 A mode request can change runtime posture only within capabilities already declared for the endpoint. It cannot:
