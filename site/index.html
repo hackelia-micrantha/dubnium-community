@@ -194,15 +194,38 @@
       max-width: var(--phyllotaxis-content-width-readable);
     }
 
-    .approach-grid {
+    .hero-grid {
       display: grid;
-      grid-template-columns: minmax(0, 1.15fr) minmax(0, .85fr);
+      grid-template-columns: minmax(0, 1.05fr) minmax(0, .95fr);
       gap: var(--phyllotaxis-space-xl);
-      align-items: start;
+      align-items: center;
+    }
+
+    .hero-principles {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: var(--phyllotaxis-space-md) var(--phyllotaxis-space-lg);
+      margin: var(--phyllotaxis-space-lg) 0 0;
+      max-width: var(--phyllotaxis-content-width-narrow);
+    }
+
+    .hero-principles > div {
+      min-width: 0;
+      padding-left: var(--phyllotaxis-space-sm);
+      border-left: 2px solid var(--phyllotaxis-color-border);
+    }
+    .hero-principles dt {
+      font-weight: 700;
+      font-size: var(--phyllotaxis-type-meta-size);
+    }
+    .hero-principles dd {
+      margin: var(--phyllotaxis-space-xs) 0 0;
+      color: var(--phyllotaxis-color-text-muted);
+      font-size: var(--phyllotaxis-type-caption-size);
     }
 
     #approach .principles {
-      grid-template-columns: repeat(2, minmax(0, 1fr));
+      grid-template-columns: repeat(4, minmax(0, 1fr));
       gap: var(--phyllotaxis-space-lg);
     }
 
@@ -312,7 +335,7 @@
       font-family: var(--phyllotaxis-font-mono);
       color: var(--phyllotaxis-color-text-muted);
       text-transform: uppercase;
-      margin-bottom: var(--phyllotaxis-space-md);
+      margin-bottom: var(--phyllotaxis-space-sm);
     }
 
     .model-flow {
@@ -320,7 +343,7 @@
     }
     .model-node {
       min-width: 0;
-      padding: var(--phyllotaxis-space-sm) var(--phyllotaxis-space-xs);
+      padding: var(--phyllotaxis-space-xs);
       overflow-wrap: anywhere;
     }
     .model-node strong, .model-node span { display: block; }
@@ -336,7 +359,7 @@
     }
     .model-branch, .model-join {
       position: relative;
-      height: var(--phyllotaxis-space-lg);
+      height: var(--phyllotaxis-space-md);
       color: var(--phyllotaxis-color-border);
     }
     .model-branch::before, .model-join::before {
@@ -358,14 +381,14 @@
     }
     .model-join { transform: rotate(180deg); }
     .model-governance {
-      padding: var(--phyllotaxis-space-md) var(--phyllotaxis-space-sm);
+      padding: var(--phyllotaxis-space-sm);
       background: var(--dubnium-authority);
       border-radius: 8px;
     }
     .model-governance strong { color: #315e46; }
     .model-foundation {
-      margin-top: var(--phyllotaxis-space-md);
-      padding-top: var(--phyllotaxis-space-sm);
+      margin-top: var(--phyllotaxis-space-sm);
+      padding-top: var(--phyllotaxis-space-xs);
       border-top: 1px solid var(--phyllotaxis-color-border);
       color: var(--phyllotaxis-color-text-muted);
       font: var(--phyllotaxis-type-caption-size)/1.4 var(--phyllotaxis-font-mono);
@@ -549,7 +572,7 @@
 
       .nav-links { justify-content: flex-start; }
 
-      .approach-grid,
+      .hero-grid,
       .overview-band,
       .principles,
       .evidence-grid,
@@ -568,6 +591,10 @@
       }
 
       .section-intro::before { content: none; }
+    }
+
+    @media (max-width: 1000px) {
+      #approach .principles { grid-template-columns: repeat(2, minmax(0, 1fr)); }
     }
 
     @media (max-width: 520px) {
@@ -634,7 +661,7 @@
   </header>
   <main id="top">
     <section class="hero">
-      <div class="wrap">
+      <div class="wrap hero-grid">
         <div class="hero-copy">
           <p class="kicker">A Micrantha project</p>
           <h1>Engineering infrastructure for the AI era.</h1>
@@ -650,7 +677,33 @@
             <span class="chip">Local-first development</span>
             <span class="chip">Experimental contracts</span>
           </div>
+          <dl class="hero-principles" aria-label="Operating principles">
+            <div><dt>Rebuild</dt><dd>Declarative environments</dd></div>
+            <div><dt>Govern</dt><dd>Capabilities, not credentials</dd></div>
+            <div><dt>Adapt</dt><dd>Resource-aware runtime</dd></div>
+            <div><dt>Verify</dt><dd>Observable outcomes</dd></div>
+          </dl>
         </div>
+        <figure class="model" aria-labelledby="platform-model-title">
+          <figcaption class="model-label" id="platform-model-title">Platform architecture</figcaption>
+          <div class="model-flow">
+            <div class="model-node model-top"><strong>Operator surfaces</strong><span>CLI · mobile/web/API direction</span></div>
+            <div class="model-branch" aria-hidden="true"><span></span></div>
+            <div class="model-pair">
+              <div class="model-node"><strong>Intelligence</strong><span>Models · routing · prediction</span></div>
+              <div class="model-node"><strong>Automation</strong><span>Memory · scheduling · CI/CD</span></div>
+            </div>
+            <div class="model-join" aria-hidden="true"><span></span></div>
+            <div class="model-node model-governance"><strong>Governed capabilities</strong><span>Identity · authorization · bounded effects</span></div>
+            <div class="model-branch" aria-hidden="true"><span></span></div>
+            <div class="model-pair">
+              <div class="model-node"><strong>Runtime</strong><span>Modes · isolation</span></div>
+              <div class="model-node"><strong>Infrastructure</strong><span>NixOS · CI · VM · VPN</span></div>
+            </div>
+            <div class="model-foundation">Observability · Data sovereignty</div>
+          </div>
+          <p class="model-note">Conceptual model, not deployment topology or availability.</p>
+        </figure>
       </div>
     </section>
 
@@ -663,8 +716,7 @@
           </div>
           <p class="section-intro">Most engineering stacks treat developer environments, build infrastructure, AI assistants and security as separate systems. Dubnium explores how to coordinate them without collapsing their trust boundaries. Four design decisions distinguish the platform.</p>
         </div>
-        <div class="approach-grid">
-          <div class="principles">
+        <div class="principles">
             <article class="principle">
               <span class="principle-number">01 / REPRODUCIBILITY</span>
               <h3>Replace the environment, not the work.</h3>
@@ -689,27 +741,6 @@
               <p>Prefer local models, scoped memory, private services and local observation. External inference, remote execution and organizational telemetry should cross explicit boundaries. Local operation does not by itself establish privacy or security.</p>
               <a href="docs/ai-and-automation.html">Local-first AI and automation</a>
             </article>
-          </div>
-        <figure class="model" aria-labelledby="platform-model-title">
-          <figcaption class="model-label" id="platform-model-title">Platform architecture / conceptual</figcaption>
-          <div class="model-flow">
-            <div class="model-node model-top"><strong>Operator surfaces</strong><span>CLI · mobile/web/API direction</span></div>
-            <div class="model-branch" aria-hidden="true"><span></span></div>
-            <div class="model-pair">
-              <div class="model-node"><strong>Intelligence</strong><span>Models · routing · prediction</span></div>
-              <div class="model-node"><strong>Automation</strong><span>Memory · scheduling · CI/CD</span></div>
-            </div>
-            <div class="model-join" aria-hidden="true"><span></span></div>
-            <div class="model-node model-governance"><strong>Governed capabilities</strong><span>Identity · authorization · bounded effects</span></div>
-            <div class="model-branch" aria-hidden="true"><span></span></div>
-            <div class="model-pair">
-              <div class="model-node"><strong>Runtime</strong><span>Modes · isolation</span></div>
-              <div class="model-node"><strong>Infrastructure</strong><span>NixOS · CI · VM · VPN</span></div>
-            </div>
-            <div class="model-foundation">Observability · Data sovereignty</div>
-          </div>
-          <p class="model-note">Conceptual responsibilities, not deployment topology or availability. Only authorized effects cross the governance boundary.</p>
-        </figure>
         </div>
       </div>
     </section>
