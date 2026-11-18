@@ -36,7 +36,7 @@
             const path_to_root = "";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "searchindex-dbcbb107.js";
+            window.path_to_searchindex_js = "searchindex-03526b3f.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="toc-3a702404.js"></script>
@@ -1085,6 +1085,7 @@ trusted acceleration
 </ul>
 <h2 id="compatibility-model"><a class="header" href="#compatibility-model">Compatibility model</a></h2>
 <p>Published contracts are versioned and classified by stability. Consumers should pin immutable releases, verify digests and provenance, and exercise conformance tests at their integration boundary.</p>
+<p>The first <a href="https://github.com/hackelia-micrantha/dubnium-community/releases/tag/contract-v0.1.0-alpha.1">Capability Gateway alpha contract bundle</a> includes a downloadable archive, manifest, software bill of materials, and checksums. It is experimental: publishing and verifying the bundle does not establish release acceptance, downstream qualification, or a stable compatibility promise. See the <a href="https://github.com/hackelia-micrantha/dubnium-community/issues/17">release acceptance tracker</a> for the remaining gates.</p>
 <p>A contract describes observable behavior. It does not promise a particular internal architecture, service layout, implementation language, deployment model, or provider.</p>
 <h2 id="disclosure-model"><a class="header" href="#disclosure-model">Disclosure model</a></h2>
 <p>A contract crosses the publication boundary only when its external value exceeds the cost and risk of maintaining it openly. Private implementation details are not documentation debt merely because a published contract exists.</p>
@@ -1093,7 +1094,7 @@ trusted acceleration
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="status-and-direction"><a class="header" href="#status-and-direction">Status and Direction</a></h1>
 <p>This page describes the published product surface and directional architecture only. It is not an internal delivery schedule and does not imply publication of private implementation.</p>
-<p>The repository remains in incubation, and no protected <code>contract-v*</code> release has yet been accepted as a consumer identity.</p>
+<p>The repository remains in incubation. The first <a href="https://github.com/hackelia-micrantha/dubnium-community/releases/tag/contract-v0.1.0-alpha.1">Capability Gateway alpha contract bundle</a> is published and independently verifiable. Release acceptance, downstream integration qualification, and production readiness remain separate gates. No stable consumer compatibility baseline has been accepted.</p>
 <h2 id="current-work"><a class="header" href="#current-work">Current work</a></h2>
 <ul>
 <li>maintaining the Community repository as the authoritative website, documentation, contract, and release surface;</li>
@@ -1101,7 +1102,7 @@ trusted acceleration
 <li>hardening short-lived self-hosted CI admission, controller-owned status, and deterministic reconciliation boundaries;</li>
 <li>maturing local-first AI control boundaries, including bounded model escalation, scoped retrieval semantics, and governed model lifecycle transitions;</li>
 <li>expanding synthetic conformance, adversarial fixtures, validators, and no-effect references;</li>
-<li>maintaining an explicit source allowlist and guarded private-to-published documentation flow;</li>
+<li>maintaining an explicit public-book source allowlist, generated-artifact parity, and independent publication validation;</li>
 <li>improving architecture, governance, compatibility, security, and release guidance.</li>
 </ul>
 <h2 id="current-architectural-direction"><a class="header" href="#current-architectural-direction">Current architectural direction</a></h2>
@@ -1143,7 +1144,7 @@ trusted acceleration
 <ul>
 <li>keep generated publication and destination validation aligned with the explicit source allowlist;</li>
 <li>improve adopter documentation and contract integration examples;</li>
-<li>consume published contract releases immutably from downstream implementations;</li>
+<li>complete release acceptance and verify immutable release consumption in downstream implementations;</li>
 <li>mature release checksums, software bills of materials, attestations, and deprecation guidance;</li>
 <li>document threat models and compatibility guarantees at stable interoperability boundaries;</li>
 <li>publish additional contracts only after their semantics are useful outside private implementation and have survived enough operational use to justify a compatibility commitment.</li>
