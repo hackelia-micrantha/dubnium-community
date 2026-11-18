@@ -192,7 +192,7 @@
 
     .hero-grid {
       display: grid;
-      grid-template-columns: minmax(0, 1.35fr) minmax(0, .65fr);
+      grid-template-columns: minmax(0, 1.15fr) minmax(0, .85fr);
       gap: var(--phyllotaxis-space-xl);
       align-items: center;
     }
@@ -283,38 +283,70 @@
     .model {
       margin: 0;
       min-width: 0;
-      padding: 0;
     }
 
     .model-label {
       font-family: var(--phyllotaxis-font-mono);
       color: var(--phyllotaxis-color-text-muted);
       text-transform: uppercase;
-      margin-bottom: var(--phyllotaxis-space-sm);
+      margin-bottom: var(--phyllotaxis-space-md);
     }
 
     .model-flow {
-      list-style: none;
-      margin: 0;
-      padding: 0 0 0 var(--phyllotaxis-space-md);
-      border-left: 2px solid var(--phyllotaxis-color-border);
+      text-align: center;
     }
-
-    .model-flow li {
-      display: grid;
-      gap: var(--phyllotaxis-space-xs);
-      margin-bottom: var(--phyllotaxis-space-md);
+    .model-node {
+      min-width: 0;
+      padding: var(--phyllotaxis-space-sm) var(--phyllotaxis-space-xs);
+      overflow-wrap: anywhere;
     }
-    .model-flow li:last-child { margin-bottom: 0; }
-    .model-flow strong {
-      font-size: var(--phyllotaxis-type-heading-size);
-      line-height: var(--phyllotaxis-type-heading-line-height);
-    }
-    .model-flow span {
-      font-size: var(--phyllotaxis-type-meta-size);
+    .model-node strong, .model-node span { display: block; }
+    .model-node strong { font-size: var(--phyllotaxis-type-body-size); }
+    .model-node span {
       color: var(--phyllotaxis-color-text-muted);
+      font-size: var(--phyllotaxis-type-caption-size);
+    }
+    .model-pair {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: var(--phyllotaxis-space-sm);
+    }
+    .model-branch, .model-join {
+      position: relative;
+      height: var(--phyllotaxis-space-lg);
+      color: var(--phyllotaxis-color-border);
+    }
+    .model-branch::before, .model-join::before {
+      content: "";
+      position: absolute;
+      left: 50%;
+      top: 0;
+      height: 50%;
+      border-left: 1px solid currentColor;
+    }
+    .model-branch span, .model-join span {
+      position: absolute;
+      left: 25%;
+      right: 25%;
+      top: 50%;
+      bottom: 0;
+      border: 1px solid currentColor;
+      border-bottom: 0;
+    }
+    .model-join { transform: rotate(180deg); }
+    .model-governance {
+      padding: var(--phyllotaxis-space-md) var(--phyllotaxis-space-sm);
+      background: var(--dubnium-authority);
+      border-radius: 8px;
     }
     .model-governance strong { color: #315e46; }
+    .model-foundation {
+      margin-top: var(--phyllotaxis-space-md);
+      padding-top: var(--phyllotaxis-space-sm);
+      border-top: 1px solid var(--phyllotaxis-color-border);
+      color: var(--phyllotaxis-color-text-muted);
+      font: var(--phyllotaxis-type-caption-size)/1.4 var(--phyllotaxis-font-mono);
+    }
     .model-note {
       margin: var(--phyllotaxis-space-sm) 0 0;
       font-size: var(--phyllotaxis-type-caption-size);
@@ -371,6 +403,7 @@
       align-items: flex-start;
       gap: var(--phyllotaxis-space-xs);
       padding: var(--phyllotaxis-space-lg);
+      border-radius: 12px;
       background: var(--dubnium-authority);
     }
     #capabilities .evidence-card:nth-child(3),
@@ -547,7 +580,9 @@
       #capabilities .evidence-card {
         border: 1px solid CanvasText;
       }
-      .model-flow, .status-callout { border-left-color: CanvasText; }
+      .model-governance { border: 1px solid CanvasText; }
+      .model-branch, .model-join { color: CanvasText; }
+      .status-callout { border-left-color: CanvasText; }
     }
   </style>
 </head>
@@ -588,14 +623,24 @@
           </div>
         </div>
         <figure class="model" aria-labelledby="platform-model-title">
-          <figcaption class="model-label" id="platform-model-title">From intent to evidence</figcaption>
-          <ol class="model-flow">
-            <li><strong>Propose</strong><span>Operators and AI-assisted tools express intent.</span></li>
-            <li class="model-governance"><strong>Authorize</strong><span>Identity and policy determine permitted effects.</span></li>
-            <li><strong>Execute</strong><span>Bounded capabilities use eligible resources.</span></li>
-            <li><strong>Verify</strong><span>Observable outcomes inform the next decision.</span></li>
-          </ol>
-          <p class="model-note">Conceptual execution flow. Only authorized effects cross the governance boundary.</p>
+          <figcaption class="model-label" id="platform-model-title">Platform architecture / conceptual</figcaption>
+          <div class="model-flow">
+            <div class="model-node model-top"><strong>Operator surfaces</strong><span>CLI · mobile · web · API</span></div>
+            <div class="model-branch" aria-hidden="true"><span></span></div>
+            <div class="model-pair">
+              <div class="model-node"><strong>Intelligence</strong><span>Models · routing · prediction</span></div>
+              <div class="model-node"><strong>Automation</strong><span>Memory · scheduling · CI/CD</span></div>
+            </div>
+            <div class="model-join" aria-hidden="true"><span></span></div>
+            <div class="model-node model-governance"><strong>Governed capabilities</strong><span>Identity · authorization · bounded effects</span></div>
+            <div class="model-branch" aria-hidden="true"><span></span></div>
+            <div class="model-pair">
+              <div class="model-node"><strong>Runtime</strong><span>Modes · isolation</span></div>
+              <div class="model-node"><strong>Infrastructure</strong><span>NixOS · CI · VM · VPN</span></div>
+            </div>
+            <div class="model-foundation">Observability · Data sovereignty</div>
+          </div>
+          <p class="model-note">Illustrative responsibilities, not deployment topology. Only authorized effects cross the governance boundary.</p>
         </figure>
       </div>
     </section>
