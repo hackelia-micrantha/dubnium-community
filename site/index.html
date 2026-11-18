@@ -48,6 +48,11 @@
       --phyllotaxis-color-selection-text: #111111;
       --status-border: #8b6d00;
       --dubnium-page: var(--phyllotaxis-color-canvas);
+      /* Consumer-owned capability accents, not shared Chroma roles. */
+      --dubnium-authority: #e8efe7;
+      --dubnium-intelligence: #e8eef4;
+      --dubnium-runtime: #f3ecdf;
+      --dubnium-evidence: #eee9f1;
     }
 
     * { box-sizing: border-box; }
@@ -181,16 +186,15 @@
     main { overflow: visible; }
 
     .hero {
-      padding: var(--phyllotaxis-space-lg) 0;
+      padding: var(--phyllotaxis-space-xl) 0;
       background: var(--phyllotaxis-color-canvas);
-      border-block: 1px solid var(--phyllotaxis-color-border);
     }
 
     .hero-grid {
       display: grid;
-      grid-template-columns: minmax(0, 1.15fr) minmax(0, .85fr);
-      gap: var(--phyllotaxis-space-lg);
-      align-items: start;
+      grid-template-columns: minmax(0, 1.35fr) minmax(0, .65fr);
+      gap: var(--phyllotaxis-space-xl);
+      align-items: center;
     }
 
     .kicker,
@@ -278,78 +282,52 @@
 
     .model {
       margin: 0;
+      min-width: 0;
       padding: 0;
-      border: 1px solid var(--phyllotaxis-color-border);
-      border-radius: 0;
-      background: var(--phyllotaxis-color-canvas);
     }
 
     .model-label {
-      background: var(--phyllotaxis-color-canvas);
-      border-bottom: 1px solid var(--phyllotaxis-color-border);
-    }
-
-    .section-head {
-      background: transparent;
-      border-bottom: 0;
-    }
-
-
-
-    .model-label {
-      margin: 0;
-      padding: .35rem .5rem;
-      color: var(--phyllotaxis-color-text);
+      font-family: var(--phyllotaxis-font-mono);
+      color: var(--phyllotaxis-color-text-muted);
+      text-transform: uppercase;
+      margin-bottom: var(--phyllotaxis-space-sm);
     }
 
     .model-flow {
+      list-style: none;
+      margin: 0;
+      padding: 0 0 0 var(--phyllotaxis-space-md);
+      border-left: 2px solid var(--phyllotaxis-color-border);
+    }
+
+    .model-flow li {
       display: grid;
       gap: var(--phyllotaxis-space-xs);
-      padding: var(--phyllotaxis-space-sm);
-      text-align: center;
+      margin-bottom: var(--phyllotaxis-space-md);
     }
-    .model-node {
-      min-width: 0;
-      padding: var(--phyllotaxis-space-sm);
-      border: 1px solid var(--phyllotaxis-color-border);
-      background: var(--phyllotaxis-color-canvas);
-      overflow-wrap: anywhere;
+    .model-flow li:last-child { margin-bottom: 0; }
+    .model-flow strong {
+      font-size: var(--phyllotaxis-type-heading-size);
+      line-height: var(--phyllotaxis-type-heading-line-height);
     }
-    .model-node strong, .model-node span { display: block; }
-    .model-node strong { font-size: var(--phyllotaxis-type-meta-size); }
-    .model-node span, .model-note { font-size: var(--phyllotaxis-type-caption-size); }
-    .model-pair {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: var(--phyllotaxis-space-xs);
-    }
-    .model-governance {
-      border: 2px solid var(--phyllotaxis-color-text-muted);
-    }
-    .model-connector {
-      font: var(--phyllotaxis-type-caption-size)/1.4 var(--phyllotaxis-font-mono);
+    .model-flow span {
+      font-size: var(--phyllotaxis-type-meta-size);
       color: var(--phyllotaxis-color-text-muted);
     }
-    .model-foundation {
-      padding: var(--phyllotaxis-space-xs);
-      border-top: 1px solid var(--phyllotaxis-color-border);
-      background: var(--phyllotaxis-color-canvas);
-      font-size: var(--phyllotaxis-type-meta-size);
-    }
+    .model-governance strong { color: #315e46; }
     .model-note {
-      margin: 0;
-      padding: 0 var(--phyllotaxis-space-sm) var(--phyllotaxis-space-sm);
+      margin: var(--phyllotaxis-space-sm) 0 0;
+      font-size: var(--phyllotaxis-type-caption-size);
       color: var(--phyllotaxis-color-text-muted);
     }
 
     .section {
-      padding: var(--phyllotaxis-space-lg) 0;
-      border-bottom: 1px solid var(--phyllotaxis-color-border);
+      padding: var(--phyllotaxis-space-xl) 0;
     }
 
     .section-head {
       display: block;
-      margin-bottom: var(--phyllotaxis-space-sm);
+      margin-bottom: var(--phyllotaxis-space-lg);
       padding: 0;
     }
 
@@ -371,9 +349,7 @@
     .audiences {
       display: grid;
       grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 1px;
-      border: 1px solid var(--phyllotaxis-color-border);
-      background: var(--phyllotaxis-color-border);
+      gap: var(--phyllotaxis-space-lg);
     }
 
     .evidence-grid,
@@ -385,15 +361,33 @@
     .evidence-card,
     .roadmap-card,
     .audience {
+      min-width: 0;
       min-height: 0;
-      padding: var(--phyllotaxis-space-md);
-      background: var(--phyllotaxis-color-canvas);
     }
 
     #capabilities .evidence-card {
       display: flex;
       flex-direction: column;
       align-items: flex-start;
+      gap: var(--phyllotaxis-space-xs);
+      padding: var(--phyllotaxis-space-lg);
+      background: var(--dubnium-authority);
+    }
+    #capabilities .evidence-card:nth-child(3),
+    #capabilities .evidence-card:nth-child(4) {
+      background: var(--dubnium-intelligence);
+    }
+    #capabilities .evidence-card:nth-child(5),
+    #capabilities .evidence-card:nth-child(6) {
+      background: var(--dubnium-runtime);
+    }
+    #capabilities .evidence-card:nth-child(7),
+    #capabilities .evidence-card:nth-child(8) {
+      background: var(--dubnium-evidence);
+    }
+    #capabilities .evidence-card p {
+      font-size: var(--phyllotaxis-type-body-size);
+      margin-bottom: var(--phyllotaxis-space-sm);
     }
     #capabilities .evidence-card a { margin-top: auto; }
     .capability-label {
@@ -431,8 +425,7 @@
       display: block;
       margin-top: var(--phyllotaxis-space-sm);
       padding: .6rem .75rem;
-      border: 1px solid var(--status-border);
-      border-radius: 0;
+      border-left: 3px solid var(--status-border);
       background: var(--phyllotaxis-color-canvas);
     }
 
@@ -460,9 +453,7 @@
       grid-template-columns: minmax(0, 1.2fr) minmax(16rem, .8fr);
       align-items: start;
       gap: var(--phyllotaxis-space-md);
-      padding: .75rem;
-      border: 1px solid var(--phyllotaxis-color-border);
-      border-radius: 0;
+      padding: 0;
       background: var(--phyllotaxis-color-canvas);
     }
 
@@ -521,10 +512,6 @@
       .section-intro::before { content: none; }
     }
 
-    @media (max-width: 380px) {
-      .model-pair { grid-template-columns: 1fr; }
-    }
-
     @media (prefers-reduced-motion: reduce) {
       *, *::before, *::after {
         scroll-behavior: auto !important;
@@ -554,17 +541,13 @@
 
     @media (forced-colors: active) {
       .button,
-      .model,
-      .model-node,
-      .mark,
-      .principles,
-      .evidence-grid,
-      .roadmap,
-      .audiences,
-      .status-callout,
-      .overview-band {
+      .mark {
         border: 1px solid CanvasText;
       }
+      #capabilities .evidence-card {
+        border: 1px solid CanvasText;
+      }
+      .model-flow, .status-callout { border-left-color: CanvasText; }
     }
   </style>
 </head>
@@ -605,24 +588,14 @@
           </div>
         </div>
         <figure class="model" aria-labelledby="platform-model-title">
-          <figcaption class="model-label" id="platform-model-title">Platform model / conceptual</figcaption>
-          <div class="model-flow">
-            <div class="model-node"><strong>Operator surfaces</strong><span>CLI · mobile · web · API direction</span></div>
-            <span class="model-connector" aria-hidden="true">↓</span>
-            <div class="model-pair">
-              <div class="model-node"><strong>Intelligence</strong><span>Models · routing · prediction</span></div>
-              <div class="model-node"><strong>Automation</strong><span>Memory · schedules · CI/CD</span></div>
-            </div>
-            <span class="model-connector" aria-hidden="true">↓ proposed effects</span>
-            <div class="model-node model-governance"><strong>Governed capabilities</strong><span>Identity · policy · authorization · verification</span></div>
-            <span class="model-connector" aria-hidden="true">↓ permitted execution</span>
-            <div class="model-pair">
-              <div class="model-node"><strong>Runtime</strong><span>Modes · isolation</span></div>
-              <div class="model-node"><strong>Infrastructure</strong><span>NixOS · CI · VM · VPN</span></div>
-            </div>
-            <div class="model-foundation">Observability · Data sovereignty</div>
-          </div>
-          <p class="model-note">Illustrative responsibilities, not deployment topology or an availability claim. Only authorized effects cross the governance boundary.</p>
+          <figcaption class="model-label" id="platform-model-title">From intent to evidence</figcaption>
+          <ol class="model-flow">
+            <li><strong>Propose</strong><span>Operators and AI-assisted tools express intent.</span></li>
+            <li class="model-governance"><strong>Authorize</strong><span>Identity and policy determine permitted effects.</span></li>
+            <li><strong>Execute</strong><span>Bounded capabilities use eligible resources.</span></li>
+            <li><strong>Verify</strong><span>Observable outcomes inform the next decision.</span></li>
+          </ol>
+          <p class="model-note">Conceptual execution flow. Only authorized effects cross the governance boundary.</p>
         </figure>
       </div>
     </section>
