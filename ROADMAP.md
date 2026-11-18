@@ -8,6 +8,14 @@ Reviewed: 2026-11-17
 
 This roadmap describes intended public work. It is not a compatibility promise, a private implementation plan, or a commitment to publish production internals.
 
+## Product outcomes
+
+- **Now — qualify reproducible, bounded execution.** Complete acceptance of the first experimental contract bundle and gather repeatable integration evidence; do not imply a stable distribution.
+- **Next — make independent integration practical.** Improve public examples, conformance and interoperability with governed AI and self-hosted engineering workflows.
+- **Later — validate adoption and supported deployment opportunities.** Use feedback from developers and design partners to determine where reproducible endpoints, private AI and supported integrations justify further investment.
+
+These are directional outcomes, not dates, sales commitments, or claims of production qualification.
+
 ## Current state
 
 The public foundation is in place:
@@ -49,7 +57,7 @@ These are directional concepts. They do not imply a production fleet service, en
 
 - maintain the public-book source as an explicit reviewed file allowlist rather than relying on navigation alone;
 - verify regenerated `site/docs/**` replaces stale generated pages and remains independently validated before deployment;
-- verify publication no-op behavior and keep generated changes confined to `site/docs/**`;
+- maintain paired public source and generated-artifact parity; keep artifact-only changes confined to `site/docs/**`;
 - maintain and verify protected-main and immutable-release controls;
 - resolve the remaining release metadata and provenance acceptance questions under #17 without rewriting immutable artifacts;
 - verify downstream consumption of an immutable release identity and digest, including attestation and conformance;

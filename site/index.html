@@ -4,8 +4,8 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#f6f4ed">
-  <meta name="description" content="Dubnium is an incubating, reproducible engineering environment for governed automation and public interoperability contracts.">
-  <title>Dubnium — Reproducible engineering, bounded automation</title>
+  <meta name="description" content="Dubnium explores reproducible development environments, self-hosted infrastructure and local-first AI for secure, accountable engineering automation.">
+  <title>Dubnium — Reproducible infrastructure for AI-assisted engineering</title>
   <link rel="icon" href="favicon.svg" type="image/svg+xml">
   <style>
     :root {
@@ -603,17 +603,17 @@
       <div class="wrap hero-grid">
         <div>
           <p class="kicker">A Micrantha project</p>
-          <h1>Reproducible engineering. Bounded automation.</h1>
-          <p class="lede">Dubnium is an engineering environment built around a practical question: how can a workstation, local AI runtime, developer tools, and automation fit together while staying rebuildable, observable, and governed?</p>
-          <p class="lede">It brings Nix-based system configuration and operator tooling together with public contracts for capabilities and interoperability. Models may propose work; explicit policy and bounded execution remain in control.</p>
+          <h1>Engineering infrastructure for the AI era.</h1>
+          <p class="lede">Dubnium brings reproducible development environments, self-hosted infrastructure and local-first AI together in an engineering platform designed for secure, accountable automation.</p>
+          <p class="lede">Built on NixOS, it explores how developers and organizations can use increasingly capable AI tools while retaining control of their infrastructure, data and execution authority.</p>
           <div class="actions">
-            <a class="button button-primary" href="https://github.com/hackelia-micrantha/dubnium-community">Explore the community repository</a>
+            <a class="button button-primary" href="https://github.com/hackelia-micrantha/dubnium-community">Explore the technology</a>
             <a class="button" href="docs/">Read the Technical Overview</a>
-            <a class="button" href="https://github.com/hackelia-micrantha/dubnium-community/releases/tag/contract-v0.1.0-alpha.1">Download the alpha contract bundle</a>
+            <a class="button" href="https://github.com/hackelia-micrantha/dubnium-community/releases/tag/contract-v0.1.0-alpha.1">View the alpha release</a>
           </div>
           <div class="maturity" aria-label="Project maturity">
             <span class="chip chip-warn">Incubating</span>
-            <span class="chip">Canary implementation</span>
+            <span class="chip">Local-first development</span>
             <span class="chip">Experimental contracts</span>
           </div>
         </div>
@@ -634,9 +634,9 @@
         <div class="section-head">
           <div>
             <p class="overline">Design approach</p>
-            <h2>Keep the important boundaries visible.</h2>
+            <h2>Make engineering environments easier to rebuild and trust.</h2>
           </div>
-          <p class="section-intro">Reproducibility is useful when systems can be rebuilt and reviewed. Governance is useful when an automation request does not silently become authority. Dubnium is designed to make those distinctions explicit.</p>
+          <p class="section-intro">Developer environments accumulate fragile configuration, builds compete for resources, and AI tools can inherit more access than their tasks need. Dubnium addresses these problems through three complementary design goals.</p>
         </div>
         <div class="principles">
           <article class="principle">
@@ -663,30 +663,30 @@
         <div class="section-head">
           <div>
             <p class="overline">Current state</p>
-            <h2>Built in slices. Still being proven.</h2>
+            <h2>Engineering progress you can examine.</h2>
           </div>
-          <p class="section-intro">The project combines a personal canary implementation with a public community surface for contracts, validation, documentation, and safe reference assets.</p>
+          <p class="section-intro">A working personal engineering environment informs the design. The public community provides architecture, experimental contracts, reproducible validation and safe references that others can examine independently.</p>
         </div>
         <div class="evidence-grid">
           <article class="evidence-card">
-            <h3>Operator and system tooling</h3>
-            <p>Public materials describe the NixOS platform and the <code>dubctl</code>, <code>modectl</code>, and <code>configctl</code> operator surfaces.</p>
+            <h3>Reproducible platform engineering</h3>
+            <p>NixOS-based configuration and operator tools distinguish declared system state from observed runtime behavior, with explicit configuration and recovery boundaries.</p>
             <a href="docs/">See the Technical Overview</a>
           </article>
           <article class="evidence-card">
-            <h3>Capability contract slice</h3>
-            <p>An experimental gateway contract has schemas, canonicalization and error semantics, synthetic fixtures, conformance checks, and a no-effect reference.</p>
+            <h3>Secure AI and governed execution</h3>
+            <p>Local-first model interfaces and an experimental capability gateway separate requests, authorization and execution. Public schemas, adversarial fixtures and a no-effect reference make the boundary inspectable.</p>
             <a href="https://github.com/hackelia-micrantha/dubnium-community/tree/main/spec">Browse public specifications</a>
           </article>
           <article class="evidence-card">
-            <h3>Verifiable public artifacts</h3>
+            <h3>Reproducible releases and conformance</h3>
             <p>The first experimental Capability Gateway bundle is published. Deterministic release tooling and independent consumer checks support verification of the bundle.</p>
             <a href="https://github.com/hackelia-micrantha/dubnium-community/releases/tag/contract-v0.1.0-alpha.1">View the published alpha release</a>
           </article>
           <article class="evidence-card">
-            <h3>One public source of truth</h3>
-            <p>The community repository owns the public website, condensed Technical Overview, contracts, and bounded public roadmap.</p>
-            <a href="https://github.com/hackelia-micrantha/dubnium-community">Visit dubnium-community</a>
+            <h3>Self-hosted CI infrastructure</h3>
+            <p>The runner-controller design admits short-lived workers for bounded jobs, separates job access from administration and reconciles execution state. Runtime qualification is ongoing.</p>
+            <a href="docs/runner-controller.html">Explore the runner architecture</a>
           </article>
         </div>
         <div class="status-callout">
@@ -704,23 +704,23 @@
         <div class="section-head">
           <div>
             <p class="overline">Goals and outcomes</p>
-            <h2>Prove the contracts with real consumers.</h2>
+            <h2>From engineering evidence to practical adoption.</h2>
           </div>
-          <p class="section-intro">The roadmap prioritizes dependable public interfaces and useful adoption evidence before broader promises about deployment forms or compatibility.</p>
+          <p class="section-intro">The next challenge is to turn the reference environment and public contracts into repeatable integration evidence, especially for private AI, reproducible developer endpoints and isolated build infrastructure.</p>
         </div>
         <div class="roadmap">
           <article class="roadmap-card">
             <h3>Now</h3>
-            <p>Complete release acceptance and integration qualification.</p>
+            <p>Qualify reproducible, bounded execution and the first public contract bundle.</p>
             <ul>
               <li>Maintain contract correctness and conformance.</li>
               <li>Complete release metadata, provenance and downstream acceptance.</li>
-              <li>Keep generated public documentation reviewed and bounded.</li>
+              <li>Demonstrate repeatable integration and verification with public-safe examples.</li>
             </ul>
           </article>
           <article class="roadmap-card">
             <h3>Next</h3>
-            <p>Improve integration and expand only where reuse is clear.</p>
+            <p>Make independent adoption and integration easier.</p>
             <ul>
               <li>Test contracts against independent and downstream implementations.</li>
               <li>Develop event and resource-budget interoperability contracts.</li>
@@ -737,30 +737,31 @@
         <div class="section-head">
           <div>
             <p class="overline">Find your entry point</p>
-            <h2>Bring a build, a question, or a constraint.</h2>
+            <h2>Build, evaluate or collaborate.</h2>
           </div>
-          <p class="section-intro">Dubnium benefits from people who want to run the public slice, challenge its assumptions, or help work out what a sustainable ecosystem could look like.</p>
+          <p class="section-intro">Different readers bring different questions. Explore the engineering, test an interoperability boundary, or discuss a practical deployment need.</p>
         </div>
         <div class="audiences">
           <article class="audience">
-            <h3>Developers</h3>
-            <p>Review schemas and compatibility rules, run conformance checks, improve validators, or build an independent implementation against the public contracts.</p>
-            <a href="https://github.com/hackelia-micrantha/dubnium-community/blob/main/CONTRIBUTING.md">Contribution guide</a>
+            <h3>Open-source developers and communities</h3>
+            <p>Run the public conformance suite, review specifications, challenge threat assumptions, or build an independent implementation. Public assets are Apache-2.0 unless explicitly excepted.</p>
+            <a href="https://github.com/hackelia-micrantha/dubnium-community/tree/main/conformance">Run the conformance suite</a>
           </article>
           <article class="audience">
-            <h3>Hobbyists and workstation builders</h3>
-            <p>Explore reproducible Nix environments, local-first AI architecture, operator tooling, and the no-effect reference assets. The public repository is a safe slice, not a packaged production workstation.</p>
-            <a href="docs/">Start with the Technical Overview</a>
+            <h3>Engineering teams and employers</h3>
+            <p>Explore the engineering behind Dubnium: systems architecture, developer experience, infrastructure automation and secure AI execution. The Technical Overview explains the trade-offs and design decisions.</p>
+            <a href="docs/">Explore the engineering</a>
           </article>
           <article class="audience">
-            <h3>Design partners and adopters</h3>
-            <p>Bring constraints from local or private AI, self-hosted builds, secure developer environments, or governed automation. Use them to test whether the contracts match real work.</p>
+            <h3>Design and integration partners</h3>
+            <p>Bring a real problem in private AI, self-hosted CI, secure developer environments or governed automation. Help test the contracts against practical operating constraints.</p>
             <a href="https://github.com/hackelia-micrantha/dubnium-community/blob/main/DESIGN_PARTNER_GUIDE.md">Design partner guide</a>
           </article>
           <article class="audience">
-            <h3>Strategic and investment conversations</h3>
-            <p>Discuss sustainability, infrastructure, distribution, integrations, and independent implementations. The project is incubating, and these conversations can help test its direction.</p>
-            <a href="https://github.com/hackelia-micrantha/.github/blob/main/profile/README.md#looking-for-collaborators">Micrantha collaboration overview</a>
+            <h3>Investors and strategic partners</h3>
+            <p>Explore potential value in supported engineering environments, secure integrations and lifecycle management. These are opportunities to validate, not existing commercial offerings.</p>
+            <a href="https://github.com/hackelia-micrantha/.github/blob/main/profile/README.md#looking-for-collaborators">Discuss collaboration through Micrantha</a><br>
+            <a href="https://github.com/hackelia-micrantha/dubnium-community/blob/main/COMMUNITY_COMMERCIAL_BOUNDARY.md">Community and commercial direction</a>
           </article>
         </div>
       </div>
@@ -770,9 +771,9 @@
       <div class="wrap">
         <div class="overview-band">
           <div>
-            <p class="overline">A deliberately condensed public manual</p>
-            <h2>Understand the promises. Keep deployment details private.</h2>
-            <p>The Technical Overview is generated from reviewed community sources. It explains project concepts, public contracts, and observable behavior while omitting private topology, prompts, production policy, privileged procedures, and operational evidence.</p>
+            <p class="overline">Technical documentation</p>
+            <h2>Explore the architecture and engineering decisions.</h2>
+            <p>Follow the system from declared configuration to bounded execution and verification. Explore component responsibilities, self-hosted CI, local-first AI, interoperability and the security assumptions behind the design.</p>
           </div>
           <div class="overview-links">
             <a class="button button-primary" href="docs/">Read the Technical Overview</a>
@@ -789,6 +790,7 @@
         <a href="https://github.com/hackelia-micrantha/dubnium-community">Community repository</a>
         <a href="https://github.com/hackelia-micrantha/dubnium-community/blob/main/ROADMAP.md">Roadmap</a>
         <a href="https://github.com/hackelia-micrantha/dubnium-community/blob/main/SECURITY.md">Security</a>
+        <a href="https://ryanjennin.gs/">Project author</a>
       </nav>
     </div>
   </footer>
