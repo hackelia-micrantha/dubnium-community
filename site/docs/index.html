@@ -15,8 +15,8 @@
         <link rel="icon" href="favicon-de23e50b.svg">
         <link rel="shortcut icon" href="favicon-8114d1fc.png">
         <link rel="stylesheet" href="css/variables-8adf115d.css">
-        <link rel="stylesheet" href="css/general-e96d0476.css">
-        <link rel="stylesheet" href="css/chrome-d279d366.css">
+        <link rel="stylesheet" href="css/general-2459343d.css">
+        <link rel="stylesheet" href="css/chrome-ae938929.css">
         <link rel="stylesheet" href="css/print-9e4910d8.css" media="print">
 
         <!-- Fonts -->
@@ -35,10 +35,10 @@
             const path_to_root = "";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "searchindex-03526b3f.js";
+            window.path_to_searchindex_js = "searchindex-7832f818.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="toc-3a702404.js"></script>
+        <script src="toc-434c69b3.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -175,61 +175,51 @@
                 <div id="mdbook-content" class="content">
                     <main>
                         <h1 id="dubnium-technical-overview"><a class="header" href="#dubnium-technical-overview">Dubnium Technical Overview</a></h1>
-<p>Dubnium is a reproducible, observable, governed engineering environment for developer workstations, smaller client environments, build and compute nodes, and AI-assisted automation.</p>
-<p>Within Micrantha, Dubnium serves as the <strong>canary implementation for the wider development and VM ecosystem</strong>: it integrates and exercises NixOS, VM, runtime, and automation patterns before broader reuse.</p>
-<p>This technical overview explains the system through <strong>responsibilities, state models, invariants, observable behavior, and published interoperability contracts</strong>. It is intentionally more detailed than the landing page while stopping before deployment-sensitive implementation and operator material.</p>
-<h2 id="what-dubnium-is-trying-to-preserve"><a class="header" href="#what-dubnium-is-trying-to-preserve">What Dubnium is trying to preserve</a></h2>
-<p>The project is built around four system qualities:</p>
+<p>Dubnium explores how reproducible development environments, self-hosted infrastructure and local-first AI can support secure, accountable engineering automation. Built on NixOS, it is intended to make development, build and execution environments easier to replace, inspect and trust.</p>
+<p>This overview is for engineers evaluating the design, organizations considering integration, and contributors who want to challenge or extend the public contracts. Dubnium is incubating: a personal engineering environment informs the design, and the first experimental Capability Gateway contract bundle is publicly available. A generally available workstation distribution or stable consumer compatibility baseline has not been established.</p>
+<h2 id="why-it-matters"><a class="header" href="#why-it-matters">Why it matters</a></h2>
+<p>Developer environments accumulate machine-specific dependencies and mutable state. Self-hosted builds need isolation and recoverability. AI-assisted tools can propose useful actions, but they may also inherit access to source, credentials or infrastructure beyond what a task requires.</p>
+<p>Dubnium addresses these concerns through four complementary system qualities:</p>
 <ul>
-<li><strong>reproducibility</strong> — environments can be rebuilt, replaced, and reviewed from declared inputs;</li>
-<li><strong>observability</strong> — intended state and observed runtime state remain distinct and explainable from bounded evidence;</li>
-<li><strong>security</strong> — connectivity, identity, capabilities, and automated effects remain explicit rather than ambient;</li>
-<li><strong>development acceleration</strong> — project environments, builds, automation, and AI support reduce setup and recovery cost without making the workstation fragile.</li>
+<li><strong>Reproducibility:</strong> replace or recover environments from declared inputs instead of reconstructing undocumented manual changes.</li>
+<li><strong>Developer experience:</strong> compose project tooling, local services and build capacity without making unrelated capabilities mandatory.</li>
+<li><strong>Security:</strong> separate access, identity, policy, authorization and execution so that a request is not permission.</li>
+<li><strong>Observability:</strong> distinguish intended state, actual behavior and the evidence needed to evaluate an outcome.</li>
 </ul>
-<p>Dubnium is local-first, not local-only. A useful endpoint should remain inspectable and recoverable without depending on a central control plane while still being able to consume remote services through explicit contracts and policy boundaries.</p>
-<h2 id="deployment-is-compositional"><a class="header" href="#deployment-is-compositional">Deployment is compositional</a></h2>
-<p>Dubnium is not limited to one workstation shape. The same architectural contracts can support smaller client environments, richer interactive workstations, build or compute nodes, remote managed development environments, and stronger security or administrative environments. Each deployment enables only the capabilities it needs.</p>
-<p>AI is one capability of the environment, not the authority for the environment. Deterministic configuration, runtime observation, policy, durable state, and recovery remain useful without a model.</p>
-<h2 id="start-with-the-system-flow"><a class="header" href="#start-with-the-system-flow">Start with the system flow</a></h2>
+<h2 id="where-the-design-could-be-useful"><a class="header" href="#where-the-design-could-be-useful">Where the design could be useful</a></h2>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Application</th><th>Problem being explored</th></tr>
+</thead>
+<tbody>
+<tr><td>Developer endpoints</td><td>Consistent setup, replacement and recovery across changing project requirements</td></tr>
+<tr><td>Self-hosted CI</td><td>Short-lived job workers, scope-constrained execution and reliable reconciliation</td></tr>
+<tr><td>Local and private AI</td><td>Useful model assistance while retaining explicit data and execution boundaries</td></tr>
+<tr><td>Governed automation</td><td>Consequential actions that can be authorized, bounded and verified independently</td></tr>
+</tbody>
+</table>
+</div>
+<p>These are use cases to validate, not claims of enterprise availability or measured benefits. <a href="vision.html">Vision and Deployment Model</a> explains the deployment assumptions and limitations.</p>
+<h2 id="explore-the-engineering"><a class="header" href="#explore-the-engineering">Explore the engineering</a></h2>
 <ul>
-<li><a href="how-dubnium-works.html">How Dubnium Works</a> gives the end-to-end mental model from declared intent through runtime observation and governed effects.</li>
-<li><a href="operator-journey.html">Operator Journey</a> shows how the public operator surfaces fit together without exposing deployment-specific procedures.</li>
-<li><a href="runner-controller.html">Self-Hosted CI Runner Controller</a> explains bounded admission, short-lived workers, canonical status, and reconciliation.</li>
+<li><strong>Product direction:</strong> <a href="vision.html">Vision and Deployment Model</a> and <a href="status.html">Status and Direction</a>.</li>
+<li><strong>System architecture:</strong> <a href="how-dubnium-works.html">How Dubnium Works</a>, <a href="components.html">Components</a> and <a href="architecture.html">Conceptual Architecture</a>.</li>
+<li><strong>Operator experience:</strong> <a href="operator-journey.html">Operator Journey</a>, <a href="operator-tooling.html">Operator Tooling</a> and <a href="runner-controller.html">Self-Hosted CI Runner Controller</a>.</li>
+<li><strong>Security and trust:</strong> <a href="governance.html">Governance and Safety</a>, <a href="ai-and-automation.html">AI and Automation</a> and <a href="observability.html">Observability and Evidence</a>.</li>
+<li><strong>Evaluate or contribute:</strong> <a href="public-contracts.html">Contracts and Conformance</a> and <a href="community.html">Community and Contributions</a>.</li>
 </ul>
-<p>Then inspect the implemented surfaces:</p>
-<ul>
-<li><a href="components.html">Components</a> describes the major platform pieces, their maturity, state ownership, and intentional boundaries.</li>
-<li><a href="operator-tooling.html">Operator Tooling</a> explains why <code>dubctl</code>, <code>modectl</code>, and <code>configctl</code> remain separate surfaces.</li>
-<li><a href="runtime-modes.html">Runtime Operating Modes</a> describes desktop, media, and compute posture and the guarded reconciliation model.</li>
-<li><a href="writable-configuration.html">Writable User Configuration</a> explains how legitimate mutable preferences coexist with Nix-store-backed managed configuration.</li>
-</ul>
-<p>Then continue into the broader design:</p>
-<ul>
-<li><a href="vision.html">Vision and Deployment Model</a> describes the long-term product shape.</li>
-<li><a href="architecture.html">Conceptual Architecture</a> describes responsibility and source-of-truth boundaries.</li>
-<li><a href="reproducibility.html">Reproducible Engineering</a> covers replacement, project environments, mutable-state classification, and supply-chain trust.</li>
-<li><a href="observability.html">Observability and Evidence</a> separates intended state, runtime facts, durable state, and derived understanding.</li>
-<li><a href="ai-and-automation.html">AI and Automation</a> explains how model-assisted work fits without becoming ambient authority.</li>
-<li><a href="governance.html">Governance and Safety</a> describes bounded effects and trust boundaries.</li>
-<li><a href="public-contracts.html">Contracts and Conformance</a> describes the independently inspectable interoperability surface.</li>
-<li><a href="status.html">Status and Direction</a> distinguishes implemented, experimental, and directional work.</li>
-<li><a href="community.html">Community and Contributions</a> points to the open source and contribution surface.</li>
-</ul>
-<h2 id="disclosure-boundary"><a class="header" href="#disclosure-boundary">Disclosure boundary</a></h2>
-<p>The useful rule for this overview is:</p>
-<blockquote>
-<p>Publish what the system promises and what an integrator or operator can observe; keep private how a particular deployment enforces it.</p>
-</blockquote>
-<p>This overview may therefore publish stable component names, maturity, operator-tool responsibilities, runtime-mode semantics, configuration ownership layers, state-machine invariants, conceptual control flow, and published contracts.</p>
-<p>It deliberately omits machine identities, exact topology, ports/endpoints, service-unit wiring, credentials, hardware/resource assignments, exact policy thresholds, trusted identities, provider-selection or model-routing heuristics, privileged recovery procedures, private prompts/data, and real operational evidence.</p>
-<p>The published Community repository is independently useful for contracts, conformance, references, and documentation. This technical overview is not a sanitized mirror of private operator documentation.</p>
+<p>The <a href="https://github.com/hackelia-micrantha/dubnium-community/releases/tag/contract-v0.1.0-alpha.1">published alpha bundle</a>, <a href="https://github.com/hackelia-micrantha/dubnium-community/tree/main/conformance">conformance suites</a>, and <a href="https://github.com/hackelia-micrantha/dubnium-community/tree/main/reference">no-effect references</a> are the public artifacts to examine first. The public repository requires no private implementation or credentials to exercise its contract fixtures.</p>
+<h2 id="scope-of-this-overview"><a class="header" href="#scope-of-this-overview">Scope of this overview</a></h2>
+<p>The overview describes observable system behavior, component responsibilities, design decisions and published interoperability commitments. It does not disclose deployment-specific implementation or operational evidence. See the <a href="https://github.com/hackelia-micrantha/dubnium-community/blob/main/PUBLICATION_BOUNDARY.md">publication boundary</a> for the governing disclosure rules.</p>
+<p>Within Micrantha, Dubnium serves as a reference and canary environment for validating shared NixOS, VM, runtime and automation patterns before broader reuse. The public Community repository is independently useful without access to the private environment.</p>
 
                     </main>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
 
-                            <a rel="next prefetch" href="how-dubnium-works.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                            <a rel="next prefetch" href="vision.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                                 <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
                             </a>
 
@@ -240,7 +230,7 @@
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
 
-                    <a rel="next prefetch" href="how-dubnium-works.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                    <a rel="next prefetch" href="vision.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                         <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
                     </a>
             </nav>
@@ -262,11 +252,11 @@
 
         <script src="elasticlunr-ef4e11c1.min.js"></script>
         <script src="mark-09e88c2c.min.js"></script>
-        <script src="searcher-09f2665d.js"></script>
+        <script src="searcher-c2a407aa.js"></script>
 
         <script src="clipboard-1626706a.min.js"></script>
         <script src="highlight-abc7f01d.js"></script>
-        <script src="book-609e4cb8.js"></script>
+        <script src="book-a0b12cfe.js"></script>
 
         <!-- Custom JS scripts -->
         <script src="mermaid-bf4a4f1d.min.js"></script>

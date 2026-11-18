@@ -15,8 +15,8 @@
         <link rel="icon" href="favicon-de23e50b.svg">
         <link rel="shortcut icon" href="favicon-8114d1fc.png">
         <link rel="stylesheet" href="css/variables-8adf115d.css">
-        <link rel="stylesheet" href="css/general-e96d0476.css">
-        <link rel="stylesheet" href="css/chrome-d279d366.css">
+        <link rel="stylesheet" href="css/general-2459343d.css">
+        <link rel="stylesheet" href="css/chrome-ae938929.css">
         <link rel="stylesheet" href="css/print-9e4910d8.css" media="print">
 
         <!-- Fonts -->
@@ -35,10 +35,10 @@
             const path_to_root = "";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "searchindex-03526b3f.js";
+            window.path_to_searchindex_js = "searchindex-7832f818.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="toc-3a702404.js"></script>
+        <script src="toc-434c69b3.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -177,16 +177,28 @@
                         <h1 id="status-and-direction"><a class="header" href="#status-and-direction">Status and Direction</a></h1>
 <p>This page describes the published product surface and directional architecture only. It is not an internal delivery schedule and does not imply publication of private implementation.</p>
 <p>The repository remains in incubation. The first <a href="https://github.com/hackelia-micrantha/dubnium-community/releases/tag/contract-v0.1.0-alpha.1">Capability Gateway alpha contract bundle</a> is published and independently verifiable. Release acceptance, downstream integration qualification, and production readiness remain separate gates. No stable consumer compatibility baseline has been accepted.</p>
-<h2 id="current-work"><a class="header" href="#current-work">Current work</a></h2>
+<h2 id="evidence-available-today"><a class="header" href="#evidence-available-today">Evidence available today</a></h2>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Area</th><th>Engineering work</th><th>Public evidence and qualification</th></tr>
+</thead>
+<tbody>
+<tr><td>Reproducible platform</td><td>Declarative environments, operator tooling and runtime reconciliation</td><td><a href="components.html">Components</a> and <a href="operator-journey.html">operator journey</a> describe the implementation surfaces; no generally available distribution</td></tr>
+<tr><td>Self-hosted CI</td><td>Short-lived workers and controller-owned admission and status</td><td><a href="runner-controller.html">Runner architecture</a>; operational qualification remains ongoing</td></tr>
+<tr><td>Governed execution</td><td>Experimental capability envelopes, lifecycle and negative conditions</td><td><a href="https://github.com/hackelia-micrantha/dubnium-community/releases/tag/contract-v0.1.0-alpha.1">Published alpha bundle</a> and <a href="https://github.com/hackelia-micrantha/dubnium-community/tree/main/conformance">conformance suites</a>; public release acceptance remains open</td></tr>
+<tr><td>Local-first AI</td><td>Bounded model and tool interfaces, scoped context and explicit authority</td><td><a href="ai-and-automation.html">AI and Automation</a>; interfaces and integration are experimental</td></tr>
+</tbody>
+</table>
+</div>
+<p>The distinction matters: architectural documentation can explain a working implementation without making it independently installable, and contract conformance does not establish production security assurance.</p>
+<h2 id="current-priorities"><a class="header" href="#current-priorities">Current priorities</a></h2>
 <ul>
-<li>maintaining the Community repository as the authoritative website, documentation, contract, and release surface;</li>
-<li>stabilizing experimental capability-boundary contracts and canonical behavior;</li>
-<li>hardening short-lived self-hosted CI admission, controller-owned status, and deterministic reconciliation boundaries;</li>
-<li>maturing local-first AI control boundaries, including bounded model escalation, scoped retrieval semantics, and governed model lifecycle transitions;</li>
-<li>expanding synthetic conformance, adversarial fixtures, validators, and no-effect references;</li>
-<li>maintaining an explicit public-book source allowlist, generated-artifact parity, and independent publication validation;</li>
-<li>improving architecture, governance, compatibility, security, and release guidance.</li>
+<li>qualify reproducible, bounded execution and the first published contract release;</li>
+<li>improve independently usable conformance examples and downstream integration evidence;</li>
+<li>evaluate use cases for self-hosted builds, local AI and governed automation with external feedback.</li>
 </ul>
+<p>The <a href="https://github.com/hackelia-micrantha/dubnium-community/blob/main/ROADMAP.md">public roadmap</a> tracks the exact contract and release work.</p>
 <h2 id="current-architectural-direction"><a class="header" href="#current-architectural-direction">Current architectural direction</a></h2>
 <p>The published design treats Dubnium as a reproducible, observable, governed engineering environment rather than only a single workstation plus AI runtime.</p>
 <p>Directional themes include:</p>
@@ -222,15 +234,13 @@
 <li><strong>Read-only tool integration and CI performance evidence:</strong> consider synthetic MCP examples and reproducible cache benchmarks after their integration and measurement gates pass, avoiding private endpoints, runner inventories, and host-specific measurements.</li>
 </ul>
 <p>The book is a conceptual entry point; public specifications are published separately only when reviewed as intentional interoperability commitments.</p>
-<h2 id="next-published-work"><a class="header" href="#next-published-work">Next published work</a></h2>
+<h2 id="next-published-outcomes"><a class="header" href="#next-published-outcomes">Next published outcomes</a></h2>
 <ul>
-<li>keep generated publication and destination validation aligned with the explicit source allowlist;</li>
-<li>improve adopter documentation and contract integration examples;</li>
-<li>complete release acceptance and verify immutable release consumption in downstream implementations;</li>
-<li>mature release checksums, software bills of materials, attestations, and deprecation guidance;</li>
-<li>document threat models and compatibility guarantees at stable interoperability boundaries;</li>
-<li>publish additional contracts only after their semantics are useful outside private implementation and have survived enough operational use to justify a compatibility commitment.</li>
+<li>Complete release acceptance and verify immutable release consumption in downstream implementations.</li>
+<li>Make public integrations easier to evaluate with synthetic examples and compatibility guidance.</li>
+<li>Use independent adopter and design-partner feedback to determine which supported deployment patterns and additional interfaces justify further work.</li>
 </ul>
+<p>These are directional outcomes, not delivery dates or commercial commitments. The <a href="https://github.com/hackelia-micrantha/dubnium-community/blob/main/ROADMAP.md">public roadmap</a> retains the detailed engineering gates.</p>
 <h2 id="later-evidence-permitting"><a class="header" href="#later-evidence-permitting">Later, evidence permitting</a></h2>
 <ul>
 <li>additional adapters or language bindings justified by real consumers;</li>
@@ -245,11 +255,11 @@
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
-                            <a rel="prev" href="public-contracts.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                            <a rel="prev" href="vision.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                                 <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
                             </a>
 
-                            <a rel="next prefetch" href="community.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                            <a rel="next prefetch" href="principles.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                                 <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
                             </a>
 
@@ -259,11 +269,11 @@
             </div>
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
-                    <a rel="prev" href="public-contracts.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                    <a rel="prev" href="vision.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                         <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
                     </a>
 
-                    <a rel="next prefetch" href="community.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                    <a rel="next prefetch" href="principles.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                         <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
                     </a>
             </nav>
@@ -285,11 +295,11 @@
 
         <script src="elasticlunr-ef4e11c1.min.js"></script>
         <script src="mark-09e88c2c.min.js"></script>
-        <script src="searcher-09f2665d.js"></script>
+        <script src="searcher-c2a407aa.js"></script>
 
         <script src="clipboard-1626706a.min.js"></script>
         <script src="highlight-abc7f01d.js"></script>
-        <script src="book-609e4cb8.js"></script>
+        <script src="book-a0b12cfe.js"></script>
 
         <!-- Custom JS scripts -->
         <script src="mermaid-bf4a4f1d.min.js"></script>

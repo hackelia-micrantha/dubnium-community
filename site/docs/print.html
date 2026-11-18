@@ -16,8 +16,8 @@
         <link rel="icon" href="favicon-de23e50b.svg">
         <link rel="shortcut icon" href="favicon-8114d1fc.png">
         <link rel="stylesheet" href="css/variables-8adf115d.css">
-        <link rel="stylesheet" href="css/general-e96d0476.css">
-        <link rel="stylesheet" href="css/chrome-d279d366.css">
+        <link rel="stylesheet" href="css/general-2459343d.css">
+        <link rel="stylesheet" href="css/chrome-ae938929.css">
         <link rel="stylesheet" href="css/print-9e4910d8.css" media="print">
 
         <!-- Fonts -->
@@ -36,10 +36,10 @@
             const path_to_root = "";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "searchindex-03526b3f.js";
+            window.path_to_searchindex_js = "searchindex-7832f818.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="toc-3a702404.js"></script>
+        <script src="toc-434c69b3.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -176,54 +176,183 @@
                 <div id="mdbook-content" class="content">
                     <main>
                         <h1 id="dubnium-technical-overview"><a class="header" href="#dubnium-technical-overview">Dubnium Technical Overview</a></h1>
-<p>Dubnium is a reproducible, observable, governed engineering environment for developer workstations, smaller client environments, build and compute nodes, and AI-assisted automation.</p>
-<p>Within Micrantha, Dubnium serves as the <strong>canary implementation for the wider development and VM ecosystem</strong>: it integrates and exercises NixOS, VM, runtime, and automation patterns before broader reuse.</p>
-<p>This technical overview explains the system through <strong>responsibilities, state models, invariants, observable behavior, and published interoperability contracts</strong>. It is intentionally more detailed than the landing page while stopping before deployment-sensitive implementation and operator material.</p>
-<h2 id="what-dubnium-is-trying-to-preserve"><a class="header" href="#what-dubnium-is-trying-to-preserve">What Dubnium is trying to preserve</a></h2>
-<p>The project is built around four system qualities:</p>
+<p>Dubnium explores how reproducible development environments, self-hosted infrastructure and local-first AI can support secure, accountable engineering automation. Built on NixOS, it is intended to make development, build and execution environments easier to replace, inspect and trust.</p>
+<p>This overview is for engineers evaluating the design, organizations considering integration, and contributors who want to challenge or extend the public contracts. Dubnium is incubating: a personal engineering environment informs the design, and the first experimental Capability Gateway contract bundle is publicly available. A generally available workstation distribution or stable consumer compatibility baseline has not been established.</p>
+<h2 id="why-it-matters"><a class="header" href="#why-it-matters">Why it matters</a></h2>
+<p>Developer environments accumulate machine-specific dependencies and mutable state. Self-hosted builds need isolation and recoverability. AI-assisted tools can propose useful actions, but they may also inherit access to source, credentials or infrastructure beyond what a task requires.</p>
+<p>Dubnium addresses these concerns through four complementary system qualities:</p>
 <ul>
-<li><strong>reproducibility</strong> — environments can be rebuilt, replaced, and reviewed from declared inputs;</li>
-<li><strong>observability</strong> — intended state and observed runtime state remain distinct and explainable from bounded evidence;</li>
-<li><strong>security</strong> — connectivity, identity, capabilities, and automated effects remain explicit rather than ambient;</li>
-<li><strong>development acceleration</strong> — project environments, builds, automation, and AI support reduce setup and recovery cost without making the workstation fragile.</li>
+<li><strong>Reproducibility:</strong> replace or recover environments from declared inputs instead of reconstructing undocumented manual changes.</li>
+<li><strong>Developer experience:</strong> compose project tooling, local services and build capacity without making unrelated capabilities mandatory.</li>
+<li><strong>Security:</strong> separate access, identity, policy, authorization and execution so that a request is not permission.</li>
+<li><strong>Observability:</strong> distinguish intended state, actual behavior and the evidence needed to evaluate an outcome.</li>
 </ul>
-<p>Dubnium is local-first, not local-only. A useful endpoint should remain inspectable and recoverable without depending on a central control plane while still being able to consume remote services through explicit contracts and policy boundaries.</p>
-<h2 id="deployment-is-compositional"><a class="header" href="#deployment-is-compositional">Deployment is compositional</a></h2>
-<p>Dubnium is not limited to one workstation shape. The same architectural contracts can support smaller client environments, richer interactive workstations, build or compute nodes, remote managed development environments, and stronger security or administrative environments. Each deployment enables only the capabilities it needs.</p>
-<p>AI is one capability of the environment, not the authority for the environment. Deterministic configuration, runtime observation, policy, durable state, and recovery remain useful without a model.</p>
-<h2 id="start-with-the-system-flow"><a class="header" href="#start-with-the-system-flow">Start with the system flow</a></h2>
+<h2 id="where-the-design-could-be-useful"><a class="header" href="#where-the-design-could-be-useful">Where the design could be useful</a></h2>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Application</th><th>Problem being explored</th></tr>
+</thead>
+<tbody>
+<tr><td>Developer endpoints</td><td>Consistent setup, replacement and recovery across changing project requirements</td></tr>
+<tr><td>Self-hosted CI</td><td>Short-lived job workers, scope-constrained execution and reliable reconciliation</td></tr>
+<tr><td>Local and private AI</td><td>Useful model assistance while retaining explicit data and execution boundaries</td></tr>
+<tr><td>Governed automation</td><td>Consequential actions that can be authorized, bounded and verified independently</td></tr>
+</tbody>
+</table>
+</div>
+<p>These are use cases to validate, not claims of enterprise availability or measured benefits. <a href="#vision-and-deployment-model">Vision and Deployment Model</a> explains the deployment assumptions and limitations.</p>
+<h2 id="explore-the-engineering"><a class="header" href="#explore-the-engineering">Explore the engineering</a></h2>
 <ul>
-<li><a href="#how-dubnium-works">How Dubnium Works</a> gives the end-to-end mental model from declared intent through runtime observation and governed effects.</li>
-<li><a href="#operator-journey">Operator Journey</a> shows how the public operator surfaces fit together without exposing deployment-specific procedures.</li>
-<li><a href="#self-hosted-ci-runner-controller">Self-Hosted CI Runner Controller</a> explains bounded admission, short-lived workers, canonical status, and reconciliation.</li>
+<li><strong>Product direction:</strong> <a href="#vision-and-deployment-model">Vision and Deployment Model</a> and <a href="#status-and-direction">Status and Direction</a>.</li>
+<li><strong>System architecture:</strong> <a href="#how-dubnium-works">How Dubnium Works</a>, <a href="#components">Components</a> and <a href="#conceptual-architecture">Conceptual Architecture</a>.</li>
+<li><strong>Operator experience:</strong> <a href="#operator-journey">Operator Journey</a>, <a href="#operator-tooling">Operator Tooling</a> and <a href="#self-hosted-ci-runner-controller">Self-Hosted CI Runner Controller</a>.</li>
+<li><strong>Security and trust:</strong> <a href="#governance-and-safety">Governance and Safety</a>, <a href="#ai-and-automation">AI and Automation</a> and <a href="#observability-and-evidence">Observability and Evidence</a>.</li>
+<li><strong>Evaluate or contribute:</strong> <a href="#contracts-and-conformance">Contracts and Conformance</a> and <a href="#community-and-contributions">Community and Contributions</a>.</li>
 </ul>
-<p>Then inspect the implemented surfaces:</p>
+<p>The <a href="https://github.com/hackelia-micrantha/dubnium-community/releases/tag/contract-v0.1.0-alpha.1">published alpha bundle</a>, <a href="https://github.com/hackelia-micrantha/dubnium-community/tree/main/conformance">conformance suites</a>, and <a href="https://github.com/hackelia-micrantha/dubnium-community/tree/main/reference">no-effect references</a> are the public artifacts to examine first. The public repository requires no private implementation or credentials to exercise its contract fixtures.</p>
+<h2 id="scope-of-this-overview"><a class="header" href="#scope-of-this-overview">Scope of this overview</a></h2>
+<p>The overview describes observable system behavior, component responsibilities, design decisions and published interoperability commitments. It does not disclose deployment-specific implementation or operational evidence. See the <a href="https://github.com/hackelia-micrantha/dubnium-community/blob/main/PUBLICATION_BOUNDARY.md">publication boundary</a> for the governing disclosure rules.</p>
+<p>Within Micrantha, Dubnium serves as a reference and canary environment for validating shared NixOS, VM, runtime and automation patterns before broader reuse. The public Community repository is independently useful without access to the private environment.</p>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="vision-and-deployment-model"><a class="header" href="#vision-and-deployment-model">Vision and Deployment Model</a></h1>
+<p>Dubnium’s long-term direction is a family of reproducible engineering environments built from shared contracts rather than one machine that must perform every role.</p>
+<h2 id="why-this-direction-matters"><a class="header" href="#why-this-direction-matters">Why this direction matters</a></h2>
+<p>An engineering team may need consistent developer endpoints, private inference, isolated build resources or automation that respects the same approval constraints as human operators. It should not have to adopt every Dubnium component to evaluate one of those requirements.</p>
+<p>The project therefore separates the environments where people work from the resources that perform builds or automation. The intended benefits are easier replacement, clearer responsibility boundaries and integration without a mandatory central stack. These are design goals to validate with real users, not measured savings or promises of a released commercial product.</p>
+<h2 id="product-shape"><a class="header" href="#product-shape">Product shape</a></h2>
+<pre><code class="language-text">Dubnium
+├── Client environment / VM
+│   └── small, replaceable development and access environment
+├── Workstation
+│   └── interactive environment with richer local device or compute access
+├── Build / compute node
+│   └── bounded non-interactive build, CI, cache, or compute capacity
+├── Remote managed environment
+│   └── sensitive work kept on infrastructure with an appropriate trust boundary
+└── Security / administrative environment
+    └── stronger isolation and access controls selected by threat model
+</code></pre>
+<p>These are deployment compositions, not identities or permission levels. A deployment should enable only the services and capabilities justified by its use case.</p>
+<h2 id="why-a-smaller-client-environment-matters"><a class="header" href="#why-a-smaller-client-environment-matters">Why a smaller client environment matters</a></h2>
+<p>A small managed VM can make project setup, replacement, credential cleanup, and offboarding easier without forcing the user’s entire physical machine into one configuration model. It can also give teams a consistent development substrate while leaving heavyweight build, AI, or infrastructure workloads elsewhere.</p>
+<p>A VM on an unmanaged physical host is <strong>not</strong> a confidentiality boundary against that host. If the host itself is outside the trust model, sensitive source, data, or credentials may require a managed endpoint or remote execution environment instead of stronger claims about the guest.</p>
+<h2 id="identity-posture-and-authority-stay-separate"><a class="header" href="#identity-posture-and-authority-stay-separate">Identity, posture, and authority stay separate</a></h2>
+<p>The architecture intentionally distinguishes:</p>
+<pre><code class="language-text">network reachable
+identity authenticated
+endpoint posture known
+operation authorized
+</code></pre>
+<p>Each can inform policy, but one should not silently stand in for another.</p>
+<h2 id="local-operation-remains-important"><a class="header" href="#local-operation-remains-important">Local operation remains important</a></h2>
+<p>Central inventory, observability, policy distribution, or remote services may be useful for larger deployments. They should extend local behavior rather than becoming the only way to inspect, diagnose, or recover an endpoint.</p>
+<h2 id="direction-not-a-support-claim"><a class="header" href="#direction-not-a-support-claim">Direction, not a support claim</a></h2>
+<p>This page describes a public architectural direction. It does not claim that every deployment form, fleet function, identity system, or remote environment is currently implemented or generally available.</p>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="status-and-direction"><a class="header" href="#status-and-direction">Status and Direction</a></h1>
+<p>This page describes the published product surface and directional architecture only. It is not an internal delivery schedule and does not imply publication of private implementation.</p>
+<p>The repository remains in incubation. The first <a href="https://github.com/hackelia-micrantha/dubnium-community/releases/tag/contract-v0.1.0-alpha.1">Capability Gateway alpha contract bundle</a> is published and independently verifiable. Release acceptance, downstream integration qualification, and production readiness remain separate gates. No stable consumer compatibility baseline has been accepted.</p>
+<h2 id="evidence-available-today"><a class="header" href="#evidence-available-today">Evidence available today</a></h2>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Area</th><th>Engineering work</th><th>Public evidence and qualification</th></tr>
+</thead>
+<tbody>
+<tr><td>Reproducible platform</td><td>Declarative environments, operator tooling and runtime reconciliation</td><td><a href="#components">Components</a> and <a href="#operator-journey">operator journey</a> describe the implementation surfaces; no generally available distribution</td></tr>
+<tr><td>Self-hosted CI</td><td>Short-lived workers and controller-owned admission and status</td><td><a href="#self-hosted-ci-runner-controller">Runner architecture</a>; operational qualification remains ongoing</td></tr>
+<tr><td>Governed execution</td><td>Experimental capability envelopes, lifecycle and negative conditions</td><td><a href="https://github.com/hackelia-micrantha/dubnium-community/releases/tag/contract-v0.1.0-alpha.1">Published alpha bundle</a> and <a href="https://github.com/hackelia-micrantha/dubnium-community/tree/main/conformance">conformance suites</a>; public release acceptance remains open</td></tr>
+<tr><td>Local-first AI</td><td>Bounded model and tool interfaces, scoped context and explicit authority</td><td><a href="#ai-and-automation">AI and Automation</a>; interfaces and integration are experimental</td></tr>
+</tbody>
+</table>
+</div>
+<p>The distinction matters: architectural documentation can explain a working implementation without making it independently installable, and contract conformance does not establish production security assurance.</p>
+<h2 id="current-priorities"><a class="header" href="#current-priorities">Current priorities</a></h2>
 <ul>
-<li><a href="#components">Components</a> describes the major platform pieces, their maturity, state ownership, and intentional boundaries.</li>
-<li><a href="#operator-tooling">Operator Tooling</a> explains why <code>dubctl</code>, <code>modectl</code>, and <code>configctl</code> remain separate surfaces.</li>
-<li><a href="#runtime-operating-modes">Runtime Operating Modes</a> describes desktop, media, and compute posture and the guarded reconciliation model.</li>
-<li><a href="#writable-user-configuration">Writable User Configuration</a> explains how legitimate mutable preferences coexist with Nix-store-backed managed configuration.</li>
+<li>qualify reproducible, bounded execution and the first published contract release;</li>
+<li>improve independently usable conformance examples and downstream integration evidence;</li>
+<li>evaluate use cases for self-hosted builds, local AI and governed automation with external feedback.</li>
 </ul>
-<p>Then continue into the broader design:</p>
+<p>The <a href="https://github.com/hackelia-micrantha/dubnium-community/blob/main/ROADMAP.md">public roadmap</a> tracks the exact contract and release work.</p>
+<h2 id="current-architectural-direction"><a class="header" href="#current-architectural-direction">Current architectural direction</a></h2>
+<p>The published design treats Dubnium as a reproducible, observable, governed engineering environment rather than only a single workstation plus AI runtime.</p>
+<p>Directional themes include:</p>
 <ul>
-<li><a href="#vision-and-deployment-model">Vision and Deployment Model</a> describes the long-term product shape.</li>
-<li><a href="#conceptual-architecture">Conceptual Architecture</a> describes responsibility and source-of-truth boundaries.</li>
-<li><a href="#reproducible-engineering">Reproducible Engineering</a> covers replacement, project environments, mutable-state classification, and supply-chain trust.</li>
-<li><a href="#observability-and-evidence">Observability and Evidence</a> separates intended state, runtime facts, durable state, and derived understanding.</li>
-<li><a href="#ai-and-automation">AI and Automation</a> explains how model-assisted work fits without becoming ambient authority.</li>
-<li><a href="#governance-and-safety">Governance and Safety</a> describes bounded effects and trust boundaries.</li>
-<li><a href="#contracts-and-conformance">Contracts and Conformance</a> describes the independently inspectable interoperability surface.</li>
-<li><a href="#status-and-direction">Status and Direction</a> distinguishes implemented, experimental, and directional work.</li>
-<li><a href="#community-and-contributions">Community and Contributions</a> points to the open source and contribution surface.</li>
+<li>smaller replaceable client environments alongside richer workstations and build/compute nodes;</li>
+<li>project-local reproducible development environments and explicit supply-chain trust;</li>
+<li>self-hosted CI through reviewed eligibility, bounded admission, short-lived workers, and controller-owned observation rather than permanently active job workers;</li>
+<li>local-first observability with bounded organizational posture when appropriate;</li>
+<li>private operator-owned status reporting and journaling kept distinct from organizational telemetry;</li>
+<li>local-first AI routing where stronger model selection changes reasoning capability but never widens effect authority;</li>
+<li>scoped memory retrieval where canonical records remain distinct from derived ranking and index state;</li>
+<li>model lifecycle boundaries that keep training, evaluation, promotion, and runtime activation as separate authorities;</li>
+<li>AI and automation behind explicit state, resource, and governed-effect boundaries;</li>
+<li>recovery and replacement based on declared configuration plus classified mutable state.</li>
 </ul>
-<h2 id="disclosure-boundary"><a class="header" href="#disclosure-boundary">Disclosure boundary</a></h2>
-<p>The useful rule for this overview is:</p>
-<blockquote>
-<p>Publish what the system promises and what an integrator or operator can observe; keep private how a particular deployment enforces it.</p>
-</blockquote>
-<p>This overview may therefore publish stable component names, maturity, operator-tool responsibilities, runtime-mode semantics, configuration ownership layers, state-machine invariants, conceptual control flow, and published contracts.</p>
-<p>It deliberately omits machine identities, exact topology, ports/endpoints, service-unit wiring, credentials, hardware/resource assignments, exact policy thresholds, trusted identities, provider-selection or model-routing heuristics, privileged recovery procedures, private prompts/data, and real operational evidence.</p>
-<p>The published Community repository is independently useful for contracts, conformance, references, and documentation. This technical overview is not a sanitized mirror of private operator documentation.</p>
+<p>These themes are architecture, not a claim that a production fleet service, every model lifecycle transition, or every deployment form is currently available.</p>
+<h2 id="current-engineering-themes"><a class="header" href="#current-engineering-themes">Current engineering themes</a></h2>
+<p>Recent work spans several related outcomes:</p>
+<ul>
+<li><strong>Reproducible, self-hosted CI:</strong> more predictable short-lived workers, smaller reusable runner foundations, and verified Nix output reuse. Cache adoption and performance qualification remain ongoing.</li>
+<li><strong>AI-assisted engineering interfaces:</strong> read-only MCP access is being qualified for external clients, including ChatGPT, with governed effects remaining distinct from transport and tool invocation.</li>
+<li><strong>Governed capabilities:</strong> scoped client interfaces and additional domain operations are being developed incrementally; public contracts are ahead of some production integrations.</li>
+<li><strong>Observable automation:</strong> portable event interoperability, operational status, and traceable outcomes are being expanded without making telemetry an authorization source.</li>
+<li><strong>Resource-aware AI:</strong> bounded usage concepts and local inference evaluations are active areas of exploration, not promised performance or deployed model offerings.</li>
+</ul>
+<p>The strongest public artifacts are versioned contracts, synthetic examples, conformance tests, and reproducible demonstrations. Private infrastructure, operational incidents, implementation wiring, unpublished benchmark data, and policy internals are outside this book.</p>
+<h2 id="public-validation-opportunities"><a class="header" href="#public-validation-opportunities">Public validation opportunities</a></h2>
+<p>The following are <strong>candidates for independent community validation</strong>, not release promises:</p>
+<ul>
+<li><strong>Portable event interoperability:</strong> mature synthetic <a href="https://github.com/hackelia-micrantha/dubnium-community/issues/54">CloudEvents conformance examples</a> without publishing real operational events or producer topology.</li>
+<li><strong>Reproducible workstation demonstration:</strong> make a small <a href="https://github.com/hackelia-micrantha/dubnium-community/issues/43">local AI engineering demo</a> buildable by an outside contributor, with a documented failure case and no private dependencies.</li>
+<li><strong>Resource-aware automation:</strong> explain visible usage limits and accountable execution at a conceptual level; detailed budget state machines, ledgers, provider routing and policy are not book material.</li>
+<li><strong>Read-only tool integration and CI performance evidence:</strong> consider synthetic MCP examples and reproducible cache benchmarks after their integration and measurement gates pass, avoiding private endpoints, runner inventories, and host-specific measurements.</li>
+</ul>
+<p>The book is a conceptual entry point; public specifications are published separately only when reviewed as intentional interoperability commitments.</p>
+<h2 id="next-published-outcomes"><a class="header" href="#next-published-outcomes">Next published outcomes</a></h2>
+<ul>
+<li>Complete release acceptance and verify immutable release consumption in downstream implementations.</li>
+<li>Make public integrations easier to evaluate with synthetic examples and compatibility guidance.</li>
+<li>Use independent adopter and design-partner feedback to determine which supported deployment patterns and additional interfaces justify further work.</li>
+</ul>
+<p>These are directional outcomes, not delivery dates or commercial commitments. The <a href="https://github.com/hackelia-micrantha/dubnium-community/blob/main/ROADMAP.md">public roadmap</a> retains the detailed engineering gates.</p>
+<h2 id="later-evidence-permitting"><a class="header" href="#later-evidence-permitting">Later, evidence permitting</a></h2>
+<ul>
+<li>additional adapters or language bindings justified by real consumers;</li>
+<li>thin validation and conformance commands;</li>
+<li>additional API families where an interoperability need stabilizes;</li>
+<li>fleet or endpoint contracts only when they are useful without exposing private topology, identity, or policy.</li>
+</ul>
+<h2 id="explicitly-outside-this-roadmap"><a class="header" href="#explicitly-outside-this-roadmap">Explicitly outside this roadmap</a></h2>
+<p>The published roadmap does not imply disclosure of production prompts, routing heuristics, policy internals, trusted identities, private data, privileged provider implementation, host or fleet configuration, operational evidence, incidents, credentials, or private planning.</p>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="principles"><a class="header" href="#principles">Principles</a></h1>
+<p>Dubnium is guided by system-level principles that apply across workstation, client, compute, automation, and AI-assisted deployments.</p>
+<h2 id="declarative-intent-before-accumulated-setup"><a class="header" href="#declarative-intent-before-accumulated-setup">Declarative intent before accumulated setup</a></h2>
+<p>Long-lived configuration should be declared, reviewable, and reproducible. A working machine should not depend on undocumented installation history.</p>
+<h2 id="desired-state-is-not-observed-state"><a class="header" href="#desired-state-is-not-observed-state">Desired state is not observed state</a></h2>
+<p>Configuration says what should be true. Runtime observation says what is true now. A transition, deployment, or workflow is not successful merely because it was requested.</p>
+<h2 id="local-first-not-local-only"><a class="header" href="#local-first-not-local-only">Local-first, not local-only</a></h2>
+<p>Endpoints should remain useful, diagnosable, and recoverable with local resources. Remote services may extend the system through explicit compatibility, privacy, security, and availability boundaries.</p>
+<h2 id="capabilities-instead-of-ambient-authority"><a class="header" href="#capabilities-instead-of-ambient-authority">Capabilities instead of ambient authority</a></h2>
+<p>A caller should request a bounded capability rather than inherit broad host, network, data, device, credential, or tool access.</p>
+<h2 id="reachability-is-not-authorization"><a class="header" href="#reachability-is-not-authorization">Reachability is not authorization</a></h2>
+<p>Network location, VPN membership, endpoint health, and authenticated identity are useful security inputs. None of them alone grants authority for an unrelated or privileged effect.</p>
+<h2 id="durable-domain-state-before-log-reconstruction"><a class="header" href="#durable-domain-state-before-log-reconstruction">Durable domain state before log reconstruction</a></h2>
+<p>Workflows, approvals, automated operations, and other stateful domains should own their exact records. Logs and events provide evidence; they should not be forced to become a substitute database.</p>
+<h2 id="structured-evidence-before-generated-narrative"><a class="header" href="#structured-evidence-before-generated-narrative">Structured evidence before generated narrative</a></h2>
+<p>Reports and summaries should be derived from bounded structured evidence. AI may help synthesize that evidence, but it should not decide what may be collected, retained, or exported.</p>
+<h2 id="reproducibility-is-not-supply-chain-trust"><a class="header" href="#reproducibility-is-not-supply-chain-trust">Reproducibility is not supply-chain trust</a></h2>
+<p>Pinned inputs make behavior easier to reproduce. Trust still requires explicit provenance, verification, update, and dependency policy appropriate to the deployment.</p>
+<h2 id="bounded-resource-use"><a class="header" href="#bounded-resource-use">Bounded resource use</a></h2>
+<p>Interactive development, background automation, builds, and AI workloads should coexist intentionally. Resource contention, disk growth, and runaway work are operational concerns to design for rather than surprises to tolerate.</p>
+<h2 id="personal-observability-is-not-organizational-surveillance"><a class="header" href="#personal-observability-is-not-organizational-surveillance">Personal observability is not organizational surveillance</a></h2>
+<p>A system can help its operator understand work without covert productivity monitoring. Personal reports and journals require a separate ownership and sharing boundary from organizational endpoint posture.</p>
+<h2 id="contracts-before-coupling"><a class="header" href="#contracts-before-coupling">Contracts before coupling</a></h2>
+<p>Public and private consumers should depend on versioned contracts, canonical behavior, and conformance evidence rather than production implementation details.</p>
+<h2 id="safe-public-disclosure"><a class="header" href="#safe-public-disclosure">Safe public disclosure</a></h2>
+<p>Public artifacts should be independently useful while revealing no private topology, credentials, privileged implementation, policy internals, operator data, or private provenance. Publication is an irreversible security and intellectual-property decision.</p>
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="how-dubnium-works"><a class="header" href="#how-dubnium-works">How Dubnium Works</a></h1>
 <p>Dubnium is easiest to understand as a set of boundaries between <strong>declared intent</strong>, <strong>runtime state</strong>, <strong>observation</strong>, and <strong>governed effects</strong>.</p>
@@ -267,6 +396,10 @@
 <h2 id="5-effects-produce-state-and-evidence"><a class="header" href="#5-effects-produce-state-and-evidence">5. Effects produce state and evidence</a></h2>
 <p>A successful operation should leave enough bounded evidence to answer what happened without indiscriminately capturing private source, prompts, credentials, or unrelated activity.</p>
 <p>Durable workflow state, domain state, and runtime observation remain distinct. That allows retries, reconciliation, replacement, and audit without reconstructing the world from model context or logs.</p>
+<h2 id="example-a-bounded-build-request"><a class="header" href="#example-a-bounded-build-request">Example: a bounded build request</a></h2>
+<p>Consider a synthetic developer workflow in which an AI assistant proposes running a project test. The environment and project dependencies are declared first. The request names a bounded operation; the execution environment must establish whether that operation is available and authorized for the caller before any effect.</p>
+<p>If admitted, the bounded worker runs the permitted operation and reports an outcome that can be checked against the request. If denied, the tool must not execute it through a different path. If the outcome is uncertain, the system must preserve that uncertainty rather than claiming success.</p>
+<p>This is a conceptual workflow illustrating the public responsibility model, not an executable demonstration of the private runner or gateway. The <a href="https://github.com/hackelia-micrantha/dubnium-community/tree/main/conformance">Capability Gateway conformance assets</a> and <a href="https://github.com/hackelia-micrantha/dubnium-community/tree/main/reference">no-effect reference</a> can be examined without privileged execution. The <a href="https://github.com/hackelia-micrantha/dubnium-community/blob/main/docs/governed-agent-integration.md">governed-agent integration reference</a> describes the separate Anthesis trial and its limitations.</p>
 <h2 id="invariants-that-hold-across-the-system"><a class="header" href="#invariants-that-hold-across-the-system">Invariants that hold across the system</a></h2>
 <p>Several rules repeat throughout Dubnium:</p>
 <div class="table-wrapper">
@@ -287,13 +420,11 @@
 <h2 id="local-first-not-isolated"><a class="header" href="#local-first-not-isolated">Local-first, not isolated</a></h2>
 <p>Dubnium favors local execution and local inspectability where they are sufficient. Remote services, stronger models, shared compute, or central coordination may still be used through explicit contracts.</p>
 <p>The important architectural property is that adding a remote dependency does not erase the endpoint’s ability to explain its own declared state, current posture, observed behavior, or authority boundaries.</p>
-<h2 id="what-this-overview-intentionally-does-not-publish"><a class="header" href="#what-this-overview-intentionally-does-not-publish">What this overview intentionally does not publish</a></h2>
-<p>This chapter describes responsibility and behavior, not deployment-sensitive implementation. It intentionally omits exact topology, service-unit wiring, trusted identities, credentials, policy thresholds, routing heuristics, privileged procedures, and production operational evidence.</p>
-<p>The public contract is the separation between responsibilities, not the private mechanics used by one deployment to enforce them.</p>
+<p>The public contract is the separation between responsibilities, not the private mechanics used by one deployment to enforce them. See the <a href="README.html#scope-of-this-overview">overview scope</a> for the disclosure boundary.</p>
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="components"><a class="header" href="#components">Components</a></h1>
 <p>Dubnium is composed from bounded components rather than one always-on control plane. The important question for each component is not only what it does, but what authority and state it deliberately does <strong>not</strong> own.</p>
-<p>Maturity labels describe the current implementation surface, not a compatibility guarantee.</p>
+<p>Maturity labels describe the current implementation surface, not a compatibility guarantee. <strong>Active</strong> means the component is described as part of the evolving reference environment; it does not mean that its implementation is publicly distributed or independently qualified. <strong>Experimental</strong> means public interface semantics are still evolving. The published alpha Capability Gateway bundle establishes a public artifact identity, not a stable consumer baseline or production assurance. See <a href="#status-and-direction">Status and Direction</a> for available evidence.</p>
 <div class="table-wrapper">
 <table>
 <thead>
@@ -652,6 +783,239 @@ dubctl runners status --json
 <p>This overview does not publish exact repository mappings, runner labels, service wiring, credential flows, filesystem paths, resource thresholds, scheduling heuristics, cleanup implementation, or production incident procedures.</p>
 <p>Those details are not required to understand the public contract: reviewed eligibility becomes bounded short-lived execution through an observable controller-owned lifecycle.</p>
 <div style="break-before: page; page-break-before: always;"></div>
+<h1 id="conceptual-architecture"><a class="header" href="#conceptual-architecture">Conceptual Architecture</a></h1>
+<p>Dubnium treats an engineering endpoint as a governed operating environment rather than a collection of unrelated tools.</p>
+<h2 id="conceptual-layers"><a class="header" href="#conceptual-layers">Conceptual layers</a></h2>
+<pre class="mermaid">flowchart TB
+    U[People and developer tools] --&gt; E[Engineering endpoint]
+    C[Reproducible configuration] --&gt; E
+    E --&gt; G[Governed capability boundary]
+    G --&gt; D[Development and operating-system capabilities]
+    G --&gt; A[AI and automation capabilities]
+    D --&gt; S[Durable state and bounded evidence]
+    A --&gt; S
+    E --&gt; O[Runtime observation]
+    O --&gt; S
+</pre>
+
+<p>The diagram communicates responsibilities, not production topology.</p>
+<ul>
+<li><strong>Reproducible configuration</strong> declares intended system, user, and project inputs.</li>
+<li><strong>Engineering endpoint</strong> composes only the capabilities required by its deployment form.</li>
+<li><strong>Governed capability boundary</strong> separates a request from authorization and effect execution.</li>
+<li><strong>Development and operating-system capabilities</strong> perform bounded engineering work.</li>
+<li><strong>AI and automation capabilities</strong> may assist reasoning and workflows without inheriting unrestricted authority.</li>
+<li><strong>Runtime observation</strong> reports what is actually happening rather than assuming intended state succeeded.</li>
+<li><strong>Durable state and bounded evidence</strong> preserve exact domain state and reviewable outcomes.</li>
+</ul>
+<h2 id="runtime-posture-and-writable-state"><a class="header" href="#runtime-posture-and-writable-state">Runtime posture and writable state</a></h2>
+<p>Two responsibilities deliberately sit beside declarative configuration rather than inside it:</p>
+<ul>
+<li><a href="#runtime-operating-modes">Runtime Operating Modes</a> choose which already-declared workload posture should be active now and require post-transition observation before declaring success.</li>
+<li><a href="#writable-user-configuration">Writable User Configuration</a> gives legitimate mutable preferences and first-run state an explicit ownership boundary instead of encouraging edits to generated configuration.</li>
+</ul>
+<p>Neither responsibility changes the authority model: a runtime mode cannot install or authorize a missing capability, and writable user configuration cannot redefine privileged host policy.</p>
+<h2 id="source-of-truth-hierarchy"><a class="header" href="#source-of-truth-hierarchy">Source-of-truth hierarchy</a></h2>
+<p>Different questions have different authorities:</p>
+<pre><code class="language-text">declarative intent       -&gt; versioned configuration
+observed runtime state   -&gt; operating-system/runtime observation
+durable domain state     -&gt; workflow and operation stores
+event evidence           -&gt; bounded logs and events
+derived understanding    -&gt; reports, dashboards, and journals
+</code></pre>
+<p>A dashboard does not become runtime truth. A log does not become authorization. A previous successful operation does not grant authority for a future one.</p>
+<h2 id="endpoint-and-central-responsibilities"><a class="header" href="#endpoint-and-central-responsibilities">Endpoint and central responsibilities</a></h2>
+<p>A Dubnium endpoint should remain locally inspectable. Optional central services may aggregate posture, provide shared resources, or coordinate policy, but central state should carry freshness and uncertainty rather than overwrite contradictory endpoint facts.</p>
+<h2 id="technical-overview-boundary"><a class="header" href="#technical-overview-boundary">Technical-overview boundary</a></h2>
+<p>The published architecture describes responsibilities, invariants, and observable state relationships. It intentionally omits machine identities, networks, ports/endpoints, exact service placement and wiring, provider selection, resource assignments, data schemas that are not published contracts, policy thresholds, credentials, and privileged recovery procedures.</p>
+<p>Those are deployment and implementation concerns rather than requirements for understanding the architecture.</p>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="reproducible-engineering"><a class="header" href="#reproducible-engineering">Reproducible Engineering</a></h1>
+<p>Dubnium aims to make engineering environments replaceable without turning every project dependency into permanent workstation state.</p>
+<h2 id="layered-ownership"><a class="header" href="#layered-ownership">Layered ownership</a></h2>
+<p>A useful mental model is:</p>
+<pre><code class="language-text">platform configuration
+  -&gt; operating system, security baseline, resource policy
+
+portable user environment
+  -&gt; shell, editor, terminal, user-facing development preferences
+
+project environment
+  -&gt; project-specific SDKs, compilers, dependencies, tools, and workflow requirements
+
+trusted acceleration
+  -&gt; caches, builders, prebuilt artifacts, and remote capacity
+</code></pre>
+<p>The layers can use different tools, but their ownership should remain explicit.</p>
+<h2 id="immutable-managed-configuration-is-not-a-read-only-user-environment"><a class="header" href="#immutable-managed-configuration-is-not-a-read-only-user-environment">Immutable managed configuration is not a read-only user environment</a></h2>
+<p>NixOS and Home Manager deliberately make managed configuration reproducible, and many managed files are materialized from immutable Nix-store content. That does not mean legitimate application preferences and user state must be forced through a system rebuild.</p>
+<p>Dubnium treats writable user configuration as a separate ownership problem. <a href="#writable-user-configuration">Writable User Configuration</a> describes the managed, local, custom, and adopted layers and the role of <code>configctl</code> in making drift and promotion visible.</p>
+<p>The important reproducibility invariant is that writable state remains <strong>classified</strong>: a local preference does not silently become the managed source of truth, and a generated managed file is not edited in place merely because it is convenient.</p>
+<h2 id="desired-developer-path"><a class="header" href="#desired-developer-path">Desired developer path</a></h2>
+<p>A project should increasingly be able to approach:</p>
+<pre><code class="language-text">clone
+-&gt; enter declared environment
+-&gt; build
+-&gt; test
+-&gt; run
+</code></pre>
+<p>without depending on undocumented machine history.</p>
+<h2 id="reproducible-does-not-mean-trusted"><a class="header" href="#reproducible-does-not-mean-trusted">Reproducible does not mean trusted</a></h2>
+<p>A perfectly reproducible malicious dependency is still malicious. Supply-chain policy may therefore include:</p>
+<ul>
+<li>pinned source and dependency identities;</li>
+<li>reviewed trust roots for caches or artifacts;</li>
+<li>signatures, provenance, or attestations where they add value;</li>
+<li>controlled update and rollback behavior;</li>
+<li>visible failure when required trust evidence is unavailable.</li>
+</ul>
+<p>The exact mechanisms can vary by deployment and project.</p>
+<h2 id="mutable-state-is-classified-not-ignored"><a class="header" href="#mutable-state-is-classified-not-ignored">Mutable state is classified, not ignored</a></h2>
+<p>Not everything should live in declarative configuration. Dubnium uses a conceptual state classification:</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Class</th><th>Meaning</th><th>Typical treatment</th></tr>
+</thead>
+<tbody>
+<tr><td>Declarative</td><td>Reconstructable from reviewed configuration</td><td>Rebuild</td></tr>
+<tr><td>Re-fetchable</td><td>Available again from another trusted source</td><td>Download or regenerate</td></tr>
+<tr><td>Recoverable</td><td>Mutable or costly state worth preserving</td><td>Explicit backup and restore</td></tr>
+<tr><td>Irreplaceable</td><td>Loss breaks identity, trust, or access</td><td>Separate recovery or escrow strategy</td></tr>
+</tbody>
+</table>
+</div>
+<p>A replaceable environment should be reconstructed from declared inputs plus explicitly restored state rather than depend on an opaque machine image.</p>
+<h2 id="performance-is-part-of-developer-experience"><a class="header" href="#performance-is-part-of-developer-experience">Performance is part of developer experience</a></h2>
+<p>Reproducibility should not require every task to rebuild the world. Shared immutable inputs, bounded caches, remote build capacity, and resource-aware scheduling can accelerate work as long as their trust and ownership boundaries remain explicit.</p>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="ai-and-automation"><a class="header" href="#ai-and-automation">AI and Automation</a></h1>
+<p>Dubnium supports AI-assisted development and automation without making a model the operating-system authority.</p>
+<h2 id="ai-is-optional-capability"><a class="header" href="#ai-is-optional-capability">AI is optional capability</a></h2>
+<p>A Dubnium environment may use local models, remote models, or no model at all. Deterministic configuration, security boundaries, runtime observation, workflow state, and recovery should continue to work independently.</p>
+<p>Model selection and provider choice are implementation concerns behind a stable caller-facing boundary. Changing a model must not silently widen access to data, tools, credentials, networks, or privileged effects.</p>
+<h2 id="local-first-model-routing"><a class="header" href="#local-first-model-routing">Local-first model routing</a></h2>
+<p>Local execution is the default direction where it is sufficient for the task. A request may use a stronger remote or frontier model only through an explicit bounded escalation path that preserves policy, sanitization, lineage, provider constraints, and traceability.</p>
+<p>Escalation changes available model capability. It does not transfer effect authority, grant additional tools or credentials, or convert unresolved policy into permission. A policy ambiguity or required human decision remains unresolved rather than being “solved” merely by selecting a stronger model.</p>
+<p>The exact production triggers, provider configuration, and routing heuristics remain private implementation concerns.</p>
+<h2 id="connecting-external-ai-tools"><a class="header" href="#connecting-external-ai-tools">Connecting external AI tools</a></h2>
+<p>Dubnium is developing a native Model Context Protocol (MCP) interface so approved assistants and engineering tools can request <strong>bounded, observable operations</strong> without gaining general host access. OpenAI’s Secure MCP Tunnel is a candidate transport for connecting ChatGPT to a private MCP service without making that transport an authorization decision.</p>
+<p>The initial focus is <strong>read-only engineering status</strong>, beginning with CI runner observation. Governed write operations are a separate future capability: a tool request alone cannot approve an effect, choose its own privileges, or substitute for independent verification.</p>
+<p><strong>Status:</strong> MCP interoperability and transport qualification are in progress. The public overview does not imply that the ChatGPT integration, privileged tools, or a supported remote-control service is deployed.</p>
+<h2 id="reasoning-is-not-an-effect"><a class="header" href="#reasoning-is-not-an-effect">Reasoning is not an effect</a></h2>
+<p>A useful separation is:</p>
+<pre><code class="language-text">reasoning proposes intent
+-&gt; deterministic validation
+-&gt; policy / approval boundary
+-&gt; bounded capability
+-&gt; effect execution
+-&gt; durable outcome and evidence
+</code></pre>
+<p>Model output can propose an action. It cannot mint its own identity, approve itself, or turn previous success into future authority.</p>
+<h2 id="retrieval-is-evidence-not-authority"><a class="header" href="#retrieval-is-evidence-not-authority">Retrieval is evidence, not authority</a></h2>
+<p>Where semantic memory retrieval is enabled, canonical memory records remain the authoritative stored state while embeddings and indexes are derived, rebuildable retrieval state. Similarity rank does not establish approval, permission, currentness, or operational truth.</p>
+<p>The Memory Service owns retrieval over its own governed memory corpus; it does not become a generic search federation layer. Document or project search, repository state, and live runtime observation remain separate sources that the caller or Supervisor may consult according to the task and source-of-truth boundary.</p>
+<h2 id="stateful-automation-owns-state"><a class="header" href="#stateful-automation-owns-state">Stateful automation owns state</a></h2>
+<p>Scheduled work, durable workflows, memory/context systems, and long-running operations should expose explicit lifecycle and state rather than exist only inside model context.</p>
+<p>That makes retries, recovery, auditing, and replacement possible without asking a model to reconstruct what probably happened.</p>
+<h2 id="training-has-separate-authorities"><a class="header" href="#training-has-separate-authorities">Training has separate authorities</a></h2>
+<p>Model training follows the same governed-effect model as other consequential automation. A backend-neutral training request can describe intent, but execution authority, resource enforcement, evaluation, promotion, catalog binding, and runtime activation remain separate responsibilities.</p>
+<p>A successful training operation yields a candidate artifact. It does not by itself prove evaluation success, authorize promotion, select a production model, or activate that model for inference. Models and specialists cannot authorize their own training or promotion merely because they generated the proposal or candidate.</p>
+<h2 id="resource-aware-operation"><a class="header" href="#resource-aware-operation">Resource-aware operation</a></h2>
+<p>AI inference, builds, tests, model training, background automation, and interactive work can all compete for CPU, memory, storage, network, and accelerators. Dubnium treats resource placement and isolation as operating concerns rather than model-routing side effects.</p>
+<h2 id="evidence-remains-bounded"><a class="header" href="#evidence-remains-bounded">Evidence remains bounded</a></h2>
+<p>Automation should produce enough structured evidence to explain outcomes while avoiding indiscriminate capture of source, prompts, credentials, private messages, training data, or unrelated user activity.</p>
+<h2 id="public-interoperability"><a class="header" href="#public-interoperability">Public interoperability</a></h2>
+<p>Public Dubnium contracts may describe model-independent request surfaces, capability envelopes, scheduling or state semantics, and conformance behavior when those interfaces are useful to external consumers. Private routing heuristics, production prompts, trusted identities, provider configuration, training implementation, and stored user data remain outside the public boundary.</p>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="governance-and-safety"><a class="header" href="#governance-and-safety">Governance and Safety</a></h1>
+<p>Dubnium treats automation as a request for bounded capability, not as ambient permission to act.</p>
+<h2 id="trust-model"><a class="header" href="#trust-model">Trust model</a></h2>
+<p>The conceptual flow is:</p>
+<pre><code class="language-text">intent
+-&gt; contract validation
+-&gt; authenticated actor and context
+-&gt; policy / approval decision
+-&gt; bounded capability
+-&gt; effect
+-&gt; durable outcome and evidence
+</code></pre>
+<p>Each stage has a distinct responsibility:</p>
+<ul>
+<li><strong>Intent</strong> states the requested outcome without granting authority.</li>
+<li><strong>Contract validation</strong> rejects malformed, ambiguous, or incompatible requests.</li>
+<li><strong>Identity and context</strong> bind the request to trusted transport or enrollment facts rather than model assertions.</li>
+<li><strong>Policy / approval decision</strong> determines whether the exact request is allowed, denied, constrained, or requires approval.</li>
+<li><strong>Bounded capability</strong> receives only the scope needed for the authorized operation.</li>
+<li><strong>Effect execution</strong> performs the domain operation without widening the decision.</li>
+<li><strong>Outcome and evidence</strong> record enough durable state to inspect what happened.</li>
+</ul>
+<h2 id="security-properties"><a class="header" href="#security-properties">Security properties</a></h2>
+<p>Public Dubnium work emphasizes:</p>
+<ul>
+<li>deny-by-default capability access;</li>
+<li>least privilege and explicit effect boundaries;</li>
+<li>deterministic validation and canonicalization;</li>
+<li>clear separation between policy authority and effect execution;</li>
+<li>no automatic widening when a dependency is unavailable;</li>
+<li>synthetic adversarial fixtures and implementation-neutral conformance;</li>
+<li>reviewable compatibility and security changes;</li>
+<li>no-effect reference implementations where real effects would create unnecessary risk.</li>
+</ul>
+<h2 id="identity-and-posture-are-policy-inputs"><a class="header" href="#identity-and-posture-are-policy-inputs">Identity and posture are policy inputs</a></h2>
+<p>Network reachability, authenticated identity, endpoint posture, and attestation can constrain a decision. They are not universal permission for privileged effects. Unsupported or stale posture should remain visible rather than being treated as success.</p>
+<h2 id="optional-public-network-privacy-layer"><a class="header" href="#optional-public-network-privacy-layer">Optional public-network privacy layer</a></h2>
+<p>For users working from untrusted networks such as public Wi-Fi, a <strong>separately operated, Headscale-managed exit node</strong> can be an additional network-security layer around a Dubnium engineering endpoint. This is an <strong>optional deployment pattern under qualification</strong>, not a default Dubnium feature or a claim that every client platform is leak-proof.</p>
+<p>Conceptually:</p>
+<pre><code class="language-text">Dubnium client on untrusted Wi-Fi
+  -&gt; encrypted Tailscale-compatible data-plane tunnel
+  -&gt; explicitly authorized home/router exit node
+  -&gt; Internet
+       |
+       +-- DNS resolved through the tunnel, subject to client policy
+</code></pre>
+<p>Headscale coordinates peer identity and route policy; it is <strong>not</strong> the ordinary browsing-traffic proxy. Network reachability and tailnet membership do not grant Dubnium capabilities, host access, runner authority, or private LAN permissions. The exit node must be explicitly authorized, with forwarding and firewall policy isolated from unrelated networks.</p>
+<p><strong>What this can protect:</strong> a public Wi-Fi operator should not see DNS queries or destination traffic carried <em>inside an established, correctly routed encrypted tunnel</em>. It can still see VPN connection metadata and traffic timing. The home ISP and any upstream DNS resolver retain visibility appropriate to the home egress and DNS configuration; an exit node does <strong>not</strong> provide anonymity.</p>
+<p><strong>What remains to qualify:</strong> DNS and IPv4/IPv6 leak behavior, client/browser resolver bypass, tunnel disconnect and reconnect, captive-portal bootstrap, mobile VPN-on-demand limits, exit-node recovery and rollback. Merely selecting an exit node is not a universal kill switch. If fail-closed routing cannot be enforced on a particular platform, users need that limitation stated rather than a guarantee of no leaks.</p>
+<p>This layer is intentionally independent of Dubnium’s capability authorization and of optional encrypted DNS upstream from the home network. Production-specific router topology, policy values, addresses, and activation procedures belong in private operator documentation.</p>
+<h2 id="public-versus-private-governance"><a class="header" href="#public-versus-private-governance">Public versus private governance</a></h2>
+<p>Public contracts may define request envelopes, decision references, authorized manifests, errors, evidence shapes, and compatibility rules.</p>
+<p>Production policy, approval rules, thresholds, trusted identities, prompts, fallback behavior, provider wiring, audit records, and recovery procedures remain private. Publishing a contract does not publish the implementation or policy behind it.</p>
+<h2 id="relationship-to-anthesis"><a class="header" href="#relationship-to-anthesis">Relationship to Anthesis</a></h2>
+<p>Where Dubnium integrates with Anthesis, Anthesis remains authoritative for governance decision and approval semantics. Dubnium transports and enforces bounded decisions through its capability boundary; it does not redefine Anthesis policy authority in the public Dubnium contracts.</p>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="observability-and-evidence"><a class="header" href="#observability-and-evidence">Observability and Evidence</a></h1>
+<p>Dubnium treats observability as part of the workstation contract: an environment should be able to explain what it expected, what it observed, what failed, and what evidence supports that conclusion.</p>
+<h2 id="host-observability"><a class="header" href="#host-observability">Host observability</a></h2>
+<p>Local host observability should answer questions such as:</p>
+<ul>
+<li>what should be active;</li>
+<li>what is actually active;</li>
+<li>what failed, restarted, or became degraded;</li>
+<li>whether resource or storage pressure is affecting work;</li>
+<li>whether the endpoint’s security and exposure posture matches expectations;</li>
+<li>what changed recently enough to investigate.</li>
+</ul>
+<p>The specific implementation may use operating-system service state, structured logs, runtime metrics, and local diagnostic tools. The public contract is the ability to inspect locally rather than dependence on a central dashboard.</p>
+<h2 id="organizational-observability"><a class="header" href="#organizational-observability">Organizational observability</a></h2>
+<p>A managed environment may publish a bounded projection of endpoint posture to an organization. Useful categories can include configuration identity, update state, critical service health, security posture, resource pressure, and record freshness.</p>
+<p>This is not a requirement to stream every workstation log. Central collection should be purpose-limited, freshness-qualified, and additive to local diagnosis.</p>
+<h2 id="personal-observability"><a class="header" href="#personal-observability">Personal observability</a></h2>
+<p>The same evidence model can support private daily reports, journals, and retrospectives for the operator.</p>
+<p>Personal observability is a separate plane from organizational telemetry. A useful default avoids covert collection of keystrokes, clipboard contents, screenshots, complete shell history, arbitrary browser activity, message bodies, or arbitrary file contents.</p>
+<p>Even metadata can be sensitive. Repository names, work times, project activity, and failure patterns need explicit purpose, visibility, retention, and sharing rules.</p>
+<h2 id="evidence-before-narrative"><a class="header" href="#evidence-before-narrative">Evidence before narrative</a></h2>
+<p>A reporting pipeline should prefer:</p>
+<pre><code class="language-text">authoritative domain state
++ bounded runtime evidence
+-&gt; deterministic structured summary
+-&gt; optional narrative synthesis
+-&gt; explicit publication or sharing
+</code></pre>
+<p>An AI-generated summary should not hide missing evidence or invent success. The structured report should remain useful without a model.</p>
+<h2 id="logs-are-evidence-not-universal-state"><a class="header" href="#logs-are-evidence-not-universal-state">Logs are evidence, not universal state</a></h2>
+<p>Logs and journals are valuable for runtime events and diagnosis. Workflows, approvals, deployments, and other stateful domains should retain their own durable records rather than require later reconstruction from log text.</p>
+<div style="break-before: page; page-break-before: always;"></div>
 <h1 id="runtime-operating-modes"><a class="header" href="#runtime-operating-modes">Runtime Operating Modes</a></h1>
 <p>A reproducible endpoint does not need every declared capability active at the same time. Dubnium uses runtime operating modes to select which already-declared workload posture should be active <strong>now</strong> without treating an imperative mode change as a replacement for declarative configuration.</p>
 <h2 id="modes-versus-capabilities"><a class="header" href="#modes-versus-capabilities">Modes versus capabilities</a></h2>
@@ -768,298 +1132,6 @@ observed state             -&gt; what is actually active after reconciliation
 </ul>
 <p>Those concerns remain with their own declarative, runtime, secret-management, and governance boundaries.</p>
 <div style="break-before: page; page-break-before: always;"></div>
-<h1 id="principles"><a class="header" href="#principles">Principles</a></h1>
-<p>Dubnium is guided by system-level principles that apply across workstation, client, compute, automation, and AI-assisted deployments.</p>
-<h2 id="declarative-intent-before-accumulated-setup"><a class="header" href="#declarative-intent-before-accumulated-setup">Declarative intent before accumulated setup</a></h2>
-<p>Long-lived configuration should be declared, reviewable, and reproducible. A working machine should not depend on undocumented installation history.</p>
-<h2 id="desired-state-is-not-observed-state"><a class="header" href="#desired-state-is-not-observed-state">Desired state is not observed state</a></h2>
-<p>Configuration says what should be true. Runtime observation says what is true now. A transition, deployment, or workflow is not successful merely because it was requested.</p>
-<h2 id="local-first-not-local-only"><a class="header" href="#local-first-not-local-only">Local-first, not local-only</a></h2>
-<p>Endpoints should remain useful, diagnosable, and recoverable with local resources. Remote services may extend the system through explicit compatibility, privacy, security, and availability boundaries.</p>
-<h2 id="capabilities-instead-of-ambient-authority"><a class="header" href="#capabilities-instead-of-ambient-authority">Capabilities instead of ambient authority</a></h2>
-<p>A caller should request a bounded capability rather than inherit broad host, network, data, device, credential, or tool access.</p>
-<h2 id="reachability-is-not-authorization"><a class="header" href="#reachability-is-not-authorization">Reachability is not authorization</a></h2>
-<p>Network location, VPN membership, endpoint health, and authenticated identity are useful security inputs. None of them alone grants authority for an unrelated or privileged effect.</p>
-<h2 id="durable-domain-state-before-log-reconstruction"><a class="header" href="#durable-domain-state-before-log-reconstruction">Durable domain state before log reconstruction</a></h2>
-<p>Workflows, approvals, automated operations, and other stateful domains should own their exact records. Logs and events provide evidence; they should not be forced to become a substitute database.</p>
-<h2 id="structured-evidence-before-generated-narrative"><a class="header" href="#structured-evidence-before-generated-narrative">Structured evidence before generated narrative</a></h2>
-<p>Reports and summaries should be derived from bounded structured evidence. AI may help synthesize that evidence, but it should not decide what may be collected, retained, or exported.</p>
-<h2 id="reproducibility-is-not-supply-chain-trust"><a class="header" href="#reproducibility-is-not-supply-chain-trust">Reproducibility is not supply-chain trust</a></h2>
-<p>Pinned inputs make behavior easier to reproduce. Trust still requires explicit provenance, verification, update, and dependency policy appropriate to the deployment.</p>
-<h2 id="bounded-resource-use"><a class="header" href="#bounded-resource-use">Bounded resource use</a></h2>
-<p>Interactive development, background automation, builds, and AI workloads should coexist intentionally. Resource contention, disk growth, and runaway work are operational concerns to design for rather than surprises to tolerate.</p>
-<h2 id="personal-observability-is-not-organizational-surveillance"><a class="header" href="#personal-observability-is-not-organizational-surveillance">Personal observability is not organizational surveillance</a></h2>
-<p>A system can help its operator understand work without covert productivity monitoring. Personal reports and journals require a separate ownership and sharing boundary from organizational endpoint posture.</p>
-<h2 id="contracts-before-coupling"><a class="header" href="#contracts-before-coupling">Contracts before coupling</a></h2>
-<p>Public and private consumers should depend on versioned contracts, canonical behavior, and conformance evidence rather than production implementation details.</p>
-<h2 id="safe-public-disclosure"><a class="header" href="#safe-public-disclosure">Safe public disclosure</a></h2>
-<p>Public artifacts should be independently useful while revealing no private topology, credentials, privileged implementation, policy internals, operator data, or private provenance. Publication is an irreversible security and intellectual-property decision.</p>
-<div style="break-before: page; page-break-before: always;"></div>
-<h1 id="vision-and-deployment-model"><a class="header" href="#vision-and-deployment-model">Vision and Deployment Model</a></h1>
-<p>Dubnium’s long-term direction is a family of reproducible engineering environments built from shared contracts rather than one machine that must perform every role.</p>
-<h2 id="product-shape"><a class="header" href="#product-shape">Product shape</a></h2>
-<pre><code class="language-text">Dubnium
-├── Client environment / VM
-│   └── small, replaceable development and access environment
-├── Workstation
-│   └── interactive environment with richer local device or compute access
-├── Build / compute node
-│   └── bounded non-interactive build, CI, cache, or compute capacity
-├── Remote managed environment
-│   └── sensitive work kept on infrastructure with an appropriate trust boundary
-└── Security / administrative environment
-    └── stronger isolation and access controls selected by threat model
-</code></pre>
-<p>These are deployment compositions, not identities or permission levels. A deployment should enable only the services and capabilities justified by its use case.</p>
-<h2 id="why-a-smaller-client-environment-matters"><a class="header" href="#why-a-smaller-client-environment-matters">Why a smaller client environment matters</a></h2>
-<p>A small managed VM can make project setup, replacement, credential cleanup, and offboarding easier without forcing the user’s entire physical machine into one configuration model. It can also give teams a consistent development substrate while leaving heavyweight build, AI, or infrastructure workloads elsewhere.</p>
-<p>A VM on an unmanaged physical host is <strong>not</strong> a confidentiality boundary against that host. If the host itself is outside the trust model, sensitive source, data, or credentials may require a managed endpoint or remote execution environment instead of stronger claims about the guest.</p>
-<h2 id="identity-posture-and-authority-stay-separate"><a class="header" href="#identity-posture-and-authority-stay-separate">Identity, posture, and authority stay separate</a></h2>
-<p>The architecture intentionally distinguishes:</p>
-<pre><code class="language-text">network reachable
-identity authenticated
-endpoint posture known
-operation authorized
-</code></pre>
-<p>Each can inform policy, but one should not silently stand in for another.</p>
-<h2 id="local-operation-remains-important"><a class="header" href="#local-operation-remains-important">Local operation remains important</a></h2>
-<p>Central inventory, observability, policy distribution, or remote services may be useful for larger deployments. They should extend local behavior rather than becoming the only way to inspect, diagnose, or recover an endpoint.</p>
-<h2 id="direction-not-a-support-claim"><a class="header" href="#direction-not-a-support-claim">Direction, not a support claim</a></h2>
-<p>This page describes a public architectural direction. It does not claim that every deployment form, fleet function, identity system, or remote environment is currently implemented or generally available.</p>
-<div style="break-before: page; page-break-before: always;"></div>
-<h1 id="conceptual-architecture"><a class="header" href="#conceptual-architecture">Conceptual Architecture</a></h1>
-<p>Dubnium treats an engineering endpoint as a governed operating environment rather than a collection of unrelated tools.</p>
-<h2 id="conceptual-layers"><a class="header" href="#conceptual-layers">Conceptual layers</a></h2>
-<pre class="mermaid">flowchart TB
-    U[People and developer tools] --&gt; E[Engineering endpoint]
-    C[Reproducible configuration] --&gt; E
-    E --&gt; G[Governed capability boundary]
-    G --&gt; D[Development and operating-system capabilities]
-    G --&gt; A[AI and automation capabilities]
-    D --&gt; S[Durable state and bounded evidence]
-    A --&gt; S
-    E --&gt; O[Runtime observation]
-    O --&gt; S
-</pre>
-
-<p>The diagram communicates responsibilities, not production topology.</p>
-<ul>
-<li><strong>Reproducible configuration</strong> declares intended system, user, and project inputs.</li>
-<li><strong>Engineering endpoint</strong> composes only the capabilities required by its deployment form.</li>
-<li><strong>Governed capability boundary</strong> separates a request from authorization and effect execution.</li>
-<li><strong>Development and operating-system capabilities</strong> perform bounded engineering work.</li>
-<li><strong>AI and automation capabilities</strong> may assist reasoning and workflows without inheriting unrestricted authority.</li>
-<li><strong>Runtime observation</strong> reports what is actually happening rather than assuming intended state succeeded.</li>
-<li><strong>Durable state and bounded evidence</strong> preserve exact domain state and reviewable outcomes.</li>
-</ul>
-<h2 id="runtime-posture-and-writable-state"><a class="header" href="#runtime-posture-and-writable-state">Runtime posture and writable state</a></h2>
-<p>Two responsibilities deliberately sit beside declarative configuration rather than inside it:</p>
-<ul>
-<li><a href="#runtime-operating-modes">Runtime Operating Modes</a> choose which already-declared workload posture should be active now and require post-transition observation before declaring success.</li>
-<li><a href="#writable-user-configuration">Writable User Configuration</a> gives legitimate mutable preferences and first-run state an explicit ownership boundary instead of encouraging edits to generated configuration.</li>
-</ul>
-<p>Neither responsibility changes the authority model: a runtime mode cannot install or authorize a missing capability, and writable user configuration cannot redefine privileged host policy.</p>
-<h2 id="source-of-truth-hierarchy"><a class="header" href="#source-of-truth-hierarchy">Source-of-truth hierarchy</a></h2>
-<p>Different questions have different authorities:</p>
-<pre><code class="language-text">declarative intent       -&gt; versioned configuration
-observed runtime state   -&gt; operating-system/runtime observation
-durable domain state     -&gt; workflow and operation stores
-event evidence           -&gt; bounded logs and events
-derived understanding    -&gt; reports, dashboards, and journals
-</code></pre>
-<p>A dashboard does not become runtime truth. A log does not become authorization. A previous successful operation does not grant authority for a future one.</p>
-<h2 id="endpoint-and-central-responsibilities"><a class="header" href="#endpoint-and-central-responsibilities">Endpoint and central responsibilities</a></h2>
-<p>A Dubnium endpoint should remain locally inspectable. Optional central services may aggregate posture, provide shared resources, or coordinate policy, but central state should carry freshness and uncertainty rather than overwrite contradictory endpoint facts.</p>
-<h2 id="technical-overview-boundary"><a class="header" href="#technical-overview-boundary">Technical-overview boundary</a></h2>
-<p>The published architecture describes responsibilities, invariants, and observable state relationships. It intentionally omits machine identities, networks, ports/endpoints, exact service placement and wiring, provider selection, resource assignments, data schemas that are not published contracts, policy thresholds, credentials, and privileged recovery procedures.</p>
-<p>Those are deployment and implementation concerns rather than requirements for understanding the architecture.</p>
-<div style="break-before: page; page-break-before: always;"></div>
-<h1 id="reproducible-engineering"><a class="header" href="#reproducible-engineering">Reproducible Engineering</a></h1>
-<p>Dubnium aims to make engineering environments replaceable without turning every project dependency into permanent workstation state.</p>
-<h2 id="layered-ownership"><a class="header" href="#layered-ownership">Layered ownership</a></h2>
-<p>A useful mental model is:</p>
-<pre><code class="language-text">platform configuration
-  -&gt; operating system, security baseline, resource policy
-
-portable user environment
-  -&gt; shell, editor, terminal, user-facing development preferences
-
-project environment
-  -&gt; project-specific SDKs, compilers, dependencies, tools, and workflow requirements
-
-trusted acceleration
-  -&gt; caches, builders, prebuilt artifacts, and remote capacity
-</code></pre>
-<p>The layers can use different tools, but their ownership should remain explicit.</p>
-<h2 id="immutable-managed-configuration-is-not-a-read-only-user-environment"><a class="header" href="#immutable-managed-configuration-is-not-a-read-only-user-environment">Immutable managed configuration is not a read-only user environment</a></h2>
-<p>NixOS and Home Manager deliberately make managed configuration reproducible, and many managed files are materialized from immutable Nix-store content. That does not mean legitimate application preferences and user state must be forced through a system rebuild.</p>
-<p>Dubnium treats writable user configuration as a separate ownership problem. <a href="#writable-user-configuration">Writable User Configuration</a> describes the managed, local, custom, and adopted layers and the role of <code>configctl</code> in making drift and promotion visible.</p>
-<p>The important reproducibility invariant is that writable state remains <strong>classified</strong>: a local preference does not silently become the managed source of truth, and a generated managed file is not edited in place merely because it is convenient.</p>
-<h2 id="desired-developer-path"><a class="header" href="#desired-developer-path">Desired developer path</a></h2>
-<p>A project should increasingly be able to approach:</p>
-<pre><code class="language-text">clone
--&gt; enter declared environment
--&gt; build
--&gt; test
--&gt; run
-</code></pre>
-<p>without depending on undocumented machine history.</p>
-<h2 id="reproducible-does-not-mean-trusted"><a class="header" href="#reproducible-does-not-mean-trusted">Reproducible does not mean trusted</a></h2>
-<p>A perfectly reproducible malicious dependency is still malicious. Supply-chain policy may therefore include:</p>
-<ul>
-<li>pinned source and dependency identities;</li>
-<li>reviewed trust roots for caches or artifacts;</li>
-<li>signatures, provenance, or attestations where they add value;</li>
-<li>controlled update and rollback behavior;</li>
-<li>visible failure when required trust evidence is unavailable.</li>
-</ul>
-<p>The exact mechanisms can vary by deployment and project.</p>
-<h2 id="mutable-state-is-classified-not-ignored"><a class="header" href="#mutable-state-is-classified-not-ignored">Mutable state is classified, not ignored</a></h2>
-<p>Not everything should live in declarative configuration. Dubnium uses a conceptual state classification:</p>
-<div class="table-wrapper">
-<table>
-<thead>
-<tr><th>Class</th><th>Meaning</th><th>Typical treatment</th></tr>
-</thead>
-<tbody>
-<tr><td>Declarative</td><td>Reconstructable from reviewed configuration</td><td>Rebuild</td></tr>
-<tr><td>Re-fetchable</td><td>Available again from another trusted source</td><td>Download or regenerate</td></tr>
-<tr><td>Recoverable</td><td>Mutable or costly state worth preserving</td><td>Explicit backup and restore</td></tr>
-<tr><td>Irreplaceable</td><td>Loss breaks identity, trust, or access</td><td>Separate recovery or escrow strategy</td></tr>
-</tbody>
-</table>
-</div>
-<p>A replaceable environment should be reconstructed from declared inputs plus explicitly restored state rather than depend on an opaque machine image.</p>
-<h2 id="performance-is-part-of-developer-experience"><a class="header" href="#performance-is-part-of-developer-experience">Performance is part of developer experience</a></h2>
-<p>Reproducibility should not require every task to rebuild the world. Shared immutable inputs, bounded caches, remote build capacity, and resource-aware scheduling can accelerate work as long as their trust and ownership boundaries remain explicit.</p>
-<div style="break-before: page; page-break-before: always;"></div>
-<h1 id="observability-and-evidence"><a class="header" href="#observability-and-evidence">Observability and Evidence</a></h1>
-<p>Dubnium treats observability as part of the workstation contract: an environment should be able to explain what it expected, what it observed, what failed, and what evidence supports that conclusion.</p>
-<h2 id="host-observability"><a class="header" href="#host-observability">Host observability</a></h2>
-<p>Local host observability should answer questions such as:</p>
-<ul>
-<li>what should be active;</li>
-<li>what is actually active;</li>
-<li>what failed, restarted, or became degraded;</li>
-<li>whether resource or storage pressure is affecting work;</li>
-<li>whether the endpoint’s security and exposure posture matches expectations;</li>
-<li>what changed recently enough to investigate.</li>
-</ul>
-<p>The specific implementation may use operating-system service state, structured logs, runtime metrics, and local diagnostic tools. The public contract is the ability to inspect locally rather than dependence on a central dashboard.</p>
-<h2 id="organizational-observability"><a class="header" href="#organizational-observability">Organizational observability</a></h2>
-<p>A managed environment may publish a bounded projection of endpoint posture to an organization. Useful categories can include configuration identity, update state, critical service health, security posture, resource pressure, and record freshness.</p>
-<p>This is not a requirement to stream every workstation log. Central collection should be purpose-limited, freshness-qualified, and additive to local diagnosis.</p>
-<h2 id="personal-observability"><a class="header" href="#personal-observability">Personal observability</a></h2>
-<p>The same evidence model can support private daily reports, journals, and retrospectives for the operator.</p>
-<p>Personal observability is a separate plane from organizational telemetry. A useful default avoids covert collection of keystrokes, clipboard contents, screenshots, complete shell history, arbitrary browser activity, message bodies, or arbitrary file contents.</p>
-<p>Even metadata can be sensitive. Repository names, work times, project activity, and failure patterns need explicit purpose, visibility, retention, and sharing rules.</p>
-<h2 id="evidence-before-narrative"><a class="header" href="#evidence-before-narrative">Evidence before narrative</a></h2>
-<p>A reporting pipeline should prefer:</p>
-<pre><code class="language-text">authoritative domain state
-+ bounded runtime evidence
--&gt; deterministic structured summary
--&gt; optional narrative synthesis
--&gt; explicit publication or sharing
-</code></pre>
-<p>An AI-generated summary should not hide missing evidence or invent success. The structured report should remain useful without a model.</p>
-<h2 id="logs-are-evidence-not-universal-state"><a class="header" href="#logs-are-evidence-not-universal-state">Logs are evidence, not universal state</a></h2>
-<p>Logs and journals are valuable for runtime events and diagnosis. Workflows, approvals, deployments, and other stateful domains should retain their own durable records rather than require later reconstruction from log text.</p>
-<div style="break-before: page; page-break-before: always;"></div>
-<h1 id="ai-and-automation"><a class="header" href="#ai-and-automation">AI and Automation</a></h1>
-<p>Dubnium supports AI-assisted development and automation without making a model the operating-system authority.</p>
-<h2 id="ai-is-optional-capability"><a class="header" href="#ai-is-optional-capability">AI is optional capability</a></h2>
-<p>A Dubnium environment may use local models, remote models, or no model at all. Deterministic configuration, security boundaries, runtime observation, workflow state, and recovery should continue to work independently.</p>
-<p>Model selection and provider choice are implementation concerns behind a stable caller-facing boundary. Changing a model must not silently widen access to data, tools, credentials, networks, or privileged effects.</p>
-<h2 id="local-first-model-routing"><a class="header" href="#local-first-model-routing">Local-first model routing</a></h2>
-<p>Local execution is the default direction where it is sufficient for the task. A request may use a stronger remote or frontier model only through an explicit bounded escalation path that preserves policy, sanitization, lineage, provider constraints, and traceability.</p>
-<p>Escalation changes available model capability. It does not transfer effect authority, grant additional tools or credentials, or convert unresolved policy into permission. A policy ambiguity or required human decision remains unresolved rather than being “solved” merely by selecting a stronger model.</p>
-<p>The exact production triggers, provider configuration, and routing heuristics remain private implementation concerns.</p>
-<h2 id="connecting-external-ai-tools"><a class="header" href="#connecting-external-ai-tools">Connecting external AI tools</a></h2>
-<p>Dubnium is developing a native Model Context Protocol (MCP) interface so approved assistants and engineering tools can request <strong>bounded, observable operations</strong> without gaining general host access. OpenAI’s Secure MCP Tunnel is a candidate transport for connecting ChatGPT to a private MCP service without making that transport an authorization decision.</p>
-<p>The initial focus is <strong>read-only engineering status</strong>, beginning with CI runner observation. Governed write operations are a separate future capability: a tool request alone cannot approve an effect, choose its own privileges, or substitute for independent verification.</p>
-<p><strong>Status:</strong> MCP interoperability and transport qualification are in progress. The public overview does not imply that the ChatGPT integration, privileged tools, or a supported remote-control service is deployed.</p>
-<h2 id="reasoning-is-not-an-effect"><a class="header" href="#reasoning-is-not-an-effect">Reasoning is not an effect</a></h2>
-<p>A useful separation is:</p>
-<pre><code class="language-text">reasoning proposes intent
--&gt; deterministic validation
--&gt; policy / approval boundary
--&gt; bounded capability
--&gt; effect execution
--&gt; durable outcome and evidence
-</code></pre>
-<p>Model output can propose an action. It cannot mint its own identity, approve itself, or turn previous success into future authority.</p>
-<h2 id="retrieval-is-evidence-not-authority"><a class="header" href="#retrieval-is-evidence-not-authority">Retrieval is evidence, not authority</a></h2>
-<p>Where semantic memory retrieval is enabled, canonical memory records remain the authoritative stored state while embeddings and indexes are derived, rebuildable retrieval state. Similarity rank does not establish approval, permission, currentness, or operational truth.</p>
-<p>The Memory Service owns retrieval over its own governed memory corpus; it does not become a generic search federation layer. Document or project search, repository state, and live runtime observation remain separate sources that the caller or Supervisor may consult according to the task and source-of-truth boundary.</p>
-<h2 id="stateful-automation-owns-state"><a class="header" href="#stateful-automation-owns-state">Stateful automation owns state</a></h2>
-<p>Scheduled work, durable workflows, memory/context systems, and long-running operations should expose explicit lifecycle and state rather than exist only inside model context.</p>
-<p>That makes retries, recovery, auditing, and replacement possible without asking a model to reconstruct what probably happened.</p>
-<h2 id="training-has-separate-authorities"><a class="header" href="#training-has-separate-authorities">Training has separate authorities</a></h2>
-<p>Model training follows the same governed-effect model as other consequential automation. A backend-neutral training request can describe intent, but execution authority, resource enforcement, evaluation, promotion, catalog binding, and runtime activation remain separate responsibilities.</p>
-<p>A successful training operation yields a candidate artifact. It does not by itself prove evaluation success, authorize promotion, select a production model, or activate that model for inference. Models and specialists cannot authorize their own training or promotion merely because they generated the proposal or candidate.</p>
-<h2 id="resource-aware-operation"><a class="header" href="#resource-aware-operation">Resource-aware operation</a></h2>
-<p>AI inference, builds, tests, model training, background automation, and interactive work can all compete for CPU, memory, storage, network, and accelerators. Dubnium treats resource placement and isolation as operating concerns rather than model-routing side effects.</p>
-<h2 id="evidence-remains-bounded"><a class="header" href="#evidence-remains-bounded">Evidence remains bounded</a></h2>
-<p>Automation should produce enough structured evidence to explain outcomes while avoiding indiscriminate capture of source, prompts, credentials, private messages, training data, or unrelated user activity.</p>
-<h2 id="public-interoperability"><a class="header" href="#public-interoperability">Public interoperability</a></h2>
-<p>Public Dubnium contracts may describe model-independent request surfaces, capability envelopes, scheduling or state semantics, and conformance behavior when those interfaces are useful to external consumers. Private routing heuristics, production prompts, trusted identities, provider configuration, training implementation, and stored user data remain outside the public boundary.</p>
-<div style="break-before: page; page-break-before: always;"></div>
-<h1 id="governance-and-safety"><a class="header" href="#governance-and-safety">Governance and Safety</a></h1>
-<p>Dubnium treats automation as a request for bounded capability, not as ambient permission to act.</p>
-<h2 id="trust-model"><a class="header" href="#trust-model">Trust model</a></h2>
-<p>The conceptual flow is:</p>
-<pre><code class="language-text">intent
--&gt; contract validation
--&gt; authenticated actor and context
--&gt; policy / approval decision
--&gt; bounded capability
--&gt; effect
--&gt; durable outcome and evidence
-</code></pre>
-<p>Each stage has a distinct responsibility:</p>
-<ul>
-<li><strong>Intent</strong> states the requested outcome without granting authority.</li>
-<li><strong>Contract validation</strong> rejects malformed, ambiguous, or incompatible requests.</li>
-<li><strong>Identity and context</strong> bind the request to trusted transport or enrollment facts rather than model assertions.</li>
-<li><strong>Policy / approval decision</strong> determines whether the exact request is allowed, denied, constrained, or requires approval.</li>
-<li><strong>Bounded capability</strong> receives only the scope needed for the authorized operation.</li>
-<li><strong>Effect execution</strong> performs the domain operation without widening the decision.</li>
-<li><strong>Outcome and evidence</strong> record enough durable state to inspect what happened.</li>
-</ul>
-<h2 id="security-properties"><a class="header" href="#security-properties">Security properties</a></h2>
-<p>Public Dubnium work emphasizes:</p>
-<ul>
-<li>deny-by-default capability access;</li>
-<li>least privilege and explicit effect boundaries;</li>
-<li>deterministic validation and canonicalization;</li>
-<li>clear separation between policy authority and effect execution;</li>
-<li>no automatic widening when a dependency is unavailable;</li>
-<li>synthetic adversarial fixtures and implementation-neutral conformance;</li>
-<li>reviewable compatibility and security changes;</li>
-<li>no-effect reference implementations where real effects would create unnecessary risk.</li>
-</ul>
-<h2 id="identity-and-posture-are-policy-inputs"><a class="header" href="#identity-and-posture-are-policy-inputs">Identity and posture are policy inputs</a></h2>
-<p>Network reachability, authenticated identity, endpoint posture, and attestation can constrain a decision. They are not universal permission for privileged effects. Unsupported or stale posture should remain visible rather than being treated as success.</p>
-<h2 id="optional-public-network-privacy-layer"><a class="header" href="#optional-public-network-privacy-layer">Optional public-network privacy layer</a></h2>
-<p>For users working from untrusted networks such as public Wi-Fi, a <strong>separately operated, Headscale-managed exit node</strong> can be an additional network-security layer around a Dubnium engineering endpoint. This is an <strong>optional deployment pattern under qualification</strong>, not a default Dubnium feature or a claim that every client platform is leak-proof.</p>
-<p>Conceptually:</p>
-<pre><code class="language-text">Dubnium client on untrusted Wi-Fi
-  -&gt; encrypted Tailscale-compatible data-plane tunnel
-  -&gt; explicitly authorized home/router exit node
-  -&gt; Internet
-       |
-       +-- DNS resolved through the tunnel, subject to client policy
-</code></pre>
-<p>Headscale coordinates peer identity and route policy; it is <strong>not</strong> the ordinary browsing-traffic proxy. Network reachability and tailnet membership do not grant Dubnium capabilities, host access, runner authority, or private LAN permissions. The exit node must be explicitly authorized, with forwarding and firewall policy isolated from unrelated networks.</p>
-<p><strong>What this can protect:</strong> a public Wi-Fi operator should not see DNS queries or destination traffic carried <em>inside an established, correctly routed encrypted tunnel</em>. It can still see VPN connection metadata and traffic timing. The home ISP and any upstream DNS resolver retain visibility appropriate to the home egress and DNS configuration; an exit node does <strong>not</strong> provide anonymity.</p>
-<p><strong>What remains to qualify:</strong> DNS and IPv4/IPv6 leak behavior, client/browser resolver bypass, tunnel disconnect and reconnect, captive-portal bootstrap, mobile VPN-on-demand limits, exit-node recovery and rollback. Merely selecting an exit node is not a universal kill switch. If fail-closed routing cannot be enforced on a particular platform, users need that limitation stated rather than a guarantee of no leaks.</p>
-<p>This layer is intentionally independent of Dubnium’s capability authorization and of optional encrypted DNS upstream from the home network. Production-specific router topology, policy values, addresses, and activation procedures belong in private operator documentation.</p>
-<h2 id="public-versus-private-governance"><a class="header" href="#public-versus-private-governance">Public versus private governance</a></h2>
-<p>Public contracts may define request envelopes, decision references, authorized manifests, errors, evidence shapes, and compatibility rules.</p>
-<p>Production policy, approval rules, thresholds, trusted identities, prompts, fallback behavior, provider wiring, audit records, and recovery procedures remain private. Publishing a contract does not publish the implementation or policy behind it.</p>
-<h2 id="relationship-to-anthesis"><a class="header" href="#relationship-to-anthesis">Relationship to Anthesis</a></h2>
-<p>Where Dubnium integrates with Anthesis, Anthesis remains authoritative for governance decision and approval semantics. Dubnium transports and enforces bounded decisions through its capability boundary; it does not redefine Anthesis policy authority in the public Dubnium contracts.</p>
-<div style="break-before: page; page-break-before: always;"></div>
 <h1 id="contracts-and-conformance"><a class="header" href="#contracts-and-conformance">Contracts and Conformance</a></h1>
 <p>Dubnium publishes contracts when interoperability is useful and disclosure does not require publishing the production implementation behind the boundary.</p>
 <h2 id="suitable-published-material"><a class="header" href="#suitable-published-material">Suitable published material</a></h2>
@@ -1092,73 +1164,6 @@ trusted acceleration
 <h2 id="source-of-truth"><a class="header" href="#source-of-truth">Source of truth</a></h2>
 <p>Specifications, schemas, conformance assets, reference implementations, release metadata, and community documentation are maintained in the <a href="https://github.com/hackelia-micrantha/dubnium-community">Dubnium Community repository</a>.</p>
 <div style="break-before: page; page-break-before: always;"></div>
-<h1 id="status-and-direction"><a class="header" href="#status-and-direction">Status and Direction</a></h1>
-<p>This page describes the published product surface and directional architecture only. It is not an internal delivery schedule and does not imply publication of private implementation.</p>
-<p>The repository remains in incubation. The first <a href="https://github.com/hackelia-micrantha/dubnium-community/releases/tag/contract-v0.1.0-alpha.1">Capability Gateway alpha contract bundle</a> is published and independently verifiable. Release acceptance, downstream integration qualification, and production readiness remain separate gates. No stable consumer compatibility baseline has been accepted.</p>
-<h2 id="current-work"><a class="header" href="#current-work">Current work</a></h2>
-<ul>
-<li>maintaining the Community repository as the authoritative website, documentation, contract, and release surface;</li>
-<li>stabilizing experimental capability-boundary contracts and canonical behavior;</li>
-<li>hardening short-lived self-hosted CI admission, controller-owned status, and deterministic reconciliation boundaries;</li>
-<li>maturing local-first AI control boundaries, including bounded model escalation, scoped retrieval semantics, and governed model lifecycle transitions;</li>
-<li>expanding synthetic conformance, adversarial fixtures, validators, and no-effect references;</li>
-<li>maintaining an explicit public-book source allowlist, generated-artifact parity, and independent publication validation;</li>
-<li>improving architecture, governance, compatibility, security, and release guidance.</li>
-</ul>
-<h2 id="current-architectural-direction"><a class="header" href="#current-architectural-direction">Current architectural direction</a></h2>
-<p>The published design treats Dubnium as a reproducible, observable, governed engineering environment rather than only a single workstation plus AI runtime.</p>
-<p>Directional themes include:</p>
-<ul>
-<li>smaller replaceable client environments alongside richer workstations and build/compute nodes;</li>
-<li>project-local reproducible development environments and explicit supply-chain trust;</li>
-<li>self-hosted CI through reviewed eligibility, bounded admission, short-lived workers, and controller-owned observation rather than permanently active job workers;</li>
-<li>local-first observability with bounded organizational posture when appropriate;</li>
-<li>private operator-owned status reporting and journaling kept distinct from organizational telemetry;</li>
-<li>local-first AI routing where stronger model selection changes reasoning capability but never widens effect authority;</li>
-<li>scoped memory retrieval where canonical records remain distinct from derived ranking and index state;</li>
-<li>model lifecycle boundaries that keep training, evaluation, promotion, and runtime activation as separate authorities;</li>
-<li>AI and automation behind explicit state, resource, and governed-effect boundaries;</li>
-<li>recovery and replacement based on declared configuration plus classified mutable state.</li>
-</ul>
-<p>These themes are architecture, not a claim that a production fleet service, every model lifecycle transition, or every deployment form is currently available.</p>
-<h2 id="current-engineering-themes"><a class="header" href="#current-engineering-themes">Current engineering themes</a></h2>
-<p>Recent work spans several related outcomes:</p>
-<ul>
-<li><strong>Reproducible, self-hosted CI:</strong> more predictable short-lived workers, smaller reusable runner foundations, and verified Nix output reuse. Cache adoption and performance qualification remain ongoing.</li>
-<li><strong>AI-assisted engineering interfaces:</strong> read-only MCP access is being qualified for external clients, including ChatGPT, with governed effects remaining distinct from transport and tool invocation.</li>
-<li><strong>Governed capabilities:</strong> scoped client interfaces and additional domain operations are being developed incrementally; public contracts are ahead of some production integrations.</li>
-<li><strong>Observable automation:</strong> portable event interoperability, operational status, and traceable outcomes are being expanded without making telemetry an authorization source.</li>
-<li><strong>Resource-aware AI:</strong> bounded usage concepts and local inference evaluations are active areas of exploration, not promised performance or deployed model offerings.</li>
-</ul>
-<p>The strongest public artifacts are versioned contracts, synthetic examples, conformance tests, and reproducible demonstrations. Private infrastructure, operational incidents, implementation wiring, unpublished benchmark data, and policy internals are outside this book.</p>
-<h2 id="public-validation-opportunities"><a class="header" href="#public-validation-opportunities">Public validation opportunities</a></h2>
-<p>The following are <strong>candidates for independent community validation</strong>, not release promises:</p>
-<ul>
-<li><strong>Portable event interoperability:</strong> mature synthetic <a href="https://github.com/hackelia-micrantha/dubnium-community/issues/54">CloudEvents conformance examples</a> without publishing real operational events or producer topology.</li>
-<li><strong>Reproducible workstation demonstration:</strong> make a small <a href="https://github.com/hackelia-micrantha/dubnium-community/issues/43">local AI engineering demo</a> buildable by an outside contributor, with a documented failure case and no private dependencies.</li>
-<li><strong>Resource-aware automation:</strong> explain visible usage limits and accountable execution at a conceptual level; detailed budget state machines, ledgers, provider routing and policy are not book material.</li>
-<li><strong>Read-only tool integration and CI performance evidence:</strong> consider synthetic MCP examples and reproducible cache benchmarks after their integration and measurement gates pass, avoiding private endpoints, runner inventories, and host-specific measurements.</li>
-</ul>
-<p>The book is a conceptual entry point; public specifications are published separately only when reviewed as intentional interoperability commitments.</p>
-<h2 id="next-published-work"><a class="header" href="#next-published-work">Next published work</a></h2>
-<ul>
-<li>keep generated publication and destination validation aligned with the explicit source allowlist;</li>
-<li>improve adopter documentation and contract integration examples;</li>
-<li>complete release acceptance and verify immutable release consumption in downstream implementations;</li>
-<li>mature release checksums, software bills of materials, attestations, and deprecation guidance;</li>
-<li>document threat models and compatibility guarantees at stable interoperability boundaries;</li>
-<li>publish additional contracts only after their semantics are useful outside private implementation and have survived enough operational use to justify a compatibility commitment.</li>
-</ul>
-<h2 id="later-evidence-permitting"><a class="header" href="#later-evidence-permitting">Later, evidence permitting</a></h2>
-<ul>
-<li>additional adapters or language bindings justified by real consumers;</li>
-<li>thin validation and conformance commands;</li>
-<li>additional API families where an interoperability need stabilizes;</li>
-<li>fleet or endpoint contracts only when they are useful without exposing private topology, identity, or policy.</li>
-</ul>
-<h2 id="explicitly-outside-this-roadmap"><a class="header" href="#explicitly-outside-this-roadmap">Explicitly outside this roadmap</a></h2>
-<p>The published roadmap does not imply disclosure of production prompts, routing heuristics, policy internals, trusted identities, private data, privileged provider implementation, host or fleet configuration, operational evidence, incidents, credentials, or private planning.</p>
-<div style="break-before: page; page-break-before: always;"></div>
 <h1 id="community-and-contributions"><a class="header" href="#community-and-contributions">Community and Contributions</a></h1>
 <p>The <a href="https://github.com/hackelia-micrantha/dubnium-community">Dubnium Community repository</a> is the published source of truth for:</p>
 <ul>
@@ -1169,12 +1174,19 @@ trusted acceleration
 <li>compatibility, security, governance, contribution, and release policies;</li>
 <li>the bounded roadmap.</li>
 </ul>
+<h2 id="choose-an-entry-point"><a class="header" href="#choose-an-entry-point">Choose an entry point</a></h2>
+<ul>
+<li><strong>Engineering teams and employers:</strong> examine the <a href="#conceptual-architecture">system architecture</a>, <a href="#self-hosted-ci-runner-controller">runner design</a>, and <a href="#governance-and-safety">governance model</a> to understand the engineering decisions and trade-offs.</li>
+<li><strong>Open-source contributors:</strong> start with the <a href="https://github.com/hackelia-micrantha/dubnium-community/tree/main/conformance">conformance suites</a>, <a href="https://github.com/hackelia-micrantha/dubnium-community/tree/main/reference">no-effect reference</a> and <a href="https://github.com/hackelia-micrantha/dubnium-community/blob/main/CONTRIBUTING.md">contribution guide</a>.</li>
+<li><strong>Design and integration partners:</strong> use the <a href="https://github.com/hackelia-micrantha/dubnium-community/blob/main/DESIGN_PARTNER_GUIDE.md">design-partner guide</a> to identify real reproducibility, isolation, private AI or integration constraints.</li>
+<li><strong>Investors and strategic collaborators:</strong> explore the <a href="https://github.com/hackelia-micrantha/dubnium-community/blob/main/COMMUNITY_COMMERCIAL_BOUNDARY.md">community and commercial boundary</a> and <a href="https://github.com/hackelia-micrantha/.github/blob/main/profile/README.md#looking-for-collaborators">Micrantha collaboration overview</a>. Potential supported products and services are opportunities for validation, not existing offers.</li>
+</ul>
 <h2 id="contribution-boundary"><a class="header" href="#contribution-boundary">Contribution boundary</a></h2>
 <p>Contributions should target published contracts, conformance, examples, conceptual documentation, release integrity, and independently useful tooling. A contribution must not depend on private source, private services, private registries, credentials, host configuration, operator data, or production policy.</p>
 <p>Private-to-public imports receive additional review because publication is irreversible. Review covers ownership, licensing, patents, trade secrets, third-party provenance, secrets, operational disclosure, synthetic test data, generated metadata, and Git history.</p>
 <h2 id="documentation-ownership"><a class="header" href="#documentation-ownership">Documentation ownership</a></h2>
 <p>The Technical Overview is curated rather than mirrored. Every source file that enters the generated artifact must be explicitly allowlisted, and every Markdown page must be part of the reviewed navigation. Unlinked source files are not a supported disclosure mechanism.</p>
-<p>Generated Technical Overview content is proposed into <code>site/docs/</code> through a guarded publication workflow and validated again in the Community repository before deployment. The hand-maintained landing page and generated Technical Overview are separate artifacts with the same publication boundary but different detail levels.</p>
+<p>The Community repository owns both the reviewed source and generated Technical Overview. Source changes and regenerated output are proposed together, with reproducibility and disclosure checks before deployment. The hand-maintained landing page and generated Technical Overview are separate artifacts with the same publication boundary but different detail levels.</p>
 <h2 id="reporting-security-issues"><a class="header" href="#reporting-security-issues">Reporting security issues</a></h2>
 <p>Use the private reporting process documented in the Community repository. Do not open a public issue containing a vulnerability, secret, sensitive topology, exploit evidence, or private implementation detail.</p>
 
@@ -1210,11 +1222,11 @@ trusted acceleration
 
         <script src="elasticlunr-ef4e11c1.min.js"></script>
         <script src="mark-09e88c2c.min.js"></script>
-        <script src="searcher-09f2665d.js"></script>
+        <script src="searcher-c2a407aa.js"></script>
 
         <script src="clipboard-1626706a.min.js"></script>
         <script src="highlight-abc7f01d.js"></script>
-        <script src="book-609e4cb8.js"></script>
+        <script src="book-a0b12cfe.js"></script>
 
         <!-- Custom JS scripts -->
         <script src="mermaid-bf4a4f1d.min.js"></script>

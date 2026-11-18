@@ -15,8 +15,8 @@
         <link rel="icon" href="favicon-de23e50b.svg">
         <link rel="shortcut icon" href="favicon-8114d1fc.png">
         <link rel="stylesheet" href="css/variables-8adf115d.css">
-        <link rel="stylesheet" href="css/general-e96d0476.css">
-        <link rel="stylesheet" href="css/chrome-d279d366.css">
+        <link rel="stylesheet" href="css/general-2459343d.css">
+        <link rel="stylesheet" href="css/chrome-ae938929.css">
         <link rel="stylesheet" href="css/print-9e4910d8.css" media="print">
 
         <!-- Fonts -->
@@ -35,10 +35,10 @@
             const path_to_root = "";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "searchindex-03526b3f.js";
+            window.path_to_searchindex_js = "searchindex-7832f818.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="toc-3a702404.js"></script>
+        <script src="toc-434c69b3.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -216,6 +216,10 @@
 <h2 id="5-effects-produce-state-and-evidence"><a class="header" href="#5-effects-produce-state-and-evidence">5. Effects produce state and evidence</a></h2>
 <p>A successful operation should leave enough bounded evidence to answer what happened without indiscriminately capturing private source, prompts, credentials, or unrelated activity.</p>
 <p>Durable workflow state, domain state, and runtime observation remain distinct. That allows retries, reconciliation, replacement, and audit without reconstructing the world from model context or logs.</p>
+<h2 id="example-a-bounded-build-request"><a class="header" href="#example-a-bounded-build-request">Example: a bounded build request</a></h2>
+<p>Consider a synthetic developer workflow in which an AI assistant proposes running a project test. The environment and project dependencies are declared first. The request names a bounded operation; the execution environment must establish whether that operation is available and authorized for the caller before any effect.</p>
+<p>If admitted, the bounded worker runs the permitted operation and reports an outcome that can be checked against the request. If denied, the tool must not execute it through a different path. If the outcome is uncertain, the system must preserve that uncertainty rather than claiming success.</p>
+<p>This is a conceptual workflow illustrating the public responsibility model, not an executable demonstration of the private runner or gateway. The <a href="https://github.com/hackelia-micrantha/dubnium-community/tree/main/conformance">Capability Gateway conformance assets</a> and <a href="https://github.com/hackelia-micrantha/dubnium-community/tree/main/reference">no-effect reference</a> can be examined without privileged execution. The <a href="https://github.com/hackelia-micrantha/dubnium-community/blob/main/docs/governed-agent-integration.md">governed-agent integration reference</a> describes the separate Anthesis trial and its limitations.</p>
 <h2 id="invariants-that-hold-across-the-system"><a class="header" href="#invariants-that-hold-across-the-system">Invariants that hold across the system</a></h2>
 <p>Several rules repeat throughout Dubnium:</p>
 <div class="table-wrapper">
@@ -236,15 +240,13 @@
 <h2 id="local-first-not-isolated"><a class="header" href="#local-first-not-isolated">Local-first, not isolated</a></h2>
 <p>Dubnium favors local execution and local inspectability where they are sufficient. Remote services, stronger models, shared compute, or central coordination may still be used through explicit contracts.</p>
 <p>The important architectural property is that adding a remote dependency does not erase the endpoint’s ability to explain its own declared state, current posture, observed behavior, or authority boundaries.</p>
-<h2 id="what-this-overview-intentionally-does-not-publish"><a class="header" href="#what-this-overview-intentionally-does-not-publish">What this overview intentionally does not publish</a></h2>
-<p>This chapter describes responsibility and behavior, not deployment-sensitive implementation. It intentionally omits exact topology, service-unit wiring, trusted identities, credentials, policy thresholds, routing heuristics, privileged procedures, and production operational evidence.</p>
-<p>The public contract is the separation between responsibilities, not the private mechanics used by one deployment to enforce them.</p>
+<p>The public contract is the separation between responsibilities, not the private mechanics used by one deployment to enforce them. See the <a href="README.html#scope-of-this-overview">overview scope</a> for the disclosure boundary.</p>
 
                     </main>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
-                            <a rel="prev" href="index.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                            <a rel="prev" href="principles.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                                 <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
                             </a>
 
@@ -258,7 +260,7 @@
             </div>
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
-                    <a rel="prev" href="index.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                    <a rel="prev" href="principles.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                         <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
                     </a>
 
@@ -284,11 +286,11 @@
 
         <script src="elasticlunr-ef4e11c1.min.js"></script>
         <script src="mark-09e88c2c.min.js"></script>
-        <script src="searcher-09f2665d.js"></script>
+        <script src="searcher-c2a407aa.js"></script>
 
         <script src="clipboard-1626706a.min.js"></script>
         <script src="highlight-abc7f01d.js"></script>
-        <script src="book-609e4cb8.js"></script>
+        <script src="book-a0b12cfe.js"></script>
 
         <!-- Custom JS scripts -->
         <script src="mermaid-bf4a4f1d.min.js"></script>
