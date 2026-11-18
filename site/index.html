@@ -190,11 +190,34 @@
       background: var(--phyllotaxis-color-canvas);
     }
 
-    .hero-grid {
+    .hero-copy {
+      max-width: var(--phyllotaxis-content-width-readable);
+    }
+
+    .approach-grid {
       display: grid;
       grid-template-columns: minmax(0, 1.15fr) minmax(0, .85fr);
       gap: var(--phyllotaxis-space-xl);
-      align-items: center;
+      align-items: start;
+    }
+
+    #approach .principles {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: var(--phyllotaxis-space-lg);
+    }
+
+    #approach .principle h3 {
+      font-size: var(--phyllotaxis-type-heading-size);
+      line-height: var(--phyllotaxis-type-heading-line-height);
+    }
+
+    #approach .principle p {
+      font-size: var(--phyllotaxis-type-body-size);
+      margin-bottom: var(--phyllotaxis-space-sm);
+    }
+
+    #approach .principle a {
+      font-size: var(--phyllotaxis-type-meta-size);
     }
 
     .kicker,
@@ -526,7 +549,7 @@
 
       .nav-links { justify-content: flex-start; }
 
-      .hero-grid,
+      .approach-grid,
       .overview-band,
       .principles,
       .evidence-grid,
@@ -534,6 +557,8 @@
       .audiences {
         grid-template-columns: 1fr;
       }
+
+      .model { max-width: 32rem; margin-inline: auto; width: 100%; }
 
       .section-head > div,
       .section-intro { display: block; }
@@ -543,6 +568,10 @@
       }
 
       .section-intro::before { content: none; }
+    }
+
+    @media (max-width: 520px) {
+      #approach .principles { grid-template-columns: 1fr; }
     }
 
     @media (prefers-reduced-motion: reduce) {
@@ -605,12 +634,12 @@
   </header>
   <main id="top">
     <section class="hero">
-      <div class="wrap hero-grid">
-        <div>
+      <div class="wrap">
+        <div class="hero-copy">
           <p class="kicker">A Micrantha project</p>
           <h1>Engineering infrastructure for the AI era.</h1>
-          <p class="lede">Dubnium brings reproducible development environments, self-hosted infrastructure and local-first AI together in an engineering platform designed for secure, accountable automation.</p>
-          <p class="lede">Built on NixOS, it brings a resource-adaptive design to workstations, build workers and AI services, with data sovereignty and explicit execution authority as guiding principles.</p>
+          <p class="lede">Dubnium is a local-first engineering platform for reproducible development, self-hosted CI and governed AI automation.</p>
+          <p class="lede">Built on NixOS, it coordinates development environments, build capacity and model services around available resources, explicit authority and operator-controlled data.</p>
           <div class="actions">
             <a class="button button-primary" href="https://github.com/hackelia-micrantha/dubnium-community">Explore the technology</a>
             <a class="button" href="docs/">Read the Technical Overview</a>
@@ -622,10 +651,49 @@
             <span class="chip">Experimental contracts</span>
           </div>
         </div>
+      </div>
+    </section>
+
+    <section class="section" id="approach">
+      <div class="wrap">
+        <div class="section-head">
+          <div>
+            <p class="overline">Design approach</p>
+            <h2>Rebuild the system. Govern the work. Keep control of the data.</h2>
+          </div>
+          <p class="section-intro">Most engineering stacks treat developer environments, build infrastructure, AI assistants and security as separate systems. Dubnium explores how to coordinate them without collapsing their trust boundaries. Four design decisions distinguish the platform.</p>
+        </div>
+        <div class="approach-grid">
+          <div class="principles">
+            <article class="principle">
+              <span class="principle-number">01 / REPRODUCIBILITY</span>
+              <h3>Replace the environment, not the work.</h3>
+              <p>Declare the system and each project's dependencies with Nix. Reuse trusted immutable build outputs while keeping mutable user and application state explicitly owned. Recovery should not depend on undocumented machine history.</p>
+              <a href="docs/reproducibility.html">Reproducible engineering</a>
+            </article>
+            <article class="principle">
+              <span class="principle-number">02 / EXECUTION AUTHORITY</span>
+              <h3>Give AI capabilities, not credentials.</h3>
+              <p>Separate reasoning, identity, authorization and execution. A valid request or a successful prediction does not grant permission. Governed capabilities and independently verifiable outcomes are the intended boundary for consequential automation.</p>
+              <a href="docs/governance.html">Governance and safety</a>
+            </article>
+            <article class="principle">
+              <span class="principle-number">03 / RESOURCE ADAPTATION</span>
+              <h3>Make one system serve many workloads.</h3>
+              <p>Interactive development, media, inference and CI compete for finite compute. Runtime modes and bounded worker admission let capacity follow current work, while dynamic planning aims to avoid unnecessary builds rather than weaken required checks.</p>
+              <a href="docs/runtime-modes.html">Runtime operating modes</a>
+            </article>
+            <article class="principle">
+              <span class="principle-number">04 / DATA SOVEREIGNTY</span>
+              <h3>Keep intelligence close to the data.</h3>
+              <p>Prefer local models, scoped memory, private services and local observation. External inference, remote execution and organizational telemetry should cross explicit boundaries. Local operation does not by itself establish privacy or security.</p>
+              <a href="docs/ai-and-automation.html">Local-first AI and automation</a>
+            </article>
+          </div>
         <figure class="model" aria-labelledby="platform-model-title">
           <figcaption class="model-label" id="platform-model-title">Platform architecture / conceptual</figcaption>
           <div class="model-flow">
-            <div class="model-node model-top"><strong>Operator surfaces</strong><span>CLI · mobile · web · API</span></div>
+            <div class="model-node model-top"><strong>Operator surfaces</strong><span>CLI · mobile/web/API direction</span></div>
             <div class="model-branch" aria-hidden="true"><span></span></div>
             <div class="model-pair">
               <div class="model-node"><strong>Intelligence</strong><span>Models · routing · prediction</span></div>
@@ -640,36 +708,8 @@
             </div>
             <div class="model-foundation">Observability · Data sovereignty</div>
           </div>
-          <p class="model-note">Illustrative responsibilities, not deployment topology. Only authorized effects cross the governance boundary.</p>
+          <p class="model-note">Conceptual responsibilities, not deployment topology or availability. Only authorized effects cross the governance boundary.</p>
         </figure>
-      </div>
-    </section>
-
-    <section class="section" id="approach">
-      <div class="wrap">
-        <div class="section-head">
-          <div>
-            <p class="overline">Design approach</p>
-            <h2>Make engineering environments easier to rebuild and trust.</h2>
-          </div>
-          <p class="section-intro">Developer environments accumulate fragile configuration, builds compete for resources, and AI tools can inherit more access than their tasks need. Dubnium addresses these problems through three complementary design goals.</p>
-        </div>
-        <div class="principles">
-          <article class="principle">
-            <span class="principle-number">01 / REBUILD</span>
-            <h3>Describe the environment</h3>
-            <p>Use declared platform and project inputs so development environments can be reproduced, inspected, and changed deliberately.</p>
-          </article>
-          <article class="principle">
-            <span class="principle-number">02 / BOUND</span>
-            <h3>Separate intent from effect</h3>
-            <p>AI can help interpret and propose work. Identity, authorization, policy, and execution still need explicit system boundaries.</p>
-          </article>
-          <article class="principle">
-            <span class="principle-number">03 / VERIFY</span>
-            <h3>Test the public promises</h3>
-            <p>Versioned contracts, synthetic adversarial fixtures, and implementation-neutral conformance checks make integration assumptions testable.</p>
-          </article>
         </div>
       </div>
     </section>
