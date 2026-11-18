@@ -2,7 +2,7 @@
 
 Dubnium is composed from bounded components rather than one always-on control plane. The important question for each component is not only what it does, but what authority and state it deliberately does **not** own.
 
-Maturity labels describe the current implementation surface, not a compatibility guarantee.
+Maturity labels describe the current implementation surface, not a compatibility guarantee. **Active** means the component is described as part of the evolving reference environment; it does not mean that its implementation is publicly distributed or independently qualified. **Experimental** means public interface semantics are still evolving. The published alpha Capability Gateway bundle establishes a public artifact identity, not a stable consumer baseline or production assurance. See [Status and Direction](status.md) for available evidence.
 
 | Component | Responsibility | Maturity |
 | --- | --- | --- |

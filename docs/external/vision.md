@@ -2,6 +2,12 @@
 
 Dubnium's long-term direction is a family of reproducible engineering environments built from shared contracts rather than one machine that must perform every role.
 
+## Why this direction matters
+
+An engineering team may need consistent developer endpoints, private inference, isolated build resources or automation that respects the same approval constraints as human operators. It should not have to adopt every Dubnium component to evaluate one of those requirements.
+
+The project therefore separates the environments where people work from the resources that perform builds or automation. The intended benefits are easier replacement, clearer responsibility boundaries and integration without a mandatory central stack. These are design goals to validate with real users, not measured savings or promises of a released commercial product.
+
 ## Product shape
 
 ```text

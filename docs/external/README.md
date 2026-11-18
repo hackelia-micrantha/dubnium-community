@@ -1,61 +1,43 @@
 # Dubnium Technical Overview
 
-Dubnium is a reproducible, observable, governed engineering environment for developer workstations, smaller client environments, build and compute nodes, and AI-assisted automation.
+Dubnium explores how reproducible development environments, self-hosted infrastructure and local-first AI can support secure, accountable engineering automation. Built on NixOS, it is intended to make development, build and execution environments easier to replace, inspect and trust.
 
-Within Micrantha, Dubnium serves as the **canary implementation for the wider development and VM ecosystem**: it integrates and exercises NixOS, VM, runtime, and automation patterns before broader reuse.
+This overview is for engineers evaluating the design, organizations considering integration, and contributors who want to challenge or extend the public contracts. Dubnium is incubating: a personal engineering environment informs the design, and the first experimental Capability Gateway contract bundle is publicly available. A generally available workstation distribution or stable consumer compatibility baseline has not been established.
 
-This technical overview explains the system through **responsibilities, state models, invariants, observable behavior, and published interoperability contracts**. It is intentionally more detailed than the landing page while stopping before deployment-sensitive implementation and operator material.
+## Why it matters
 
-## What Dubnium is trying to preserve
+Developer environments accumulate machine-specific dependencies and mutable state. Self-hosted builds need isolation and recoverability. AI-assisted tools can propose useful actions, but they may also inherit access to source, credentials or infrastructure beyond what a task requires.
 
-The project is built around four system qualities:
+Dubnium addresses these concerns through four complementary system qualities:
 
-- **reproducibility** — environments can be rebuilt, replaced, and reviewed from declared inputs;
-- **observability** — intended state and observed runtime state remain distinct and explainable from bounded evidence;
-- **security** — connectivity, identity, capabilities, and automated effects remain explicit rather than ambient;
-- **development acceleration** — project environments, builds, automation, and AI support reduce setup and recovery cost without making the workstation fragile.
+- **Reproducibility:** replace or recover environments from declared inputs instead of reconstructing undocumented manual changes.
+- **Developer experience:** compose project tooling, local services and build capacity without making unrelated capabilities mandatory.
+- **Security:** separate access, identity, policy, authorization and execution so that a request is not permission.
+- **Observability:** distinguish intended state, actual behavior and the evidence needed to evaluate an outcome.
 
-Dubnium is local-first, not local-only. A useful endpoint should remain inspectable and recoverable without depending on a central control plane while still being able to consume remote services through explicit contracts and policy boundaries.
+## Where the design could be useful
 
-## Deployment is compositional
+| Application | Problem being explored |
+| --- | --- |
+| Developer endpoints | Consistent setup, replacement and recovery across changing project requirements |
+| Self-hosted CI | Short-lived job workers, scope-constrained execution and reliable reconciliation |
+| Local and private AI | Useful model assistance while retaining explicit data and execution boundaries |
+| Governed automation | Consequential actions that can be authorized, bounded and verified independently |
 
-Dubnium is not limited to one workstation shape. The same architectural contracts can support smaller client environments, richer interactive workstations, build or compute nodes, remote managed development environments, and stronger security or administrative environments. Each deployment enables only the capabilities it needs.
+These are use cases to validate, not claims of enterprise availability or measured benefits. [Vision and Deployment Model](vision.md) explains the deployment assumptions and limitations.
 
-AI is one capability of the environment, not the authority for the environment. Deterministic configuration, runtime observation, policy, durable state, and recovery remain useful without a model.
+## Explore the engineering
 
-## Start with the system flow
+- **Product direction:** [Vision and Deployment Model](vision.md) and [Status and Direction](status.md).
+- **System architecture:** [How Dubnium Works](how-dubnium-works.md), [Components](components.md) and [Conceptual Architecture](architecture.md).
+- **Operator experience:** [Operator Journey](operator-journey.md), [Operator Tooling](operator-tooling.md) and [Self-Hosted CI Runner Controller](runner-controller.md).
+- **Security and trust:** [Governance and Safety](governance.md), [AI and Automation](ai-and-automation.md) and [Observability and Evidence](observability.md).
+- **Evaluate or contribute:** [Contracts and Conformance](public-contracts.md) and [Community and Contributions](community.md).
 
-- [How Dubnium Works](how-dubnium-works.md) gives the end-to-end mental model from declared intent through runtime observation and governed effects.
-- [Operator Journey](operator-journey.md) shows how the public operator surfaces fit together without exposing deployment-specific procedures.
-- [Self-Hosted CI Runner Controller](runner-controller.md) explains bounded admission, short-lived workers, canonical status, and reconciliation.
+The [published alpha bundle](https://github.com/hackelia-micrantha/dubnium-community/releases/tag/contract-v0.1.0-alpha.1), [conformance suites](https://github.com/hackelia-micrantha/dubnium-community/tree/main/conformance), and [no-effect references](https://github.com/hackelia-micrantha/dubnium-community/tree/main/reference) are the public artifacts to examine first. The public repository requires no private implementation or credentials to exercise its contract fixtures.
 
-Then inspect the implemented surfaces:
+## Scope of this overview
 
-- [Components](components.md) describes the major platform pieces, their maturity, state ownership, and intentional boundaries.
-- [Operator Tooling](operator-tooling.md) explains why `dubctl`, `modectl`, and `configctl` remain separate surfaces.
-- [Runtime Operating Modes](runtime-modes.md) describes desktop, media, and compute posture and the guarded reconciliation model.
-- [Writable User Configuration](writable-configuration.md) explains how legitimate mutable preferences coexist with Nix-store-backed managed configuration.
+The overview describes observable system behavior, component responsibilities, design decisions and published interoperability commitments. It does not disclose deployment-specific implementation or operational evidence. See the [publication boundary](https://github.com/hackelia-micrantha/dubnium-community/blob/main/PUBLICATION_BOUNDARY.md) for the governing disclosure rules.
 
-Then continue into the broader design:
-
-- [Vision and Deployment Model](vision.md) describes the long-term product shape.
-- [Conceptual Architecture](architecture.md) describes responsibility and source-of-truth boundaries.
-- [Reproducible Engineering](reproducibility.md) covers replacement, project environments, mutable-state classification, and supply-chain trust.
-- [Observability and Evidence](observability.md) separates intended state, runtime facts, durable state, and derived understanding.
-- [AI and Automation](ai-and-automation.md) explains how model-assisted work fits without becoming ambient authority.
-- [Governance and Safety](governance.md) describes bounded effects and trust boundaries.
-- [Contracts and Conformance](public-contracts.md) describes the independently inspectable interoperability surface.
-- [Status and Direction](status.md) distinguishes implemented, experimental, and directional work.
-- [Community and Contributions](community.md) points to the open source and contribution surface.
-
-## Disclosure boundary
-
-The useful rule for this overview is:
-
-> Publish what the system promises and what an integrator or operator can observe; keep private how a particular deployment enforces it.
-
-This overview may therefore publish stable component names, maturity, operator-tool responsibilities, runtime-mode semantics, configuration ownership layers, state-machine invariants, conceptual control flow, and published contracts.
-
-It deliberately omits machine identities, exact topology, ports/endpoints, service-unit wiring, credentials, hardware/resource assignments, exact policy thresholds, trusted identities, provider-selection or model-routing heuristics, privileged recovery procedures, private prompts/data, and real operational evidence.
-
-The published Community repository is independently useful for contracts, conformance, references, and documentation. This technical overview is not a sanitized mirror of private operator documentation.
+Within Micrantha, Dubnium serves as a reference and canary environment for validating shared NixOS, VM, runtime and automation patterns before broader reuse. The public Community repository is independently useful without access to the private environment.

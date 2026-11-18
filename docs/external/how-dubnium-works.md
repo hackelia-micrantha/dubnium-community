@@ -64,6 +64,14 @@ A successful operation should leave enough bounded evidence to answer what happe
 
 Durable workflow state, domain state, and runtime observation remain distinct. That allows retries, reconciliation, replacement, and audit without reconstructing the world from model context or logs.
 
+## Example: a bounded build request
+
+Consider a synthetic developer workflow in which an AI assistant proposes running a project test. The environment and project dependencies are declared first. The request names a bounded operation; the execution environment must establish whether that operation is available and authorized for the caller before any effect.
+
+If admitted, the bounded worker runs the permitted operation and reports an outcome that can be checked against the request. If denied, the tool must not execute it through a different path. If the outcome is uncertain, the system must preserve that uncertainty rather than claiming success.
+
+This is a conceptual workflow illustrating the public responsibility model, not an executable demonstration of the private runner or gateway. The [Capability Gateway conformance assets](https://github.com/hackelia-micrantha/dubnium-community/tree/main/conformance) and [no-effect reference](https://github.com/hackelia-micrantha/dubnium-community/tree/main/reference) can be examined without privileged execution. The [governed-agent integration reference](https://github.com/hackelia-micrantha/dubnium-community/blob/main/docs/governed-agent-integration.md) describes the separate Anthesis trial and its limitations.
+
 ## Invariants that hold across the system
 
 Several rules repeat throughout Dubnium:
@@ -83,8 +91,4 @@ Dubnium favors local execution and local inspectability where they are sufficien
 
 The important architectural property is that adding a remote dependency does not erase the endpoint's ability to explain its own declared state, current posture, observed behavior, or authority boundaries.
 
-## What this overview intentionally does not publish
-
-This chapter describes responsibility and behavior, not deployment-sensitive implementation. It intentionally omits exact topology, service-unit wiring, trusted identities, credentials, policy thresholds, routing heuristics, privileged procedures, and production operational evidence.
-
-The public contract is the separation between responsibilities, not the private mechanics used by one deployment to enforce them.
+The public contract is the separation between responsibilities, not the private mechanics used by one deployment to enforce them. See the [overview scope](README.md#scope-of-this-overview) for the disclosure boundary.

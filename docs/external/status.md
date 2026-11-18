@@ -4,15 +4,24 @@ This page describes the published product surface and directional architecture o
 
 The repository remains in incubation. The first [Capability Gateway alpha contract bundle](https://github.com/hackelia-micrantha/dubnium-community/releases/tag/contract-v0.1.0-alpha.1) is published and independently verifiable. Release acceptance, downstream integration qualification, and production readiness remain separate gates. No stable consumer compatibility baseline has been accepted.
 
-## Current work
+## Evidence available today
 
-- maintaining the Community repository as the authoritative website, documentation, contract, and release surface;
-- stabilizing experimental capability-boundary contracts and canonical behavior;
-- hardening short-lived self-hosted CI admission, controller-owned status, and deterministic reconciliation boundaries;
-- maturing local-first AI control boundaries, including bounded model escalation, scoped retrieval semantics, and governed model lifecycle transitions;
-- expanding synthetic conformance, adversarial fixtures, validators, and no-effect references;
-- maintaining an explicit public-book source allowlist, generated-artifact parity, and independent publication validation;
-- improving architecture, governance, compatibility, security, and release guidance.
+| Area | Engineering work | Public evidence and qualification |
+| --- | --- | --- |
+| Reproducible platform | Declarative environments, operator tooling and runtime reconciliation | [Components](components.md) and [operator journey](operator-journey.md) describe the implementation surfaces; no generally available distribution |
+| Self-hosted CI | Short-lived workers and controller-owned admission and status | [Runner architecture](runner-controller.md); operational qualification remains ongoing |
+| Governed execution | Experimental capability envelopes, lifecycle and negative conditions | [Published alpha bundle](https://github.com/hackelia-micrantha/dubnium-community/releases/tag/contract-v0.1.0-alpha.1) and [conformance suites](https://github.com/hackelia-micrantha/dubnium-community/tree/main/conformance); public release acceptance remains open |
+| Local-first AI | Bounded model and tool interfaces, scoped context and explicit authority | [AI and Automation](ai-and-automation.md); interfaces and integration are experimental |
+
+The distinction matters: architectural documentation can explain a working implementation without making it independently installable, and contract conformance does not establish production security assurance.
+
+## Current priorities
+
+- qualify reproducible, bounded execution and the first published contract release;
+- improve independently usable conformance examples and downstream integration evidence;
+- evaluate use cases for self-hosted builds, local AI and governed automation with external feedback.
+
+The [public roadmap](https://github.com/hackelia-micrantha/dubnium-community/blob/main/ROADMAP.md) tracks the exact contract and release work.
 
 ## Current architectural direction
 
@@ -56,14 +65,13 @@ The following are **candidates for independent community validation**, not relea
 
 The book is a conceptual entry point; public specifications are published separately only when reviewed as intentional interoperability commitments.
 
-## Next published work
+## Next published outcomes
 
-- keep generated publication and destination validation aligned with the explicit source allowlist;
-- improve adopter documentation and contract integration examples;
-- complete release acceptance and verify immutable release consumption in downstream implementations;
-- mature release checksums, software bills of materials, attestations, and deprecation guidance;
-- document threat models and compatibility guarantees at stable interoperability boundaries;
-- publish additional contracts only after their semantics are useful outside private implementation and have survived enough operational use to justify a compatibility commitment.
+- Complete release acceptance and verify immutable release consumption in downstream implementations.
+- Make public integrations easier to evaluate with synthetic examples and compatibility guidance.
+- Use independent adopter and design-partner feedback to determine which supported deployment patterns and additional interfaces justify further work.
+
+These are directional outcomes, not delivery dates or commercial commitments. The [public roadmap](https://github.com/hackelia-micrantha/dubnium-community/blob/main/ROADMAP.md) retains the detailed engineering gates.
 
 ## Later, evidence permitting
 

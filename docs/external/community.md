@@ -9,6 +9,13 @@ The [Dubnium Community repository](https://github.com/hackelia-micrantha/dubnium
 - compatibility, security, governance, contribution, and release policies;
 - the bounded roadmap.
 
+## Choose an entry point
+
+- **Engineering teams and employers:** examine the [system architecture](architecture.md), [runner design](runner-controller.md), and [governance model](governance.md) to understand the engineering decisions and trade-offs.
+- **Open-source contributors:** start with the [conformance suites](https://github.com/hackelia-micrantha/dubnium-community/tree/main/conformance), [no-effect reference](https://github.com/hackelia-micrantha/dubnium-community/tree/main/reference) and [contribution guide](https://github.com/hackelia-micrantha/dubnium-community/blob/main/CONTRIBUTING.md).
+- **Design and integration partners:** use the [design-partner guide](https://github.com/hackelia-micrantha/dubnium-community/blob/main/DESIGN_PARTNER_GUIDE.md) to identify real reproducibility, isolation, private AI or integration constraints.
+- **Investors and strategic collaborators:** explore the [community and commercial boundary](https://github.com/hackelia-micrantha/dubnium-community/blob/main/COMMUNITY_COMMERCIAL_BOUNDARY.md) and [Micrantha collaboration overview](https://github.com/hackelia-micrantha/.github/blob/main/profile/README.md#looking-for-collaborators). Potential supported products and services are opportunities for validation, not existing offers.
+
 ## Contribution boundary
 
 Contributions should target published contracts, conformance, examples, conceptual documentation, release integrity, and independently useful tooling. A contribution must not depend on private source, private services, private registries, credentials, host configuration, operator data, or production policy.
@@ -19,7 +26,7 @@ Private-to-public imports receive additional review because publication is irrev
 
 The Technical Overview is curated rather than mirrored. Every source file that enters the generated artifact must be explicitly allowlisted, and every Markdown page must be part of the reviewed navigation. Unlinked source files are not a supported disclosure mechanism.
 
-Generated Technical Overview content is proposed into `site/docs/` through a guarded publication workflow and validated again in the Community repository before deployment. The hand-maintained landing page and generated Technical Overview are separate artifacts with the same publication boundary but different detail levels.
+The Community repository owns both the reviewed source and generated Technical Overview. Source changes and regenerated output are proposed together, with reproducibility and disclosure checks before deployment. The hand-maintained landing page and generated Technical Overview are separate artifacts with the same publication boundary but different detail levels.
 
 ## Reporting security issues
 
