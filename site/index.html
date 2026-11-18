@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#f6f4ed">
+  <meta name="theme-color" content="#ffffff">
   <meta name="description" content="Dubnium explores reproducible development environments, self-hosted infrastructure and local-first AI for secure, accountable engineering automation.">
   <title>Dubnium — Reproducible infrastructure for AI-assisted engineering</title>
   <link rel="icon" href="favicon.svg" type="image/svg+xml">
@@ -11,48 +11,48 @@
     :root {
       color-scheme: light;
       --phyllotaxis-space-none: 0;
-      --phyllotaxis-space-xs: .25rem;
-      --phyllotaxis-space-sm: .5rem;
+      --phyllotaxis-space-xs: 0.25rem;
+      --phyllotaxis-space-sm: 0.5rem;
       --phyllotaxis-space-md: 1rem;
       --phyllotaxis-space-lg: 1.5rem;
       --phyllotaxis-space-xl: 2rem;
-      --phyllotaxis-gutter-page: clamp(.75rem, 2.5vw, 1.5rem);
-      --phyllotaxis-content-width-narrow: 42rem;
-      --phyllotaxis-content-width-readable: 62rem;
+      --phyllotaxis-gutter-page: 1rem;
+      --phyllotaxis-content-width-narrow: 46rem;
+      --phyllotaxis-content-width-readable: 70rem;
       --phyllotaxis-content-width-wide: 82rem;
       --phyllotaxis-content-width-full: 100%;
-      --phyllotaxis-font-body: Arial, Helvetica, sans-serif;
-      --phyllotaxis-font-display: Arial, Helvetica, sans-serif;
-      --phyllotaxis-font-mono: "Courier New", Courier, monospace;
+      --phyllotaxis-font-body: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      --phyllotaxis-font-display: var(--phyllotaxis-font-body);
+      --phyllotaxis-font-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
       --phyllotaxis-type-body-size: 1rem;
       --phyllotaxis-type-body-line-height: 1.45;
-      --phyllotaxis-type-title-size: clamp(1.65rem, 4vw, 2.35rem);
-      --phyllotaxis-type-title-line-height: 1.08;
+      --phyllotaxis-type-title-size: 1.75rem;
+      --phyllotaxis-type-title-line-height: 1.15;
       --phyllotaxis-type-title-weight: 700;
-      --phyllotaxis-type-heading-size: 1.05rem;
+      --phyllotaxis-type-heading-size: 1.25rem;
       --phyllotaxis-type-heading-line-height: 1.25;
       --phyllotaxis-type-heading-weight: 700;
-      --phyllotaxis-type-meta-size: .875rem;
+      --phyllotaxis-type-meta-size: 0.875rem;
       --phyllotaxis-type-meta-line-height: 1.35;
-      --phyllotaxis-type-caption-size: .8125rem;
-      --phyllotaxis-type-caption-line-height: 1.35;
-      --phyllotaxis-color-canvas: #fff;
-      --phyllotaxis-color-surface: #f4f4f4;
-      --phyllotaxis-color-text: #111;
-      --phyllotaxis-color-text-muted: #555;
-      --phyllotaxis-color-border: #b8b8b8;
+      --phyllotaxis-type-caption-size: 0.875rem;
+      --phyllotaxis-type-caption-line-height: 1.4;
+      --phyllotaxis-color-canvas: #ffffff;
+      --phyllotaxis-color-surface: #f5f5f5;
+      --phyllotaxis-color-text: #111111;
+      --phyllotaxis-color-text-muted: #555555;
+      --phyllotaxis-color-border: #a0a0a0;
       --phyllotaxis-color-link: #0000ee;
       --phyllotaxis-color-link-visited: #551a8b;
-      --phyllotaxis-color-focus: #c45500;
-      --phyllotaxis-color-selection: #ffef9c;
-      --phyllotaxis-color-selection-text: #111;
-      --status-background: #fff8d6;
+      --phyllotaxis-color-focus: #111111;
+      --phyllotaxis-color-selection: #cfe3ff;
+      --phyllotaxis-color-selection-text: #111111;
       --status-border: #8b6d00;
-      --section-heading: #e8e8e8;
-      --dubnium-page: #fff;
-      --dubnium-surface-a: #e9f0e7;
-      --dubnium-surface-b: #e8eef3;
-      --dubnium-surface-c: #f1eadc;
+      --dubnium-page: var(--phyllotaxis-color-canvas);
+      /* Consumer-owned capability accents, not shared Chroma roles. */
+      --dubnium-authority: #e8efe7;
+      --dubnium-intelligence: #e8eef4;
+      --dubnium-runtime: #f3ecdf;
+      --dubnium-evidence: #eee9f1;
     }
 
     * { box-sizing: border-box; }
@@ -82,7 +82,6 @@
       text-underline-offset: .12em;
       transition:
         color 120ms ease-out,
-        background-color 120ms ease-out,
         text-decoration-color 120ms ease-out,
         text-underline-offset 120ms ease-out;
     }
@@ -139,16 +138,16 @@
 
     .nav {
       display: flex;
-      align-items: baseline;
+      align-items: center;
       justify-content: space-between;
       gap: var(--phyllotaxis-space-md);
-      padding-block: .6rem;
+      padding-block: var(--phyllotaxis-space-sm);
     }
 
     .brand {
       display: inline-flex;
-      align-items: baseline;
-      gap: .5rem;
+      align-items: center;
+      gap: var(--phyllotaxis-space-sm);
       color: var(--phyllotaxis-color-text);
       font-size: 1.35rem;
       font-weight: 700;
@@ -158,10 +157,16 @@
     .brand:visited { color: var(--phyllotaxis-color-text); }
 
     .mark {
-      font-family: var(--phyllotaxis-font-mono);
-      font-size: .8rem;
-      font-weight: 700;
+      display: grid;
+      min-width: 2.5rem;
+      padding: var(--phyllotaxis-space-xs);
+      border: 1px solid var(--phyllotaxis-color-border);
+      background: var(--phyllotaxis-color-canvas);
+      font: 700 1rem/1 var(--phyllotaxis-font-mono);
+      text-align: center;
+      gap: .15rem;
     }
+    .mark small { font-size: .625rem; font-weight: 400; }
 
     .nav-links,
     .footer-links,
@@ -178,25 +183,41 @@
       font-size: var(--phyllotaxis-type-meta-size);
     }
 
-    .nav-links a:hover,
-    .footer-links a:hover,
-    .evidence-card a:hover,
-    .audience a:hover {
-      background-color: var(--dubnium-surface-c);
-    }
-
     main { overflow: visible; }
 
     .hero {
-      padding: var(--phyllotaxis-space-lg) 0 var(--phyllotaxis-space-md);
+      padding: var(--phyllotaxis-space-xl) 0;
       background: var(--phyllotaxis-color-canvas);
+    }
+
+    .hero-copy {
+      max-width: var(--phyllotaxis-content-width-readable);
     }
 
     .hero-grid {
       display: grid;
-      grid-template-columns: minmax(0, 1.45fr) minmax(18rem, .55fr);
+      grid-template-columns: minmax(0, 1.05fr) minmax(0, .95fr);
+      gap: var(--phyllotaxis-space-xl);
+      align-items: center;
+    }
+
+    #approach .principles {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
       gap: var(--phyllotaxis-space-lg);
-      align-items: start;
+    }
+
+    #approach .principle h3 {
+      font-size: var(--phyllotaxis-type-heading-size);
+      line-height: var(--phyllotaxis-type-heading-line-height);
+    }
+
+    #approach .principle p {
+      font-size: var(--phyllotaxis-type-body-size);
+      margin-bottom: var(--phyllotaxis-space-sm);
+    }
+
+    #approach .principle a {
+      font-size: var(--phyllotaxis-type-meta-size);
     }
 
     .kicker,
@@ -223,21 +244,20 @@
     .button {
       display: inline-block;
       min-height: 0;
-      padding: .25rem .45rem;
-      border: 1px solid #888;
+      padding: var(--phyllotaxis-space-xs) var(--phyllotaxis-space-sm);
+      border: 1px solid var(--phyllotaxis-color-border);
       border-radius: 0;
-      background: #eee;
+      background: var(--phyllotaxis-color-canvas);
       color: var(--phyllotaxis-color-link);
       font-weight: 400;
       text-decoration: underline;
       transition:
-        background-color 120ms ease-out,
         border-color 120ms ease-out,
         transform 120ms ease-out;
     }
 
     .button:visited { color: var(--phyllotaxis-color-link-visited); }
-    .button:hover { background-color: var(--dubnium-surface-c); }
+    .button:hover { border-color: currentColor; }
 
     @media (hover: hover) {
       .button:hover { transform: translateY(-1px); }
@@ -251,16 +271,13 @@
     }
 
     .button-primary {
-      border-color: #777;
-      background: #ddd;
-      color: #0000ee;
+      border-color: var(--phyllotaxis-color-text-muted);
+      background: var(--phyllotaxis-color-canvas);
+      color: var(--phyllotaxis-color-link);
       font-weight: 700;
     }
 
-    .button-primary:hover {
-      background-color: var(--dubnium-surface-c);
-      color: #0000ee;
-    }
+    .button-primary:visited { color: var(--phyllotaxis-color-link-visited); }
 
     .maturity { margin-top: var(--phyllotaxis-space-sm); }
 
@@ -287,88 +304,99 @@
     }
 
     .model {
-      padding: 0;
-      border: 1px solid var(--phyllotaxis-color-border);
-      border-radius: 0;
-      background: var(--phyllotaxis-color-canvas);
+      margin: 0;
+      min-width: 0;
     }
 
     .model-label {
-      background: var(--section-heading);
-      border-bottom: 1px solid var(--phyllotaxis-color-border);
-    }
-
-    .section-head {
-      background: transparent;
-      border-bottom: 0;
-    }
-
-    .section-head h2 {
-      font-size: clamp(1.35rem, 2.4vw, 1.55rem);
-      line-height: 1.15;
-    }
-
-    .model-label {
-      margin: 0;
-      padding: .35rem .5rem;
-      color: var(--phyllotaxis-color-text);
-    }
-
-    .model-list {
-      list-style: none;
-      margin: 0;
-      padding: 0 .5rem;
-    }
-
-    .model-list li {
-      display: grid;
-      grid-template-columns: 2rem 1fr;
-      gap: .4rem;
-      padding: .5rem 0;
-      border-top: 1px solid #ddd;
-    }
-
-    .model-list li:first-child { border-top: 0; }
-
-    .model-num {
-      color: var(--phyllotaxis-color-text-muted);
       font-family: var(--phyllotaxis-font-mono);
+      color: var(--phyllotaxis-color-text-muted);
+      text-transform: uppercase;
+      margin-bottom: var(--phyllotaxis-space-sm);
+    }
+
+    .model-flow {
+      text-align: center;
+    }
+    .model-node {
+      min-width: 0;
+      padding: var(--phyllotaxis-space-xs);
+      overflow-wrap: anywhere;
+    }
+    .model-node strong, .model-node span { display: block; }
+    .model-node strong { font-size: var(--phyllotaxis-type-body-size); }
+    .model-node span {
+      color: var(--phyllotaxis-color-text-muted);
       font-size: var(--phyllotaxis-type-caption-size);
     }
-
-    .model-list strong { display: block; margin-bottom: .1rem; font-size: .95rem; }
-
-    .model-list span:last-child {
+    .model-pair {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: var(--phyllotaxis-space-sm);
+    }
+    .model-branch, .model-join {
+      position: relative;
+      height: var(--phyllotaxis-space-md);
+      color: var(--phyllotaxis-color-border);
+    }
+    .model-branch::before, .model-join::before {
+      content: "";
+      position: absolute;
+      left: 50%;
+      top: 0;
+      height: 50%;
+      border-left: 1px solid currentColor;
+    }
+    .model-branch span, .model-join span {
+      position: absolute;
+      left: 25%;
+      right: 25%;
+      top: 50%;
+      bottom: 0;
+      border: 1px solid currentColor;
+      border-bottom: 0;
+    }
+    .model-join { transform: rotate(180deg); }
+    .model-governance {
+      padding: var(--phyllotaxis-space-sm);
+      background: var(--dubnium-authority);
+      border-radius: 8px;
+    }
+    .model-governance strong { color: #315e46; }
+    .model-foundation {
+      margin-top: var(--phyllotaxis-space-sm);
+      padding-top: var(--phyllotaxis-space-xs);
+      border-top: 1px solid var(--phyllotaxis-color-border);
       color: var(--phyllotaxis-color-text-muted);
-      font-size: var(--phyllotaxis-type-meta-size);
-      line-height: var(--phyllotaxis-type-meta-line-height);
+      font: var(--phyllotaxis-type-caption-size)/1.4 var(--phyllotaxis-font-mono);
+    }
+    .model-note {
+      margin: var(--phyllotaxis-space-sm) 0 0;
+      font-size: var(--phyllotaxis-type-caption-size);
+      color: var(--phyllotaxis-color-text-muted);
     }
 
     .section {
-      padding: var(--phyllotaxis-space-md) 0;
-      border-top: 0;
+      padding: var(--phyllotaxis-space-xl) 0;
     }
 
     .section-head {
       display: block;
-      margin-bottom: var(--phyllotaxis-space-sm);
-      padding: .35rem .5rem;
+      margin-bottom: var(--phyllotaxis-space-lg);
+      padding: 0;
     }
 
-    .section-head > div,
-    .section-intro { display: inline; }
-
     .section-head .overline {
-      display: none;
+      font-family: var(--phyllotaxis-font-mono);
+      text-transform: uppercase;
     }
 
     .section-intro {
-      margin-left: .45rem;
+      max-width: var(--phyllotaxis-content-width-readable);
+      margin: var(--phyllotaxis-space-xs) 0 0;
       color: var(--phyllotaxis-color-text-muted);
       font-size: var(--phyllotaxis-type-meta-size);
     }
-
-    .section-intro::before { content: "— "; }
 
     .principles,
     .evidence-grid,
@@ -376,14 +404,10 @@
     .audiences {
       display: grid;
       grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 0;
-      border: 0;
-      border-radius: 0;
-      overflow: visible;
+      gap: var(--phyllotaxis-space-lg);
     }
 
     .evidence-grid,
-    .roadmap,
     .audiences {
       grid-template-columns: repeat(2, minmax(0, 1fr));
     }
@@ -392,35 +416,37 @@
     .evidence-card,
     .roadmap-card,
     .audience {
+      min-width: 0;
       min-height: 0;
-      padding: .65rem .75rem;
-      border: 0;
-      border-radius: 0;
-      background: var(--phyllotaxis-color-canvas);
-      transition: background-color 120ms ease-out;
     }
 
-    @media (hover: hover) {
-      .principle:nth-child(3n+1):hover,
-      .evidence-card:nth-child(3n+1):hover,
-      .roadmap-card:nth-child(3n+1):hover,
-      .audience:nth-child(3n+1):hover {
-        background-color: var(--dubnium-surface-a);
-      }
-
-      .principle:nth-child(3n+2):hover,
-      .evidence-card:nth-child(3n+2):hover,
-      .roadmap-card:nth-child(3n+2):hover,
-      .audience:nth-child(3n+2):hover {
-        background-color: var(--dubnium-surface-b);
-      }
-
-      .principle:nth-child(3n):hover,
-      .evidence-card:nth-child(3n):hover,
-      .roadmap-card:nth-child(3n):hover,
-      .audience:nth-child(3n):hover {
-        background-color: var(--dubnium-surface-c);
-      }
+    #capabilities .evidence-card {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: var(--phyllotaxis-space-xs);
+      padding: var(--phyllotaxis-space-lg);
+      border-radius: 12px;
+      background: var(--dubnium-authority);
+    }
+    #capabilities .evidence-card:nth-child(4n + 2) {
+      background: var(--dubnium-intelligence);
+    }
+    #capabilities .evidence-card:nth-child(4n + 3) {
+      background: var(--dubnium-runtime);
+    }
+    #capabilities .evidence-card:nth-child(4n) {
+      background: var(--dubnium-evidence);
+    }
+    #capabilities .evidence-card p {
+      font-size: var(--phyllotaxis-type-body-size);
+      margin-bottom: var(--phyllotaxis-space-sm);
+    }
+    #capabilities .evidence-card a { margin-top: auto; }
+    .capability-label {
+      color: var(--phyllotaxis-color-text-muted);
+      font: var(--phyllotaxis-type-caption-size)/1.4 var(--phyllotaxis-font-mono);
+      margin-bottom: var(--phyllotaxis-space-xs);
     }
 
     .principle p,
@@ -444,17 +470,45 @@
     .evidence-card a,
     .audience a { font-size: var(--phyllotaxis-type-meta-size); }
 
+    /* Keep secondary regions flat; use spacing and a single edge for grouping. */
+    .roadmap-card {
+      padding-top: var(--phyllotaxis-space-md);
+      border-top: 2px solid var(--phyllotaxis-color-border);
+    }
+
+    .roadmap-card:first-child {
+      border-top-color: #315e46;
+    }
+
+    .roadmap-card h3 {
+      font-size: var(--phyllotaxis-type-heading-size);
+    }
+
+    .roadmap-card ul {
+      padding-left: var(--phyllotaxis-space-lg);
+      margin-top: var(--phyllotaxis-space-sm);
+    }
+
+    .roadmap-card li + li {
+      margin-top: var(--phyllotaxis-space-xs);
+    }
+
+    .audiences {
+      row-gap: var(--phyllotaxis-space-xl);
+    }
+
     .audience {
       display: block;
+      padding-top: var(--phyllotaxis-space-md);
+      border-top: 1px solid var(--phyllotaxis-color-border);
     }
 
     .status-callout {
       display: block;
-      margin-top: var(--phyllotaxis-space-sm);
-      padding: .6rem .75rem;
-      border: 1px solid var(--status-border);
-      border-radius: 0;
-      background: var(--status-background);
+      margin-top: var(--phyllotaxis-space-lg);
+      padding: var(--phyllotaxis-space-sm) var(--phyllotaxis-space-md);
+      border-left: 3px solid var(--status-border);
+      background: var(--phyllotaxis-color-canvas);
     }
 
     .status-icon {
@@ -481,9 +535,7 @@
       grid-template-columns: minmax(0, 1.2fr) minmax(16rem, .8fr);
       align-items: start;
       gap: var(--phyllotaxis-space-md);
-      padding: .75rem;
-      border: 1px solid var(--phyllotaxis-color-border);
-      border-radius: 0;
+      padding: 0;
       background: var(--phyllotaxis-color-canvas);
     }
 
@@ -532,6 +584,8 @@
         grid-template-columns: 1fr;
       }
 
+      .model { max-width: 32rem; margin-inline: auto; width: 100%; }
+
       .section-head > div,
       .section-intro { display: block; }
 
@@ -540,6 +594,14 @@
       }
 
       .section-intro::before { content: none; }
+    }
+
+    @media (max-width: 1000px) {
+      #approach .principles { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+
+    @media (max-width: 520px) {
+      #approach .principles { grid-template-columns: 1fr; }
     }
 
     @media (prefers-reduced-motion: reduce) {
@@ -571,15 +633,16 @@
 
     @media (forced-colors: active) {
       .button,
-      .model,
-      .principles,
-      .evidence-grid,
-      .roadmap,
-      .audiences,
-      .status-callout,
-      .overview-band {
+      .mark {
         border: 1px solid CanvasText;
       }
+      #capabilities .evidence-card {
+        border: 1px solid CanvasText;
+      }
+      .model-governance { border: 1px solid CanvasText; }
+      .model-branch, .model-join { color: CanvasText; }
+      .roadmap-card, .roadmap-card:first-child, .audience { border-top-color: CanvasText; }
+      .status-callout { border-left-color: CanvasText; }
     }
   </style>
 </head>
@@ -587,12 +650,14 @@
   <header class="topbar">
     <div class="wrap nav">
       <a class="brand" href="#top" aria-label="Dubnium home">
-        <span class="mark" aria-hidden="true">Db</span>
+        <span class="mark" aria-hidden="true"><small>105</small>Db</span>
         <span>Dubnium</span>
       </a>
       <nav class="nav-links" aria-label="Main navigation">
         <a href="#approach">Approach</a>
+        <a href="#capabilities">Capabilities</a>
         <a href="#status">Project status</a>
+        <a href="#direction">Roadmap</a>
         <a href="#people">Who it’s for</a>
         <a href="#overview">Technical Overview</a>
       </nav>
@@ -601,11 +666,11 @@
   <main id="top">
     <section class="hero">
       <div class="wrap hero-grid">
-        <div>
+        <div class="hero-copy">
           <p class="kicker">A Micrantha project</p>
           <h1>Engineering infrastructure for the AI era.</h1>
-          <p class="lede">Dubnium brings reproducible development environments, self-hosted infrastructure and local-first AI together in an engineering platform designed for secure, accountable automation.</p>
-          <p class="lede">Built on NixOS, it explores how developers and organizations can use increasingly capable AI tools while retaining control of their infrastructure, data and execution authority.</p>
+          <p class="lede">Dubnium is a local-first engineering platform for reproducible development, self-hosted CI and governed AI automation.</p>
+          <p class="lede">Built on NixOS, it coordinates development environments, build capacity and model services around available resources, explicit authority and operator-controlled data.</p>
           <div class="actions">
             <a class="button button-primary" href="https://github.com/hackelia-micrantha/dubnium-community">Explore the technology</a>
             <a class="button" href="docs/">Read the Technical Overview</a>
@@ -617,15 +682,26 @@
             <span class="chip">Experimental contracts</span>
           </div>
         </div>
-        <aside class="model" aria-label="Dubnium system model">
-          <p class="model-label">The system, in four parts</p>
-          <ol class="model-list">
-            <li><span class="model-num">01</span><span><strong>Rebuildable platform</strong><span>Declared system and development environments.</span></span></li>
-            <li><span class="model-num">02</span><span><strong>Operator surfaces</strong><span>Tools for inspection, runtime modes, and configuration.</span></span></li>
-            <li><span class="model-num">03</span><span><strong>Governed capabilities</strong><span>Explicit contracts between intent, authorization, and effects.</span></span></li>
-            <li><span class="model-num">04</span><span><strong>Inspectable evidence</strong><span>Conformance fixtures and repeatable validation.</span></span></li>
-          </ol>
-        </aside>
+        <figure class="model" aria-labelledby="platform-model-title">
+          <figcaption class="model-label" id="platform-model-title">Platform architecture</figcaption>
+          <div class="model-flow">
+            <div class="model-node model-top"><strong>Operator surfaces</strong><span>CLI · mobile/web/API direction</span></div>
+            <div class="model-branch" aria-hidden="true"><span></span></div>
+            <div class="model-pair">
+              <div class="model-node"><strong>Intelligence</strong><span>Models · routing · prediction</span></div>
+              <div class="model-node"><strong>Automation</strong><span>Memory · scheduling · CI/CD</span></div>
+            </div>
+            <div class="model-join" aria-hidden="true"><span></span></div>
+            <div class="model-node model-governance"><strong>Governed capabilities</strong><span>Identity · authorization · bounded effects</span></div>
+            <div class="model-branch" aria-hidden="true"><span></span></div>
+            <div class="model-pair">
+              <div class="model-node"><strong>Runtime</strong><span>Modes · isolation</span></div>
+              <div class="model-node"><strong>Infrastructure</strong><span>NixOS · CI · VM · VPN</span></div>
+            </div>
+            <div class="model-foundation">Observability · Data sovereignty</div>
+          </div>
+          <p class="model-note">Conceptual model, not deployment topology or availability.</p>
+        </figure>
       </div>
     </section>
 
@@ -634,25 +710,96 @@
         <div class="section-head">
           <div>
             <p class="overline">Design approach</p>
-            <h2>Make engineering environments easier to rebuild and trust.</h2>
+            <h2>Rebuild the system. Govern the work. Keep control of the data.</h2>
           </div>
-          <p class="section-intro">Developer environments accumulate fragile configuration, builds compete for resources, and AI tools can inherit more access than their tasks need. Dubnium addresses these problems through three complementary design goals.</p>
+          <p class="section-intro">Most engineering stacks treat developer environments, build infrastructure, AI assistants and security as separate systems. Dubnium explores how to coordinate them without collapsing their trust boundaries. Four design decisions distinguish the platform.</p>
         </div>
         <div class="principles">
-          <article class="principle">
-            <span class="principle-number">01 / REBUILD</span>
-            <h3>Describe the environment</h3>
-            <p>Use declared platform and project inputs so development environments can be reproduced, inspected, and changed deliberately.</p>
+            <article class="principle">
+              <span class="principle-number">01 / REPRODUCIBILITY</span>
+              <h3>Replace the environment, not the work.</h3>
+              <p>Declare the system and each project's dependencies with Nix. Reuse trusted immutable build outputs while keeping mutable user and application state explicitly owned. Recovery should not depend on undocumented machine history.</p>
+              <a href="docs/reproducibility.html">Reproducible engineering</a>
+            </article>
+            <article class="principle">
+              <span class="principle-number">02 / EXECUTION AUTHORITY</span>
+              <h3>Give AI capabilities, not credentials.</h3>
+              <p>Separate reasoning, identity, authorization and execution. A valid request or a successful prediction does not grant permission. Governed capabilities and independently verifiable outcomes are the intended boundary for consequential automation.</p>
+              <a href="docs/governance.html">Governance and safety</a>
+            </article>
+            <article class="principle">
+              <span class="principle-number">03 / RESOURCE ADAPTATION</span>
+              <h3>Make one system serve many workloads.</h3>
+              <p>Interactive development, media, inference and CI compete for finite compute. Runtime modes and bounded worker admission let capacity follow current work, while dynamic planning aims to avoid unnecessary builds rather than weaken required checks.</p>
+              <a href="docs/runtime-modes.html">Runtime operating modes</a>
+            </article>
+            <article class="principle">
+              <span class="principle-number">04 / DATA SOVEREIGNTY</span>
+              <h3>Keep intelligence close to the data.</h3>
+              <p>Prefer local models, scoped memory, private services and local observation. External inference, remote execution and organizational telemetry should cross explicit boundaries. Local operation does not by itself establish privacy or security.</p>
+              <a href="docs/ai-and-automation.html">Local-first AI and automation</a>
+            </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="capabilities">
+      <div class="wrap">
+        <div class="section-head">
+          <div>
+            <p class="overline">Platform capabilities</p>
+            <h2>One engineering environment, many independent boundaries.</h2>
+          </div>
+          <p class="section-intro">Reproducible infrastructure, intelligence and governed automation share resources without sharing unrestricted authority. These capabilities span the evolving reference environment, published experimental interfaces and directions under qualification.</p>
+        </div>
+        <div class="evidence-grid">
+          <article class="evidence-card">
+            <span class="capability-label">01 / AUTHORITY</span>
+            <h3>Governed capabilities</h3>
+            <p>Separate AI proposals, identity, policy and execution. Experimental capability contracts and conformance make authorization and effects inspectable; Keylix and Anthesis provide complementary identity and governance boundaries.</p>
+            <a href="docs/governance.html">Governance and security</a>
           </article>
-          <article class="principle">
-            <span class="principle-number">02 / BOUND</span>
-            <h3>Separate intent from effect</h3>
-            <p>AI can help interpret and propose work. Identity, authorization, policy, and execution still need explicit system boundaries.</p>
+          <article class="evidence-card">
+            <span class="capability-label">02 / OPERATOR</span>
+            <h3>Operator experience</h3>
+            <p>Composable CLI tools for host workflows, runtime modes, configuration and capabilities. An experimental operator authentication contract supports the direction toward a bounded Operator API and mobile/web consoles, rather than arbitrary remote shell access.</p>
+            <a href="docs/operator-tooling.html">Operator interfaces</a>
           </article>
-          <article class="principle">
-            <span class="principle-number">03 / VERIFY</span>
-            <h3>Test the public promises</h3>
-            <p>Versioned contracts, synthetic adversarial fixtures, and implementation-neutral conformance checks make integration assumptions testable.</p>
+          <article class="evidence-card">
+            <span class="capability-label">03 / INTELLIGENCE</span>
+            <h3>Local-first intelligence</h3>
+            <p>Local inference, model routing and bounded remote escalation. Multi-GPU serving, token-efficient routing, classification and predictive planning are active areas of development and evaluation, not guaranteed savings.</p>
+            <a href="docs/ai-and-automation.html">AI and automation</a>
+          </article>
+          <article class="evidence-card">
+            <span class="capability-label">04 / STATE</span>
+            <h3>Memory and scheduled automation</h3>
+            <p>Experimental Memory and Scheduler APIs make reusable context and deferred work explicit. Scope, provenance, state and execution authority remain separate from model reasoning.</p>
+            <a href="docs/components.html">Memory and scheduling</a>
+          </article>
+          <article class="evidence-card">
+            <span class="capability-label">05 / DELIVERY</span>
+            <h3>Adaptive CI/CD</h3>
+            <p>Short-lived self-hosted workers, reproducible builds and trusted cache reuse. Dynamic test selection and registry-free ordinary onboarding are directions under evaluation; admission remains governed and resource-aware.</p>
+            <a href="docs/runner-controller.html">Self-hosted CI</a>
+          </article>
+          <article class="evidence-card">
+            <span class="capability-label">06 / RUNTIME</span>
+            <h3>Runtime and isolation</h3>
+            <p>Desktop, media and compute modes adapt available resources to the workload. Layered VM, container and process isolation is chosen for the threat model rather than presented as one universal sandbox.</p>
+            <a href="docs/runtime-modes.html">Runtime modes</a>
+          </article>
+          <article class="evidence-card">
+            <span class="capability-label">07 / CONNECTIVITY</span>
+            <h3>Private connectivity and deployment</h3>
+            <p>Explore VPN-connected private services, optional edge exit-node integration and replaceable virtual appliances. Router qualification, portable QCOW2 images and cloud appliance delivery remain separate work.</p>
+            <a href="docs/vision.html">Deployment direction</a>
+          </article>
+          <article class="evidence-card">
+            <span class="capability-label">08 / EVIDENCE</span>
+            <h3>Observability and data sovereignty</h3>
+            <p>Local-first service health, metrics, logs and traceable outcomes support diagnosis without indiscriminate data export. OpenTelemetry interoperability is developing; remote data sharing is explicit.</p>
+            <a href="docs/observability.html">Observability and evidence</a>
           </article>
         </div>
       </div>
@@ -669,24 +816,14 @@
         </div>
         <div class="evidence-grid">
           <article class="evidence-card">
-            <h3>Reproducible platform engineering</h3>
-            <p>NixOS-based configuration and operator tools distinguish declared system state from observed runtime behavior, with explicit configuration and recovery boundaries.</p>
-            <a href="docs/">See the Technical Overview</a>
+            <h3>Published experimental release</h3>
+            <p>The first Capability Gateway alpha bundle is available with schemas, checksums, a software bill of materials and independent consumer verification.</p>
+            <a href="https://github.com/hackelia-micrantha/dubnium-community/releases/tag/contract-v0.1.0-alpha.1">View the alpha release</a>
           </article>
           <article class="evidence-card">
-            <h3>Secure AI and governed execution</h3>
-            <p>Local-first model interfaces and an experimental capability gateway separate requests, authorization and execution. Public schemas, adversarial fixtures and a no-effect reference make the boundary inspectable.</p>
-            <a href="https://github.com/hackelia-micrantha/dubnium-community/tree/main/spec">Browse public specifications</a>
-          </article>
-          <article class="evidence-card">
-            <h3>Reproducible releases and conformance</h3>
-            <p>The first experimental Capability Gateway bundle is published. Deterministic release tooling and independent consumer checks support verification of the bundle.</p>
-            <a href="https://github.com/hackelia-micrantha/dubnium-community/releases/tag/contract-v0.1.0-alpha.1">View the published alpha release</a>
-          </article>
-          <article class="evidence-card">
-            <h3>Self-hosted CI infrastructure</h3>
-            <p>The runner-controller design admits short-lived workers for bounded jobs, separates job access from administration and reconciles execution state. Runtime qualification is ongoing.</p>
-            <a href="docs/runner-controller.html">Explore the runner architecture</a>
+            <h3>Engineering evidence you can run</h3>
+            <p>Public conformance suites, synthetic adversarial fixtures and a no-effect reference let developers examine contract behavior independently of private infrastructure.</p>
+            <a href="https://github.com/hackelia-micrantha/dubnium-community/tree/main/conformance">Run the conformance suite</a>
           </article>
         </div>
         <div class="status-callout">
@@ -727,8 +864,16 @@
               <li>Refine compatibility guidance from adopter feedback.</li>
             </ul>
           </article>
+          <article class="roadmap-card">
+            <h3>Later</h3>
+            <p>Validate practical adoption and deployment opportunities.</p>
+            <ul>
+              <li>Evaluate supported deployment patterns with independent users.</li>
+              <li>Use integration evidence and partner feedback to guide further work.</li>
+            </ul>
+          </article>
         </div>
-        <p class="actions"><a class="button" href="https://github.com/hackelia-micrantha/dubnium-community/blob/main/ROADMAP.md">Read the public roadmap</a></p>
+        <p class="actions"><a href="https://github.com/hackelia-micrantha/dubnium-community/blob/main/ROADMAP.md">Read the public roadmap</a></p>
       </div>
     </section>
 
