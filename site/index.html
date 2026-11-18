@@ -201,29 +201,6 @@
       align-items: center;
     }
 
-    .hero-principles {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: var(--phyllotaxis-space-md) var(--phyllotaxis-space-lg);
-      margin: var(--phyllotaxis-space-lg) 0 0;
-      max-width: var(--phyllotaxis-content-width-narrow);
-    }
-
-    .hero-principles > div {
-      min-width: 0;
-      padding-left: var(--phyllotaxis-space-sm);
-      border-left: 2px solid var(--phyllotaxis-color-border);
-    }
-    .hero-principles dt {
-      font-weight: 700;
-      font-size: var(--phyllotaxis-type-meta-size);
-    }
-    .hero-principles dd {
-      margin: var(--phyllotaxis-space-xs) 0 0;
-      color: var(--phyllotaxis-color-text-muted);
-      font-size: var(--phyllotaxis-type-caption-size);
-    }
-
     #approach .principles {
       grid-template-columns: repeat(4, minmax(0, 1fr));
       gap: var(--phyllotaxis-space-lg);
@@ -677,12 +654,6 @@
             <span class="chip">Local-first development</span>
             <span class="chip">Experimental contracts</span>
           </div>
-          <dl class="hero-principles" aria-label="Operating principles">
-            <div><dt>Rebuild</dt><dd>Declarative environments</dd></div>
-            <div><dt>Govern</dt><dd>Capabilities, not credentials</dd></div>
-            <div><dt>Adapt</dt><dd>Resource-aware runtime</dd></div>
-            <div><dt>Verify</dt><dd>Observable outcomes</dd></div>
-          </dl>
         </div>
         <figure class="model" aria-labelledby="platform-model-title">
           <figcaption class="model-label" id="platform-model-title">Platform architecture</figcaption>
