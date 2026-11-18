@@ -1,10 +1,33 @@
 # Dubnium Community
 
-**Public contracts, conformance assets, developer tooling, documentation, and safe reference implementations for the Dubnium capability ecosystem.**
+**Open contracts and conformance for reproducible, local-first, governed engineering.**
 
-Dubnium is a reproducible, observable, governed engineering environment for developer workstations, replaceable client environments, build and compute nodes, and AI-assisted automation. This repository is its public community and interoperability boundary. It is not a mirror of any private production runtime.
+Dubnium explores how reproducible development environments, self-hosted infrastructure and local-first AI can support secure, accountable automation. This repository is its public community and interoperability boundary. It is not a mirror of any private production runtime.
 
-**Looking to contribute, provide infrastructure, or validate Dubnium in a real environment?** See [How to help Dubnium](#how-to-help-dubnium).
+**For engineers, collaborators and independent implementers:** see [Start here](#start-here) and [How to help Dubnium](#how-to-help-dubnium).
+
+## Start here
+
+- [Project website](https://dubnium.micrantha.com/) — product direction, engineering progress and collaboration.
+- [Technical Overview](https://dubnium.micrantha.com/docs/) — architecture, component responsibilities and design trade-offs.
+- [Download the experimental Capability Gateway alpha bundle](https://github.com/hackelia-micrantha/dubnium-community/releases/tag/contract-v0.1.0-alpha.1) — contracts, manifest, checksums and SBOM.
+- [Conformance](conformance/README.md) and [no-effect reference](reference/README.md) — evaluate the public contracts without private infrastructure or credentials.
+
+From a checkout of this repository, run the enrolled HTTP contract suites with Python 3:
+
+```sh
+python3 -m conformance.contract_bundle conformance/service-bundles.json
+```
+
+A passing suite is evidence for the selected contract/profile, not certification or production qualification. The experimental release is not a generally available workstation distribution.
+
+## Public architecture
+
+The public design treats Dubnium as an engineering-environment platform rather than one mandatory machine shape. Public concepts include replaceable clients, richer workstations, bounded build/compute capacity, remote managed environments for stronger trust requirements, reproducible project tooling, local-first observability, and governed automation.
+
+AI is a capability of the environment, not an authority for it. Model-assisted work can propose intent, while deterministic validation, policy, bounded capabilities, durable state, resource controls, and evidence remain explicit system concerns.
+
+These concepts are directional architecture, not a claim that every deployment form or capability is currently available.
 
 ## What this repository owns
 
@@ -21,35 +44,9 @@ This monorepo is authoritative for public Dubnium-owned:
 
 Private or external implementations may consume these contracts, but public artifacts must build and validate without private source, private services, credentials, host configuration, operator data, or production policy.
 
-## Public architecture
+## Documentation and publication
 
-The public design treats Dubnium as an engineering-environment platform rather than one mandatory machine shape. Public concepts include replaceable clients, richer workstations, bounded build/compute capacity, remote managed environments for stronger trust requirements, reproducible project tooling, local-first observability, and governed automation.
-
-AI is a capability of the environment, not an authority for it. Model-assisted work can propose intent, while deterministic validation, policy, bounded capabilities, durable state, resource controls, and evidence remain explicit system concerns.
-
-These concepts are directional architecture, not a claim that every deployment form or capability is currently available.
-
-## Website and documentation
-
-This repository is the sole authority for the public web surface.
-
-| Path / system | Ownership |
-| --- | --- |
-| `site/index.html` and adjacent assets | Hand-maintained public landing page |
-| `site/docs/**` | Generated public mdBook artifact; changed only through the guarded publication path |
-| `PUBLICATION_BOUNDARY.md` | Normative public disclosure and publication contract |
-| `scripts/validate_publication.py` | Destination-side disclosure, metadata, size, and path guard |
-| `wrangler.jsonc` | Cloudflare Workers Static Assets configuration |
-| `.github/workflows/pages.yml` | GitHub-side publication validation and Wrangler dry run |
-| Cloudflare Workers Builds Git integration | Preview and production deployment authority |
-
-The GitHub workflow filename is retained for repository-policy compatibility; it does not deploy GitHub Pages. GitHub Actions validates the repository artifact while Cloudflare's connected Git integration performs deployments. Maintaining one deploy authority avoids duplicate production uploads and duplicated Cloudflare credentials.
-
-Every site-related pull request runs publication tests, destination validation, and a Wrangler deployment dry run. Cloudflare independently creates branch previews and reports build status back to GitHub. See [docs/public-site-deployment.md](docs/public-site-deployment.md) for verification and rollback guidance.
-
-The generated book is a curated conceptual overview. Its producer uses an explicit source-file allowlist; unlinked source pages are not a publication mechanism. Public output must not contain production topology, policy internals, prompts, memory behavior, privileged providers, host configuration, credentials, operational evidence, private repository coordinates, private commits, workflow identifiers, or private issue links.
-
-See [PUBLICATION_BOUNDARY.md](PUBLICATION_BOUNDARY.md) for the complete ownership and metadata contract.
+The Community repository owns the public website, curated Technical Overview source and generated artifact. See [PUBLICATION_BOUNDARY.md](PUBLICATION_BOUNDARY.md) for disclosure and ownership rules and [public-site deployment](docs/public-site-deployment.md) for the sole Cloudflare deployment path, validation and rollback. Generated book changes must pass source-to-artifact parity and the independent publication guards.
 
 ## Governed-agent integration reference
 
@@ -120,7 +117,7 @@ The current experimental slice defines a narrow Capability Gateway envelope with
 
 ## How to help Dubnium
 
-Dubnium is actively looking for contributors and design partners who can improve the public engineering-environment contracts and test them against real operational constraints.
+Dubnium welcomes contributions and design feedback on reproducible development, secure AI and interoperability. Engineering teams can examine the architecture and conformance evidence; partners can help validate practical use cases. See the [community and commercial boundary](COMMUNITY_COMMERCIAL_BOUNDARY.md) for possible supported offerings and the limits of current maturity.
 
 - **Contract and conformance contributors** — review specifications, validators, compatibility rules, synthetic fixtures, adversarial cases, and public reference implementations.
 - **Platform, NixOS, security, and DevEx contributors** — improve reproducibility guidance, threat models, operator ergonomics, documentation, and portable integration patterns within the public boundary.
