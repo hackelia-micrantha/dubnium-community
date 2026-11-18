@@ -470,14 +470,43 @@
     .evidence-card a,
     .audience a { font-size: var(--phyllotaxis-type-meta-size); }
 
+    /* Keep secondary regions flat; use spacing and a single edge for grouping. */
+    .roadmap-card {
+      padding-top: var(--phyllotaxis-space-md);
+      border-top: 2px solid var(--phyllotaxis-color-border);
+    }
+
+    .roadmap-card:first-child {
+      border-top-color: #315e46;
+    }
+
+    .roadmap-card h3 {
+      font-size: var(--phyllotaxis-type-heading-size);
+    }
+
+    .roadmap-card ul {
+      padding-left: var(--phyllotaxis-space-lg);
+      margin-top: var(--phyllotaxis-space-sm);
+    }
+
+    .roadmap-card li + li {
+      margin-top: var(--phyllotaxis-space-xs);
+    }
+
+    .audiences {
+      row-gap: var(--phyllotaxis-space-xl);
+    }
+
     .audience {
       display: block;
+      padding-top: var(--phyllotaxis-space-md);
+      border-top: 1px solid var(--phyllotaxis-color-border);
     }
 
     .status-callout {
       display: block;
-      margin-top: var(--phyllotaxis-space-sm);
-      padding: .6rem .75rem;
+      margin-top: var(--phyllotaxis-space-lg);
+      padding: var(--phyllotaxis-space-sm) var(--phyllotaxis-space-md);
       border-left: 3px solid var(--status-border);
       background: var(--phyllotaxis-color-canvas);
     }
@@ -612,6 +641,7 @@
       }
       .model-governance { border: 1px solid CanvasText; }
       .model-branch, .model-join { color: CanvasText; }
+      .roadmap-card, .roadmap-card:first-child, .audience { border-top-color: CanvasText; }
       .status-callout { border-left-color: CanvasText; }
     }
   </style>
