@@ -91,4 +91,4 @@ Dubnium favors local execution and local inspectability where they are sufficien
 
 The important architectural property is that adding a remote dependency does not erase the endpoint's ability to explain its own declared state, current posture, observed behavior, or authority boundaries.
 
-The public contract is the separation between responsibilities, not the private mechanics used by one deployment to enforce them. See the [overview scope](README.md#scope-of-this-overview) for the disclosure boundary.
+The public contract is the separation between responsibilities, not the private mechanics used by one deployment to enforce them. See the [publication boundary](https://github.com/hackelia-micrantha/dubnium-community/blob/main/PUBLICATION_BOUNDARY.md) for the disclosure rules.
