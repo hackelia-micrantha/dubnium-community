@@ -29,6 +29,19 @@ AI is a capability of the environment, not an authority for it. Model-assisted w
 
 These concepts are directional architecture, not a claim that every deployment form or capability is currently available.
 
+## Platform capabilities
+
+Dubnium's architectural scope extends beyond a workstation and AI runtime:
+
+- [**Governed execution and cryptographic identity**](https://dubnium.micrantha.com/docs/governance.html) — bound requests, decisions, identity and effects; experimental Capability Gateway conformance.
+- [**Operator experience**](https://dubnium.micrantha.com/docs/operator-tooling.html) — composable CLI tools, experimental operator authentication, and mobile/web operator direction.
+- [**Intelligence and automation**](https://dubnium.micrantha.com/docs/ai-and-automation.html) — local-first inference, model selection, memory, scheduling and advisory classification/prediction; multi-GPU and token-efficiency work remains under evaluation.
+- [**Reproducible infrastructure and adaptive CI**](https://dubnium.micrantha.com/docs/runner-controller.html) — project-local Nix environments, trusted cache reuse, short-lived workers, resource-aware admission and developing dynamic CI planning.
+- [**Runtime and deployment**](https://dubnium.micrantha.com/docs/vision.html) — operating modes, layered isolation, VPN/private-service connectivity and experimental virtual-appliance direction.
+- [**Observability and data sovereignty**](https://dubnium.micrantha.com/docs/observability.html) — local-first operational evidence, purpose-limited telemetry, bounded remote access and operator-owned data.
+
+The [status and direction](https://dubnium.micrantha.com/docs/status.html) page distinguishes publicly published contracts, evolving implementation and unqualified deployment or integration goals. These are not commitments to a stable distribution or managed service.
+
 ## What this repository owns
 
 This monorepo is authoritative for public Dubnium-owned:

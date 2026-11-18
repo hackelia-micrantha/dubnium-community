@@ -592,6 +592,7 @@
       </a>
       <nav class="nav-links" aria-label="Main navigation">
         <a href="#approach">Approach</a>
+        <a href="#capabilities">Capabilities</a>
         <a href="#status">Project status</a>
         <a href="#people">Who it’s for</a>
         <a href="#overview">Technical Overview</a>
@@ -605,7 +606,7 @@
           <p class="kicker">A Micrantha project</p>
           <h1>Engineering infrastructure for the AI era.</h1>
           <p class="lede">Dubnium brings reproducible development environments, self-hosted infrastructure and local-first AI together in an engineering platform designed for secure, accountable automation.</p>
-          <p class="lede">Built on NixOS, it explores how developers and organizations can use increasingly capable AI tools while retaining control of their infrastructure, data and execution authority.</p>
+          <p class="lede">Built on NixOS, it brings a resource-adaptive design to workstations, build workers and AI services, with data sovereignty and explicit execution authority as guiding principles.</p>
           <div class="actions">
             <a class="button button-primary" href="https://github.com/hackelia-micrantha/dubnium-community">Explore the technology</a>
             <a class="button" href="docs/">Read the Technical Overview</a>
@@ -618,12 +619,12 @@
           </div>
         </div>
         <aside class="model" aria-label="Dubnium system model">
-          <p class="model-label">The system, in four parts</p>
+          <p class="model-label">The platform, in four parts</p>
           <ol class="model-list">
-            <li><span class="model-num">01</span><span><strong>Rebuildable platform</strong><span>Declared system and development environments.</span></span></li>
-            <li><span class="model-num">02</span><span><strong>Operator surfaces</strong><span>Tools for inspection, runtime modes, and configuration.</span></span></li>
-            <li><span class="model-num">03</span><span><strong>Governed capabilities</strong><span>Explicit contracts between intent, authorization, and effects.</span></span></li>
-            <li><span class="model-num">04</span><span><strong>Inspectable evidence</strong><span>Conformance fixtures and repeatable validation.</span></span></li>
+            <li><span class="model-num">01</span><span><strong>Rebuildable platform</strong><span>NixOS, project environments and replaceable execution capacity.</span></span></li>
+            <li><span class="model-num">02</span><span><strong>Operator surfaces</strong><span>Composable tools and evolving remote operator interfaces.</span></span></li>
+            <li><span class="model-num">03</span><span><strong>Governed capabilities</strong><span>Identity-bound requests and bounded execution.</span></span></li>
+            <li><span class="model-num">04</span><span><strong>Inspectable evidence</strong><span>Local-first telemetry, conformance and verifiable outcomes.</span></span></li>
           </ol>
         </aside>
       </div>
@@ -658,6 +659,60 @@
       </div>
     </section>
 
+    <section class="section" id="capabilities">
+      <div class="wrap">
+        <div class="section-head">
+          <div>
+            <p class="overline">Platform capabilities</p>
+            <h2>One engineering environment, many independent boundaries.</h2>
+          </div>
+          <p class="section-intro">Reproducible infrastructure, intelligence and governed automation share resources without sharing unrestricted authority. These capabilities span the evolving reference environment, published experimental interfaces and directions under qualification.</p>
+        </div>
+        <div class="evidence-grid">
+          <article class="evidence-card">
+            <h3>Governed capabilities</h3>
+            <p>Separate AI proposals, identity, policy and execution. Experimental capability contracts and conformance make authorization and effects inspectable; Keylix and Anthesis provide complementary identity and governance boundaries.</p>
+            <a href="docs/governance.html">Governance and security</a>
+          </article>
+          <article class="evidence-card">
+            <h3>Operator experience</h3>
+            <p>Composable CLI tools for host workflows, runtime modes, configuration and capabilities. An experimental Operator API supports the direction toward mobile and web consoles without exposing arbitrary remote shell access.</p>
+            <a href="docs/operator-tooling.html">Operator interfaces</a>
+          </article>
+          <article class="evidence-card">
+            <h3>Local-first intelligence</h3>
+            <p>Local inference, model routing and bounded remote escalation. Multi-GPU serving, token-efficient routing, classification and predictive planning are active areas of development and evaluation, not guaranteed savings.</p>
+            <a href="docs/ai-and-automation.html">AI and automation</a>
+          </article>
+          <article class="evidence-card">
+            <h3>Memory and scheduled automation</h3>
+            <p>Experimental Memory and Scheduler APIs make reusable context and deferred work explicit. Scope, provenance, state and execution authority remain separate from model reasoning.</p>
+            <a href="docs/components.html">Memory and scheduling</a>
+          </article>
+          <article class="evidence-card">
+            <h3>Adaptive CI/CD</h3>
+            <p>Short-lived self-hosted workers, reproducible builds and trusted cache reuse. Dynamic test selection and registry-free ordinary onboarding are directions under evaluation; admission remains governed and resource-aware.</p>
+            <a href="docs/runner-controller.html">Self-hosted CI</a>
+          </article>
+          <article class="evidence-card">
+            <h3>Runtime and isolation</h3>
+            <p>Desktop, media and compute modes adapt available resources to the workload. Layered VM, container and process isolation is chosen for the threat model rather than presented as one universal sandbox.</p>
+            <a href="docs/runtime-modes.html">Runtime modes</a>
+          </article>
+          <article class="evidence-card">
+            <h3>Private connectivity and deployment</h3>
+            <p>Explore VPN-connected private services, optional edge exit-node integration and replaceable virtual appliances. Router qualification, portable QCOW2 images and cloud appliance delivery remain separate work.</p>
+            <a href="docs/vision.html">Deployment direction</a>
+          </article>
+          <article class="evidence-card">
+            <h3>Observability and data sovereignty</h3>
+            <p>Local-first service health, metrics, logs and traceable outcomes support diagnosis without indiscriminate data export. OpenTelemetry interoperability is developing; remote data sharing is explicit.</p>
+            <a href="docs/observability.html">Observability and evidence</a>
+          </article>
+        </div>
+      </div>
+    </section>
+
     <section class="section" id="status">
       <div class="wrap">
         <div class="section-head">
@@ -669,24 +724,14 @@
         </div>
         <div class="evidence-grid">
           <article class="evidence-card">
-            <h3>Reproducible platform engineering</h3>
-            <p>NixOS-based configuration and operator tools distinguish declared system state from observed runtime behavior, with explicit configuration and recovery boundaries.</p>
-            <a href="docs/">See the Technical Overview</a>
+            <h3>Published experimental release</h3>
+            <p>The first Capability Gateway alpha bundle is available with schemas, checksums, a software bill of materials and independent consumer verification.</p>
+            <a href="https://github.com/hackelia-micrantha/dubnium-community/releases/tag/contract-v0.1.0-alpha.1">View the alpha release</a>
           </article>
           <article class="evidence-card">
-            <h3>Secure AI and governed execution</h3>
-            <p>Local-first model interfaces and an experimental capability gateway separate requests, authorization and execution. Public schemas, adversarial fixtures and a no-effect reference make the boundary inspectable.</p>
-            <a href="https://github.com/hackelia-micrantha/dubnium-community/tree/main/spec">Browse public specifications</a>
-          </article>
-          <article class="evidence-card">
-            <h3>Reproducible releases and conformance</h3>
-            <p>The first experimental Capability Gateway bundle is published. Deterministic release tooling and independent consumer checks support verification of the bundle.</p>
-            <a href="https://github.com/hackelia-micrantha/dubnium-community/releases/tag/contract-v0.1.0-alpha.1">View the published alpha release</a>
-          </article>
-          <article class="evidence-card">
-            <h3>Self-hosted CI infrastructure</h3>
-            <p>The runner-controller design admits short-lived workers for bounded jobs, separates job access from administration and reconciles execution state. Runtime qualification is ongoing.</p>
-            <a href="docs/runner-controller.html">Explore the runner architecture</a>
+            <h3>Engineering evidence you can run</h3>
+            <p>Public conformance suites, synthetic adversarial fixtures and a no-effect reference let developers examine contract behavior independently of private infrastructure.</p>
+            <a href="https://github.com/hackelia-micrantha/dubnium-community/tree/main/conformance">Run the conformance suite</a>
           </article>
         </div>
         <div class="status-callout">
