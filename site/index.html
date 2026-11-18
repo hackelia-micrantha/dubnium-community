@@ -46,13 +46,8 @@
       --phyllotaxis-color-focus: #111111;
       --phyllotaxis-color-selection: #cfe3ff;
       --phyllotaxis-color-selection-text: #111111;
-      --status-background: #fff8d6;
       --status-border: #8b6d00;
-      --section-heading: var(--phyllotaxis-color-surface);
       --dubnium-page: var(--phyllotaxis-color-canvas);
-      --dubnium-surface-a: #e9f0e7;
-      --dubnium-surface-b: #e8eef3;
-      --dubnium-surface-c: #f1eadc;
     }
 
     * { box-sizing: border-box; }
@@ -82,7 +77,6 @@
       text-underline-offset: .12em;
       transition:
         color 120ms ease-out,
-        background-color 120ms ease-out,
         text-decoration-color 120ms ease-out,
         text-underline-offset 120ms ease-out;
     }
@@ -162,7 +156,7 @@
       min-width: 2.5rem;
       padding: var(--phyllotaxis-space-xs);
       border: 1px solid var(--phyllotaxis-color-border);
-      background: var(--dubnium-surface-a);
+      background: var(--phyllotaxis-color-canvas);
       font: 700 1rem/1 var(--phyllotaxis-font-mono);
       text-align: center;
       gap: .15rem;
@@ -184,18 +178,11 @@
       font-size: var(--phyllotaxis-type-meta-size);
     }
 
-    .nav-links a:hover,
-    .footer-links a:hover,
-    .evidence-card a:hover,
-    .audience a:hover {
-      background-color: var(--dubnium-surface-c);
-    }
-
     main { overflow: visible; }
 
     .hero {
       padding: var(--phyllotaxis-space-lg) 0;
-      background: var(--dubnium-surface-a);
+      background: var(--phyllotaxis-color-canvas);
       border-block: 1px solid var(--phyllotaxis-color-border);
     }
 
@@ -233,18 +220,17 @@
       padding: var(--phyllotaxis-space-xs) var(--phyllotaxis-space-sm);
       border: 1px solid var(--phyllotaxis-color-border);
       border-radius: 0;
-      background: #eee;
+      background: var(--phyllotaxis-color-canvas);
       color: var(--phyllotaxis-color-link);
       font-weight: 400;
       text-decoration: underline;
       transition:
-        background-color 120ms ease-out,
         border-color 120ms ease-out,
         transform 120ms ease-out;
     }
 
     .button:visited { color: var(--phyllotaxis-color-link-visited); }
-    .button:hover { background-color: var(--dubnium-surface-c); }
+    .button:hover { border-color: currentColor; }
 
     @media (hover: hover) {
       .button:hover { transform: translateY(-1px); }
@@ -259,14 +245,9 @@
 
     .button-primary {
       border-color: var(--phyllotaxis-color-text-muted);
-      background: var(--dubnium-surface-a);
+      background: var(--phyllotaxis-color-canvas);
       color: var(--phyllotaxis-color-link);
       font-weight: 700;
-    }
-
-    .button-primary:hover {
-      background-color: var(--dubnium-surface-c);
-      color: var(--phyllotaxis-color-link);
     }
 
     .button-primary:visited { color: var(--phyllotaxis-color-link-visited); }
@@ -304,7 +285,7 @@
     }
 
     .model-label {
-      background: var(--section-heading);
+      background: var(--phyllotaxis-color-canvas);
       border-bottom: 1px solid var(--phyllotaxis-color-border);
     }
 
@@ -331,7 +312,7 @@
       min-width: 0;
       padding: var(--phyllotaxis-space-sm);
       border: 1px solid var(--phyllotaxis-color-border);
-      background: var(--dubnium-surface-b);
+      background: var(--phyllotaxis-color-canvas);
       overflow-wrap: anywhere;
     }
     .model-node strong, .model-node span { display: block; }
@@ -343,8 +324,7 @@
       gap: var(--phyllotaxis-space-xs);
     }
     .model-governance {
-      border-color: var(--phyllotaxis-color-text-muted);
-      background: var(--dubnium-surface-a);
+      border: 2px solid var(--phyllotaxis-color-text-muted);
     }
     .model-connector {
       font: var(--phyllotaxis-type-caption-size)/1.4 var(--phyllotaxis-font-mono);
@@ -353,7 +333,7 @@
     .model-foundation {
       padding: var(--phyllotaxis-space-xs);
       border-top: 1px solid var(--phyllotaxis-color-border);
-      background: var(--dubnium-surface-c);
+      background: var(--phyllotaxis-color-canvas);
       font-size: var(--phyllotaxis-type-meta-size);
     }
     .model-note {
@@ -385,9 +365,6 @@
       font-size: var(--phyllotaxis-type-meta-size);
     }
 
-    #capabilities, #direction { background: var(--phyllotaxis-color-surface); }
-    #people { background: var(--dubnium-surface-b); }
-
     .principles,
     .evidence-grid,
     .roadmap,
@@ -413,15 +390,6 @@
       background: var(--phyllotaxis-color-canvas);
     }
 
-    /* Product-owned accents; shared separators, not floating card chrome. */
-    #capabilities .evidence-card:nth-child(4n+1),
-    #capabilities .evidence-card:nth-child(4n+2) {
-      background: var(--dubnium-surface-a);
-    }
-    #capabilities .evidence-card:nth-child(4n+3),
-    #capabilities .evidence-card:nth-child(4n+4) {
-      background: var(--dubnium-surface-b);
-    }
     #capabilities .evidence-card {
       display: flex;
       flex-direction: column;
@@ -465,7 +433,7 @@
       padding: .6rem .75rem;
       border: 1px solid var(--status-border);
       border-radius: 0;
-      background: var(--status-background);
+      background: var(--phyllotaxis-color-canvas);
     }
 
     .status-icon {
