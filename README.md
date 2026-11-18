@@ -112,7 +112,7 @@ Repository settings are expected to require the aggregate checks, but committed 
 
 The repository is **incubating**. Experimental capability-boundary contracts, conformance fixtures, deterministic release tooling, publication validation, and the public website are present; stabilization and adopter integration remain active work.
 
-No `contract-v*` release is currently an accepted consumer baseline. Until the first protected release is accepted, `main` is development source rather than immutable contract identity.
+The first [Capability Gateway contract bundle, `contract-v0.1.0-alpha.1`](https://github.com/hackelia-micrantha/dubnium-community/releases/tag/contract-v0.1.0-alpha.1), is published and independently verifiable. It is an experimental release, not a stable or accepted downstream compatibility baseline. Publication, downstream acceptance, and production qualification are separate gates; `main` remains development source rather than immutable contract identity.
 
 Content is explicitly marked `experimental`, `v1alpha`, `v1beta`, or `stable`. Unmarked content is not a compatibility commitment. Compatibility and deprecation rules are defined in [COMPATIBILITY.md](COMPATIBILITY.md).
 

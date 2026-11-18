@@ -4,7 +4,7 @@ Status: experimental
 Content: informative
 Canonical source: this file
 Generated: no
-Reviewed: 2026-08-24
+Reviewed: 2026-11-17
 
 This roadmap describes intended public work. It is not a compatibility promise, a private implementation plan, or a commitment to publish production internals.
 
@@ -15,7 +15,7 @@ The public foundation is in place:
 - public/private product and publication boundaries;
 - Apache-2.0 licensing and contribution provenance;
 - governance, security, compatibility, trademark, and disclosure policies;
-- repository-policy, contract, release, and Pages CI;
+- repository-policy, contract, release, and public-site validation CI;
 - the authoritative public landing page and generated-book deployment under `site/**`;
 - schema-version-2 public-safe publication metadata with an opaque publication identifier and content digest;
 - an experimental Capability Gateway contract slice;
@@ -27,7 +27,7 @@ The public foundation is in place:
 - an active Resource Budget v1 contract/conformance workstream (#57);
 - public operator CLI architecture work that now includes Unix-pipe composability and man-page expectations (#15).
 
-The repository remains incubating. Presence does not imply a stable compatibility commitment. No protected `contract-v*` release has yet been accepted as consumer identity.
+The repository remains incubating. The first [experimental Capability Gateway contract bundle](https://github.com/hackelia-micrantha/dubnium-community/releases/tag/contract-v0.1.0-alpha.1) has been published and independently verified. The status-read and pre-dispatch uncertainty corrections (#29 and #31) are merged. Release acceptance, provenance review, and downstream qualification remain open; publication is not a stable compatibility commitment.
 
 ## Public architecture direction
 
@@ -45,26 +45,23 @@ Dubnium's public architecture now describes a broader engineering-environment mo
 
 These are directional concepts. They do not imply a production fleet service, endpoint enrollment system, or publication of private implementation.
 
-## Now — complete activation and publication gates
+## Now — complete release acceptance and publication gates
 
 - maintain the public-book source as an explicit reviewed file allowlist rather than relying on navigation alone;
 - verify regenerated `site/docs/**` replaces stale generated pages and remains independently validated before deployment;
 - verify publication no-op behavior and keep generated changes confined to `site/docs/**`;
-- apply and read back the committed `main` protection and squash-only merge policy;
-- establish immutable `contract-v*` tag protection or an equivalent audited administrative control;
-- resolve or explicitly classify the v1alpha status-read `503` question in #29;
-- resolve or explicitly classify the pre-dispatch `indeterminate` attribution question in #31;
-- publish the tag named by `release/contract-bundle-version.txt` only from the current protected `main` commit;
-- require the post-publication consumer job to verify checksums, provenance, safe extraction, the embedded manifest, and public conformance;
-- record release and protection evidence on the public tracking issues.
+- maintain and verify protected-main and immutable-release controls;
+- resolve the remaining release metadata and provenance acceptance questions under #17 without rewriting immutable artifacts;
+- verify downstream consumption of an immutable release identity and digest, including attestation and conformance;
+- retain independent post-publication checks for future release candidates.
 
 ## Next — adopter integration and active contract expansion
 
 - improve contract integration documentation and synthetic examples;
 - pin the immutable release tag, source commit, archive digest, and verified attestation in each consumer;
 - exercise public conformance against independent and private consumers at the contract boundary;
-- add positive fixtures for pre-dispatch and post-dispatch uncertainty once #31 selects a compatible model;
-- keep transport error documentation and OpenAPI response sets aligned as #29 is resolved;
+- maintain the merged status-read and uncertainty conformance corrections as contracts evolve;
+- develop the bounded synthetic runner/gateway walkthrough (#86) only after the required integration qualification;
 - refine compatibility, deprecation, and migration guidance from actual consumer feedback;
 - expand public threat models without disclosing production policy or topology;
 - complete the CloudEvents Event Contract v1 profile, schemas, and conformance fixtures under #54;
