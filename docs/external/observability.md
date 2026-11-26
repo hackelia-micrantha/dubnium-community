@@ -43,6 +43,10 @@ authoritative domain state
 
 An AI-generated summary should not hide missing evidence or invent success. The structured report should remain useful without a model.
 
+## Interoperability
+
+Portable structured status, events and resource-accountability concepts can help independent clients understand engineering outcomes without depending on private deployment details. OpenTelemetry interoperability and public CloudEvents contract work remain developing directions. See [Contracts and Conformance](public-contracts.md).
+
 ## Logs are evidence, not universal state
 
 Logs and journals are valuable for runtime events and diagnosis. Workflows, approvals, deployments, and other stateful domains should retain their own durable records rather than require later reconstruction from log text.

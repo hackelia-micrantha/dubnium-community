@@ -36,10 +36,10 @@
             const path_to_root = "";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "searchindex-b3b0eed8.js";
+            window.path_to_searchindex_js = "searchindex-007cc100.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="toc-dfaa8dec.js"></script>
+        <script src="toc-111e0900.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -292,6 +292,7 @@ operation authorized
 </ul>
 <p>These themes are architecture, not a claim that a production fleet service, every model lifecycle transition, or every deployment form is currently available.</p>
 <h2 id="current-engineering-themes"><a class="header" href="#current-engineering-themes">Current engineering themes</a></h2>
+<p>Additional planned or developing capability families include Supervisor-mediated on-demand execution, durable workflows, staged AI-assisted recovery, multi-user account separation, and mobile/web operator diagnostics. Each requires its own qualification; the research directions are not a release or delivery commitment.</p>
 <p>Recent work spans several related outcomes:</p>
 <ul>
 <li><strong>Reproducible, self-hosted CI:</strong> more predictable short-lived workers, smaller reusable runner foundations, and verified Nix output reuse. Cache adoption and performance qualification remain ongoing.</li>
@@ -301,6 +302,7 @@ operation authorized
 <li><strong>Resource-aware AI:</strong> bounded usage concepts and local inference evaluations are active areas of exploration, not promised performance or deployed model offerings.</li>
 </ul>
 <p>The strongest public artifacts are versioned contracts, synthetic examples, conformance tests, and reproducible demonstrations. Private infrastructure, operational incidents, implementation wiring, unpublished benchmark data, and policy internals are outside this book.</p>
+<p>See <a href="#research-foundations">Research foundations</a> for a ranked selection of relevant public literature.</p>
 <h2 id="public-validation-opportunities"><a class="header" href="#public-validation-opportunities">Public validation opportunities</a></h2>
 <p>The following are <strong>candidates for independent community validation</strong>, not release promises:</p>
 <ul>
@@ -326,6 +328,32 @@ operation authorized
 </ul>
 <h2 id="explicitly-outside-this-roadmap"><a class="header" href="#explicitly-outside-this-roadmap">Explicitly outside this roadmap</a></h2>
 <p>The published roadmap does not imply disclosure of production prompts, routing heuristics, policy internals, trusted identities, private data, privileged provider implementation, host or fleet configuration, operational evidence, incidents, credentials, or private planning.</p>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="research-foundations"><a class="header" href="#research-foundations">Research foundations</a></h1>
+<p>Dubnium investigates reproducible engineering, reliable automation, resource management and safe AI-assisted work. This curated reading list is ranked by editorial relevance to those broad objectives: foundational systems research first, then reliability and execution, then AI engineering interfaces and evaluation. The order is not a measured impact score or implementation priority.</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Rank</th><th>Publication</th><th>Authors, venue and year</th><th>Research theme</th></tr>
+</thead>
+<tbody>
+<tr><td>1</td><td><a href="https://doi.org/10.1109/MC.2003.1160055">The Vision of Autonomic Computing</a></td><td>Kephart and Chess; Computer, 2003</td><td>Self-management and feedback</td></tr>
+<tr><td>2</td><td><a href="https://doi.org/10.1145/1411204.1411255">NixOS: A Purely Functional Linux Distribution</a></td><td>Dolstra and Löh; ICFP, 2008</td><td>Reproducible environments</td></tr>
+<tr><td>3</td><td><a href="https://doi.org/10.1017/S0956796820000088">Build Systems à la Carte: Theory and Practice</a></td><td>Mokhov, Mitchell and Peyton Jones; JFP, 2020</td><td>Dependencies and incremental builds</td></tr>
+<tr><td>4</td><td><a href="https://www.usenix.org/conference/osdi20/presentation/levy">Predictive and Adaptive Failure Mitigation to Avert Production Cloud VM Interruptions</a></td><td>Levy et al.; OSDI, 2020</td><td>Reliability and recovery</td></tr>
+<tr><td>5</td><td><a href="https://www.usenix.org/conference/nsdi20/presentation/li">Gandalf: An Intelligent, End-to-End Analytics Service for Safe Deployment in Large-Scale Cloud Infrastructure</a></td><td>Li et al.; NSDI, 2020</td><td>Deployment safety</td></tr>
+<tr><td>6</td><td><a href="https://www.usenix.org/legacy/publications/library/proceedings/lisa04/tech/dolstra.html">Nix: A Safe and Policy-Free System for Software Deployment</a></td><td>Dolstra, de Jonge and Visser; LISA, 2004</td><td>Functional deployment</td></tr>
+<tr><td>7</td><td><a href="https://www.amazon.science/publications/how-amazon-web-services-uses-formal-methods">How Amazon Web Services Uses Formal Methods</a></td><td>Newcombe et al.; Communications of the ACM, 2015</td><td>Correctness and assurance</td></tr>
+<tr><td>8</td><td><a href="https://research.google/pubs/dapper-a-large-scale-distributed-systems-tracing-infrastructure/">Dapper, a Large-Scale Distributed Systems Tracing Infrastructure</a></td><td>Sigelman et al.; Google technical report, 2010</td><td>Distributed observability</td></tr>
+<tr><td>9</td><td><a href="https://www.usenix.org/conference/osdi20/presentation/zhang-haoran">Fault-tolerant and Transactional Stateful Serverless Workflows</a></td><td>Zhang et al.; OSDI, 2020</td><td>Durable execution</td></tr>
+<tr><td>10</td><td><a href="https://www.usenix.org/conference/nsdi11/dominant-resource-fairness-fair-allocation-multiple-resource-types">Dominant Resource Fairness: Fair Allocation of Multiple Resource Types</a></td><td>Ghodsi et al.; NSDI, 2011</td><td>Resource allocation</td></tr>
+<tr><td>11</td><td><a href="https://arxiv.org/abs/2405.15793v1">SWE-agent: Agent-Computer Interfaces Enable Automated Software Engineering</a></td><td>Yang et al.; arXiv, 2024</td><td>Engineering interfaces</td></tr>
+<tr><td>12</td><td><a href="https://proceedings.neurips.cc/paper_files/paper/2024/hash/97091a5177d8dc64b1da8bf3e1f6fb54-Abstract-Datasets_and_Benchmarks_Track.html">AgentDojo: A Dynamic Environment to Evaluate Prompt Injection Attacks and Defenses for LLM Agents</a></td><td>Debenedetti et al.; NeurIPS, 2024</td><td>Defensive evaluation</td></tr>
+</tbody>
+</table>
+</div>
+<p>These publications identify research questions, not an inventory of adopted mechanisms. The list does not establish performance, safety, compatibility or production readiness. Future additions will follow literature review and disclosure review. Negative or inconclusive evaluation results are valuable.</p>
+<p>See <a href="#status-and-direction">Status and Direction</a> for the distinction between public evidence and future directions.</p>
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="principles"><a class="header" href="#principles">Principles</a></h1>
 <p>Dubnium is guided by system-level principles that apply across workstation, client, compute, automation, and AI-assisted deployments.</p>
@@ -481,13 +509,13 @@ operation authorized
 <h2 id="supervisor--llm-gateway"><a class="header" href="#supervisor--llm-gateway">Supervisor / LLM Gateway</a></h2>
 <p><strong>Purpose.</strong> Expose a bounded interface for model and specialist execution with explicit capability negotiation, normalized errors, sanitized metadata, and execution lineage. The control-plane direction is local-first, with stronger remote or frontier execution treated as an explicit bounded escalation rather than an ambient fallback.</p>
 <p><strong>Boundary.</strong> Model or specialist output is proposal material, not ambient authority to mutate the host, deploy software, write durable memory, train or promote models, or bypass governance. Escalating model capability does not escalate effect authority.</p>
-<p><strong>Maturity.</strong> Experimental v1alpha.</p>
+<p><strong>Maturity.</strong> Experimental v1alpha. Planned on-demand execution through the Supervisor extends the direction toward bounded engineering workloads independent of conventional CI assignment; see <a href="#self-hosted-ci-runner-controller">Self-Hosted CI Runner Controller</a>. No ad hoc execution availability is implied.</p>
 <ul>
 <li><a href="https://github.com/hackelia-micrantha/dubnium-community/blob/main/spec/supervisor-gateway-v1alpha.md">Supervisor / LLM Gateway v1alpha</a></li>
 </ul>
 <h2 id="memory-service"><a class="header" href="#memory-service">Memory Service</a></h2>
 <p><strong>Purpose.</strong> Provide an interoperability boundary for scoped reusable context and memory used by model-assisted and automated workflows.</p>
-<p><strong>Boundary.</strong> Memory is durable application data with scope and governance; it is not authorization, runtime truth, or an implicit channel for privileged effects. Where semantic retrieval is enabled, embeddings and indexes remain derived retrieval state and ranked results remain evidence rather than authority or proof of currentness. Repository, document, and live-runtime sources remain separate source-of-truth boundaries rather than being silently federated through memory.</p>
+<p><strong>Boundary.</strong> Memory is durable application data with scope and governance; user-controlled retention and deletion assurance are developing goals, not verified erasure promises; it is not authorization, runtime truth, or an implicit channel for privileged effects. Where semantic retrieval is enabled, embeddings and indexes remain derived retrieval state and ranked results remain evidence rather than authority or proof of currentness. Repository, document, and live-runtime sources remain separate source-of-truth boundaries rather than being silently federated through memory.</p>
 <p><strong>Maturity.</strong> Experimental v1alpha.</p>
 <ul>
 <li><a href="https://github.com/hackelia-micrantha/dubnium-community/blob/main/spec/memory-service-v1alpha.md">Memory Service v1alpha</a></li>
@@ -668,6 +696,8 @@ dubctl runners status --json
 <p><code>configctl</code> handles the part of the user environment that legitimately needs to remain writable even when managed defaults come from immutable Nix-store-backed configuration.</p>
 <p>It reports ownership and drift, establishes writable layers, supports reviewable promotion of useful changes, and handles bounded first-run state where declaring a file alone is insufficient.</p>
 <p>See <a href="#writable-user-configuration">Writable User Configuration</a>.</p>
+<h2 id="mobile-and-web-operator-experience"><a class="header" href="#mobile-and-web-operator-experience">Mobile and web operator experience</a></h2>
+<p>The developing Operator Console direction brings bounded diagnostics, CI status, Supervisor interaction and reviewed operator requests to mobile and web clients. The goal is to make routine operational questions answerable without unrestricted remote shell access. Clients should share the same observed state and authority boundaries as other operator tools. This is not a claim of an available supported remote-control product.</p>
 <h2 id="why-the-tools-stay-separate"><a class="header" href="#why-the-tools-stay-separate">Why the tools stay separate</a></h2>
 <p>The separation gives each question a clear authority:</p>
 <pre><code class="language-text">What should this endpoint be able to run?  -&gt; declarative configuration
@@ -762,6 +792,10 @@ dubctl runners status --json
 <p>Initial source-level signing and rejection tests have passed, while end-to-end worker adoption and representative performance measurements remain unfinished. No particular cache service or production rollout is promised by this overview.</p>
 <h2 id="governed-integration-tests"><a class="header" href="#governed-integration-tests">Governed integration tests</a></h2>
 <p>A related workstream explores running bounded integration tests through the platform’s existing capability boundary rather than giving CI jobs unrestricted host or container access. This remains under implementation and qualification, not a generally available CI feature.</p>
+<h2 id="supervisor-mediated-ad-hoc-runners"><a class="header" href="#supervisor-mediated-ad-hoc-runners">Supervisor-mediated ad hoc runners</a></h2>
+<p>A planned complementary execution mode would allow an operator or authorized assistant to request a bounded engineering workload through the Supervisor without requiring a Git commit or conventional CI assignment. The intended outcome is short-lived isolated execution, explicit admission and resource limits, attributable results, and cleanup. Model participation is optional; deterministic workloads are equally useful.</p>
+<p>Conventional CI and on-demand work should be able to coexist within bounded capacity. Each request needs its own identity and authority. An ad hoc result does not automatically satisfy protected CI checks. Additional CI provider integrations and recursive workflow composition are longer-term research directions, not current support commitments. Each requires separate qualification.</p>
+<p>See <a href="#ai-and-automation">AI and Automation</a>.</p>
 <h2 id="trust-boundaries"><a class="header" href="#trust-boundaries">Trust boundaries</a></h2>
 <p>The runner design preserves several separations:</p>
 <div class="table-wrapper">
@@ -886,6 +920,10 @@ trusted acceleration
 </table>
 </div>
 <p>A replaceable environment should be reconstructed from declared inputs plus explicitly restored state rather than depend on an opaque machine image.</p>
+<h2 id="system-lifecycle-and-verified-recovery"><a class="header" href="#system-lifecycle-and-verified-recovery">System lifecycle and verified recovery</a></h2>
+<p>Reviewed updates, isolated validation, explicit activation and post-change observation are distinct lifecycle steps. Recovery must preserve operator control and remain possible without optional AI services.</p>
+<p>Encrypted backup and independently tested restoration of non-reproducible state are developing capabilities. A successful system rebuild does not prove that application data or identities have been restored. A successful backup does not establish recoverability without restoration evidence. No production backup coverage or recovery time is promised here.</p>
+<p>See <a href="#safe-staged-ai-assisted-self-healing">AI and Automation</a>.</p>
 <h2 id="performance-is-part-of-developer-experience"><a class="header" href="#performance-is-part-of-developer-experience">Performance is part of developer experience</a></h2>
 <p>Reproducibility should not require every task to rebuild the world. Shared immutable inputs, bounded caches, remote build capacity, and resource-aware scheduling can accelerate work as long as their trust and ownership boundaries remain explicit.</p>
 <div style="break-before: page; page-break-before: always;"></div>
@@ -918,6 +956,13 @@ trusted acceleration
 <h2 id="stateful-automation-owns-state"><a class="header" href="#stateful-automation-owns-state">Stateful automation owns state</a></h2>
 <p>Scheduled work, durable workflows, memory/context systems, and long-running operations should expose explicit lifecycle and state rather than exist only inside model context.</p>
 <p>That makes retries, recovery, auditing, and replacement possible without asking a model to reconstruct what probably happened.</p>
+<h2 id="supervisor-assisted-engineering"><a class="header" href="#supervisor-assisted-engineering">Supervisor-assisted engineering</a></h2>
+<p>The Supervisor direction encompasses task coordination, specialist assistance and bounded engineering execution. Models may help interpret intent, diagnose problems, suggest changes and evaluate alternatives. Deterministic controls and independent functional and security verification remain necessary; a useful model judgment is not an authorization or proof of success.</p>
+<p>Durable workflows should preserve explicit progress and outcomes across interruptions. Governed improvement of future workflows is an experimental research direction: candidate improvements require separate evaluation and review before adoption. Neither a successful task nor a model’s recommendation can promote its own guidance.</p>
+<h2 id="safe-staged-ai-assisted-self-healing"><a class="header" href="#safe-staged-ai-assisted-self-healing">Safe, staged AI-assisted self-healing</a></h2>
+<p>Dubnium is exploring recovery that combines observed operational evidence, deterministic checks and optional AI-assisted diagnosis. Proposed configuration changes should be evaluated and tested in isolation before any separately authorized activation. Independent health verification, recoverability and the ability to stop remain central. A configuration rollback does not necessarily restore mutable application data.</p>
+<p>This is a research and engineering direction, not an available autonomous production repair service or a guarantee of recovery. Model participation is optional.</p>
+<p>See <a href="#reproducible-engineering">Reproducible Engineering</a> and <a href="#research-foundations">Research foundations</a>.</p>
 <h2 id="training-has-separate-authorities"><a class="header" href="#training-has-separate-authorities">Training has separate authorities</a></h2>
 <p>Model training follows the same governed-effect model as other consequential automation. A backend-neutral training request can describe intent, but execution authority, resource enforcement, evaluation, promotion, catalog binding, and runtime activation remain separate responsibilities.</p>
 <p>A successful training operation yields a candidate artifact. It does not by itself prove evaluation success, authorize promotion, select a production model, or activate that model for inference. Models and specialists cannot authorize their own training or promotion merely because they generated the proposal or candidate.</p>
@@ -964,20 +1009,11 @@ trusted acceleration
 </ul>
 <h2 id="identity-and-posture-are-policy-inputs"><a class="header" href="#identity-and-posture-are-policy-inputs">Identity and posture are policy inputs</a></h2>
 <p>Network reachability, authenticated identity, endpoint posture, and attestation can constrain a decision. They are not universal permission for privileged effects. Unsupported or stale posture should remain visible rather than being treated as success.</p>
-<h2 id="optional-public-network-privacy-layer"><a class="header" href="#optional-public-network-privacy-layer">Optional public-network privacy layer</a></h2>
-<p>For users working from untrusted networks such as public Wi-Fi, a <strong>separately operated, Headscale-managed exit node</strong> can be an additional network-security layer around a Dubnium engineering endpoint. This is an <strong>optional deployment pattern under qualification</strong>, not a default Dubnium feature or a claim that every client platform is leak-proof.</p>
-<p>Conceptually:</p>
-<pre><code class="language-text">Dubnium client on untrusted Wi-Fi
-  -&gt; encrypted Tailscale-compatible data-plane tunnel
-  -&gt; explicitly authorized home/router exit node
-  -&gt; Internet
-       |
-       +-- DNS resolved through the tunnel, subject to client policy
-</code></pre>
-<p>Headscale coordinates peer identity and route policy; it is <strong>not</strong> the ordinary browsing-traffic proxy. Network reachability and tailnet membership do not grant Dubnium capabilities, host access, runner authority, or private LAN permissions. The exit node must be explicitly authorized, with forwarding and firewall policy isolated from unrelated networks.</p>
-<p><strong>What this can protect:</strong> a public Wi-Fi operator should not see DNS queries or destination traffic carried <em>inside an established, correctly routed encrypted tunnel</em>. It can still see VPN connection metadata and traffic timing. The home ISP and any upstream DNS resolver retain visibility appropriate to the home egress and DNS configuration; an exit node does <strong>not</strong> provide anonymity.</p>
-<p><strong>What remains to qualify:</strong> DNS and IPv4/IPv6 leak behavior, client/browser resolver bypass, tunnel disconnect and reconnect, captive-portal bootstrap, mobile VPN-on-demand limits, exit-node recovery and rollback. Merely selecting an exit node is not a universal kill switch. If fail-closed routing cannot be enforced on a particular platform, users need that limitation stated rather than a guarantee of no leaks.</p>
-<p>This layer is intentionally independent of Dubnium’s capability authorization and of optional encrypted DNS upstream from the home network. Production-specific router topology, policy values, addresses, and activation procedures belong in private operator documentation.</p>
+<h2 id="multi-user-and-external-account-direction"><a class="header" href="#multi-user-and-external-account-direction">Multi-user and external account direction</a></h2>
+<p>Dubnium is exploring authenticated users, isolated workspaces, workload identities and explicitly authorized external account use. Application sign-in, access to third-party accounts, operation authorization and execution evidence remain distinct concerns. User or workspace membership does not grant unrestricted access to a host or to another user’s provider account.</p>
+<p>This is a planned direction, not a supported multi-tenant service or a commitment to a particular identity provider.</p>
+<h2 id="private-connectivity-and-remote-access"><a class="header" href="#private-connectivity-and-remote-access">Private connectivity and remote access</a></h2>
+<p>Private connectivity and authenticated remote access are deployment choices, not capability grants. Encrypted network transport may reduce exposure to untrusted networks, but it does not establish endpoint trust, authorize an operation, or guarantee anonymity or leak-free routing. Each deployment requires its own threat model, identity, routing and failure-behavior qualification. The public architecture does not prescribe a particular network provider or topology.</p>
 <h2 id="public-versus-private-governance"><a class="header" href="#public-versus-private-governance">Public versus private governance</a></h2>
 <p>Public contracts may define request envelopes, decision references, authorized manifests, errors, evidence shapes, and compatibility rules.</p>
 <p>Production policy, approval rules, thresholds, trusted identities, prompts, fallback behavior, provider wiring, audit records, and recovery procedures remain private. Publishing a contract does not publish the implementation or policy behind it.</p>
@@ -1013,6 +1049,8 @@ trusted acceleration
 -&gt; explicit publication or sharing
 </code></pre>
 <p>An AI-generated summary should not hide missing evidence or invent success. The structured report should remain useful without a model.</p>
+<h2 id="interoperability"><a class="header" href="#interoperability">Interoperability</a></h2>
+<p>Portable structured status, events and resource-accountability concepts can help independent clients understand engineering outcomes without depending on private deployment details. OpenTelemetry interoperability and public CloudEvents contract work remain developing directions. See <a href="#contracts-and-conformance">Contracts and Conformance</a>.</p>
 <h2 id="logs-are-evidence-not-universal-state"><a class="header" href="#logs-are-evidence-not-universal-state">Logs are evidence, not universal state</a></h2>
 <p>Logs and journals are valuable for runtime events and diagnosis. Workflows, approvals, deployments, and other stateful domains should retain their own durable records rather than require later reconstruction from log text.</p>
 <div style="break-before: page; page-break-before: always;"></div>

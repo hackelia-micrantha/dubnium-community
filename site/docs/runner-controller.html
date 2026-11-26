@@ -35,10 +35,10 @@
             const path_to_root = "";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "searchindex-b3b0eed8.js";
+            window.path_to_searchindex_js = "searchindex-007cc100.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="toc-dfaa8dec.js"></script>
+        <script src="toc-111e0900.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -257,6 +257,10 @@ dubctl runners status --json
 <p>Initial source-level signing and rejection tests have passed, while end-to-end worker adoption and representative performance measurements remain unfinished. No particular cache service or production rollout is promised by this overview.</p>
 <h2 id="governed-integration-tests"><a class="header" href="#governed-integration-tests">Governed integration tests</a></h2>
 <p>A related workstream explores running bounded integration tests through the platform’s existing capability boundary rather than giving CI jobs unrestricted host or container access. This remains under implementation and qualification, not a generally available CI feature.</p>
+<h2 id="supervisor-mediated-ad-hoc-runners"><a class="header" href="#supervisor-mediated-ad-hoc-runners">Supervisor-mediated ad hoc runners</a></h2>
+<p>A planned complementary execution mode would allow an operator or authorized assistant to request a bounded engineering workload through the Supervisor without requiring a Git commit or conventional CI assignment. The intended outcome is short-lived isolated execution, explicit admission and resource limits, attributable results, and cleanup. Model participation is optional; deterministic workloads are equally useful.</p>
+<p>Conventional CI and on-demand work should be able to coexist within bounded capacity. Each request needs its own identity and authority. An ad hoc result does not automatically satisfy protected CI checks. Additional CI provider integrations and recursive workflow composition are longer-term research directions, not current support commitments. Each requires separate qualification.</p>
+<p>See <a href="ai-and-automation.html">AI and Automation</a>.</p>
 <h2 id="trust-boundaries"><a class="header" href="#trust-boundaries">Trust boundaries</a></h2>
 <p>The runner design preserves several separations:</p>
 <div class="table-wrapper">

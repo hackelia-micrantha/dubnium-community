@@ -69,6 +69,14 @@ Not everything should live in declarative configuration. Dubnium uses a conceptu
 
 A replaceable environment should be reconstructed from declared inputs plus explicitly restored state rather than depend on an opaque machine image.
 
+## System lifecycle and verified recovery
+
+Reviewed updates, isolated validation, explicit activation and post-change observation are distinct lifecycle steps. Recovery must preserve operator control and remain possible without optional AI services.
+
+Encrypted backup and independently tested restoration of non-reproducible state are developing capabilities. A successful system rebuild does not prove that application data or identities have been restored. A successful backup does not establish recoverability without restoration evidence. No production backup coverage or recovery time is promised here.
+
+See [AI and Automation](ai-and-automation.md#safe-staged-ai-assisted-self-healing).
+
 ## Performance is part of developer experience
 
 Reproducibility should not require every task to rebuild the world. Shared immutable inputs, bounded caches, remote build capacity, and resource-aware scheduling can accelerate work as long as their trust and ownership boundaries remain explicit.

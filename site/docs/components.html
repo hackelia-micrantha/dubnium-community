@@ -35,10 +35,10 @@
             const path_to_root = "";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "searchindex-b3b0eed8.js";
+            window.path_to_searchindex_js = "searchindex-007cc100.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="toc-dfaa8dec.js"></script>
+        <script src="toc-111e0900.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -233,13 +233,13 @@
 <h2 id="supervisor--llm-gateway"><a class="header" href="#supervisor--llm-gateway">Supervisor / LLM Gateway</a></h2>
 <p><strong>Purpose.</strong> Expose a bounded interface for model and specialist execution with explicit capability negotiation, normalized errors, sanitized metadata, and execution lineage. The control-plane direction is local-first, with stronger remote or frontier execution treated as an explicit bounded escalation rather than an ambient fallback.</p>
 <p><strong>Boundary.</strong> Model or specialist output is proposal material, not ambient authority to mutate the host, deploy software, write durable memory, train or promote models, or bypass governance. Escalating model capability does not escalate effect authority.</p>
-<p><strong>Maturity.</strong> Experimental v1alpha.</p>
+<p><strong>Maturity.</strong> Experimental v1alpha. Planned on-demand execution through the Supervisor extends the direction toward bounded engineering workloads independent of conventional CI assignment; see <a href="runner-controller.html">Self-Hosted CI Runner Controller</a>. No ad hoc execution availability is implied.</p>
 <ul>
 <li><a href="https://github.com/hackelia-micrantha/dubnium-community/blob/main/spec/supervisor-gateway-v1alpha.md">Supervisor / LLM Gateway v1alpha</a></li>
 </ul>
 <h2 id="memory-service"><a class="header" href="#memory-service">Memory Service</a></h2>
 <p><strong>Purpose.</strong> Provide an interoperability boundary for scoped reusable context and memory used by model-assisted and automated workflows.</p>
-<p><strong>Boundary.</strong> Memory is durable application data with scope and governance; it is not authorization, runtime truth, or an implicit channel for privileged effects. Where semantic retrieval is enabled, embeddings and indexes remain derived retrieval state and ranked results remain evidence rather than authority or proof of currentness. Repository, document, and live-runtime sources remain separate source-of-truth boundaries rather than being silently federated through memory.</p>
+<p><strong>Boundary.</strong> Memory is durable application data with scope and governance; user-controlled retention and deletion assurance are developing goals, not verified erasure promises; it is not authorization, runtime truth, or an implicit channel for privileged effects. Where semantic retrieval is enabled, embeddings and indexes remain derived retrieval state and ranked results remain evidence rather than authority or proof of currentness. Repository, document, and live-runtime sources remain separate source-of-truth boundaries rather than being silently federated through memory.</p>
 <p><strong>Maturity.</strong> Experimental v1alpha.</p>
 <ul>
 <li><a href="https://github.com/hackelia-micrantha/dubnium-community/blob/main/spec/memory-service-v1alpha.md">Memory Service v1alpha</a></li>

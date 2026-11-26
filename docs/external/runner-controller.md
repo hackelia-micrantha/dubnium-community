@@ -128,6 +128,14 @@ Initial source-level signing and rejection tests have passed, while end-to-end w
 
 A related workstream explores running bounded integration tests through the platform's existing capability boundary rather than giving CI jobs unrestricted host or container access. This remains under implementation and qualification, not a generally available CI feature.
 
+## Supervisor-mediated ad hoc runners
+
+A planned complementary execution mode would allow an operator or authorized assistant to request a bounded engineering workload through the Supervisor without requiring a Git commit or conventional CI assignment. The intended outcome is short-lived isolated execution, explicit admission and resource limits, attributable results, and cleanup. Model participation is optional; deterministic workloads are equally useful.
+
+Conventional CI and on-demand work should be able to coexist within bounded capacity. Each request needs its own identity and authority. An ad hoc result does not automatically satisfy protected CI checks. Additional CI provider integrations and recursive workflow composition are longer-term research directions, not current support commitments. Each requires separate qualification.
+
+See [AI and Automation](ai-and-automation.md).
+
 ## Trust boundaries
 
 The runner design preserves several separations:

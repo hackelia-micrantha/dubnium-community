@@ -35,10 +35,10 @@
             const path_to_root = "";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "searchindex-b3b0eed8.js";
+            window.path_to_searchindex_js = "searchindex-007cc100.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="toc-dfaa8dec.js"></script>
+        <script src="toc-111e0900.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -225,6 +225,8 @@
 <p><code>configctl</code> handles the part of the user environment that legitimately needs to remain writable even when managed defaults come from immutable Nix-store-backed configuration.</p>
 <p>It reports ownership and drift, establishes writable layers, supports reviewable promotion of useful changes, and handles bounded first-run state where declaring a file alone is insufficient.</p>
 <p>See <a href="writable-configuration.html">Writable User Configuration</a>.</p>
+<h2 id="mobile-and-web-operator-experience"><a class="header" href="#mobile-and-web-operator-experience">Mobile and web operator experience</a></h2>
+<p>The developing Operator Console direction brings bounded diagnostics, CI status, Supervisor interaction and reviewed operator requests to mobile and web clients. The goal is to make routine operational questions answerable without unrestricted remote shell access. Clients should share the same observed state and authority boundaries as other operator tools. This is not a claim of an available supported remote-control product.</p>
 <h2 id="why-the-tools-stay-separate"><a class="header" href="#why-the-tools-stay-separate">Why the tools stay separate</a></h2>
 <p>The separation gives each question a clear authority:</p>
 <pre><code class="language-text">What should this endpoint be able to run?  -&gt; declarative configuration

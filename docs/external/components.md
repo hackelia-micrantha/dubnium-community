@@ -87,7 +87,7 @@ A small dedicated client, `capctl`, is being developed for interacting with the 
 
 **Boundary.** Model or specialist output is proposal material, not ambient authority to mutate the host, deploy software, write durable memory, train or promote models, or bypass governance. Escalating model capability does not escalate effect authority.
 
-**Maturity.** Experimental v1alpha.
+**Maturity.** Experimental v1alpha. Planned on-demand execution through the Supervisor extends the direction toward bounded engineering workloads independent of conventional CI assignment; see [Self-Hosted CI Runner Controller](runner-controller.md). No ad hoc execution availability is implied.
 
 - [Supervisor / LLM Gateway v1alpha](https://github.com/hackelia-micrantha/dubnium-community/blob/main/spec/supervisor-gateway-v1alpha.md)
 
@@ -95,7 +95,7 @@ A small dedicated client, `capctl`, is being developed for interacting with the 
 
 **Purpose.** Provide an interoperability boundary for scoped reusable context and memory used by model-assisted and automated workflows.
 
-**Boundary.** Memory is durable application data with scope and governance; it is not authorization, runtime truth, or an implicit channel for privileged effects. Where semantic retrieval is enabled, embeddings and indexes remain derived retrieval state and ranked results remain evidence rather than authority or proof of currentness. Repository, document, and live-runtime sources remain separate source-of-truth boundaries rather than being silently federated through memory.
+**Boundary.** Memory is durable application data with scope and governance; user-controlled retention and deletion assurance are developing goals, not verified erasure promises; it is not authorization, runtime truth, or an implicit channel for privileged effects. Where semantic retrieval is enabled, embeddings and indexes remain derived retrieval state and ranked results remain evidence rather than authority or proof of currentness. Repository, document, and live-runtime sources remain separate source-of-truth boundaries rather than being silently federated through memory.
 
 **Maturity.** Experimental v1alpha.
 
