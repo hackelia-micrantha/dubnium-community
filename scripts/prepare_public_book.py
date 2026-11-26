@@ -34,7 +34,8 @@ PUBLIC_SUMMARY_TARGETS = {
     "status.md",
     "community.md",
 }
-PUBLIC_SOURCE_FILES = PUBLIC_SUMMARY_TARGETS | {"SUMMARY.md"}
+PUBLIC_OPTIONAL_SUMMARY_TARGETS = {"research.md"}
+PUBLIC_SOURCE_FILES = PUBLIC_SUMMARY_TARGETS | PUBLIC_OPTIONAL_SUMMARY_TARGETS | {"SUMMARY.md"}
 ALLOWED_SUFFIXES = {
     ".html", ".css", ".js", ".json", ".svg", ".png", ".jpg", ".jpeg",
     ".webp", ".gif", ".woff", ".woff2", ".ttf", ".eot", ".txt",
@@ -100,13 +101,14 @@ def validate_source(root: Path) -> list[str]:
         for target in SUMMARY_LINK.findall(text)
         if target.split("#", 1)[0].endswith(".md")
     }
-    unexpected = sorted(targets - PUBLIC_SUMMARY_TARGETS)
-    missing = sorted(PUBLIC_SUMMARY_TARGETS - targets)
+    expected_targets = PUBLIC_SUMMARY_TARGETS | (source_files & PUBLIC_OPTIONAL_SUMMARY_TARGETS)
+    unexpected = sorted(targets - expected_targets)
+    missing = sorted(expected_targets - targets)
     if unexpected:
         errors.append("public SUMMARY references non-overview pages: " + ", ".join(unexpected))
     if missing:
         errors.append("public SUMMARY is missing required overview pages: " + ", ".join(missing))
-    for target in sorted(PUBLIC_SUMMARY_TARGETS):
+    for target in sorted(expected_targets):
         if not (source / target).is_file():
             errors.append(f"public SUMMARY target is missing: {target}")
     return errors
