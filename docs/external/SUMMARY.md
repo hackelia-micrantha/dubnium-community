@@ -6,6 +6,7 @@
 
 - [Vision and Deployment Model](vision.md)
 - [Status and Direction](status.md)
+- [Research foundations](research.md)
 - [Principles](principles.md)
 
 # Platform

@@ -66,6 +66,10 @@ It reports ownership and drift, establishes writable layers, supports reviewable
 
 See [Writable User Configuration](writable-configuration.md).
 
+## Mobile and web operator experience
+
+The developing Operator Console direction brings bounded diagnostics, CI status, Supervisor interaction and reviewed operator requests to mobile and web clients. The goal is to make routine operational questions answerable without unrestricted remote shell access. Clients should share the same observed state and authority boundaries as other operator tools. This is not a claim of an available supported remote-control product.
+
 ## Why the tools stay separate
 
 The separation gives each question a clear authority:

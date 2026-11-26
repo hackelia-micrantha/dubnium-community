@@ -51,6 +51,20 @@ Scheduled work, durable workflows, memory/context systems, and long-running oper
 
 That makes retries, recovery, auditing, and replacement possible without asking a model to reconstruct what probably happened.
 
+## Supervisor-assisted engineering
+
+The Supervisor direction encompasses task coordination, specialist assistance and bounded engineering execution. Models may help interpret intent, diagnose problems, suggest changes and evaluate alternatives. Deterministic controls and independent functional and security verification remain necessary; a useful model judgment is not an authorization or proof of success.
+
+Durable workflows should preserve explicit progress and outcomes across interruptions. Governed improvement of future workflows is an experimental research direction: candidate improvements require separate evaluation and review before adoption. Neither a successful task nor a model's recommendation can promote its own guidance.
+
+## Safe, staged AI-assisted self-healing
+
+Dubnium is exploring recovery that combines observed operational evidence, deterministic checks and optional AI-assisted diagnosis. Proposed configuration changes should be evaluated and tested in isolation before any separately authorized activation. Independent health verification, recoverability and the ability to stop remain central. A configuration rollback does not necessarily restore mutable application data.
+
+This is a research and engineering direction, not an available autonomous production repair service or a guarantee of recovery. Model participation is optional.
+
+See [Reproducible Engineering](reproducibility.md) and [Research foundations](research.md).
+
 ## Training has separate authorities
 
 Model training follows the same governed-effect model as other consequential automation. A backend-neutral training request can describe intent, but execution authority, resource enforcement, evaluation, promotion, catalog binding, and runtime activation remain separate responsibilities.

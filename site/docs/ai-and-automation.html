@@ -15,8 +15,8 @@
         <link rel="icon" href="favicon-de23e50b.svg">
         <link rel="shortcut icon" href="favicon-8114d1fc.png">
         <link rel="stylesheet" href="css/variables-8adf115d.css">
-        <link rel="stylesheet" href="css/general-e96d0476.css">
-        <link rel="stylesheet" href="css/chrome-d279d366.css">
+        <link rel="stylesheet" href="css/general-2459343d.css">
+        <link rel="stylesheet" href="css/chrome-ae938929.css">
         <link rel="stylesheet" href="css/print-9e4910d8.css" media="print">
 
         <!-- Fonts -->
@@ -35,10 +35,10 @@
             const path_to_root = "";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "searchindex-b3b0eed8.js";
+            window.path_to_searchindex_js = "searchindex-a183ecbc.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="toc-dfaa8dec.js"></script>
+        <script src="toc-9cb4cd0a.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -203,6 +203,13 @@
 <h2 id="stateful-automation-owns-state"><a class="header" href="#stateful-automation-owns-state">Stateful automation owns state</a></h2>
 <p>Scheduled work, durable workflows, memory/context systems, and long-running operations should expose explicit lifecycle and state rather than exist only inside model context.</p>
 <p>That makes retries, recovery, auditing, and replacement possible without asking a model to reconstruct what probably happened.</p>
+<h2 id="supervisor-assisted-engineering"><a class="header" href="#supervisor-assisted-engineering">Supervisor-assisted engineering</a></h2>
+<p>The Supervisor direction encompasses task coordination, specialist assistance and bounded engineering execution. Models may help interpret intent, diagnose problems, suggest changes and evaluate alternatives. Deterministic controls and independent functional and security verification remain necessary; a useful model judgment is not an authorization or proof of success.</p>
+<p>Durable workflows should preserve explicit progress and outcomes across interruptions. Governed improvement of future workflows is an experimental research direction: candidate improvements require separate evaluation and review before adoption. Neither a successful task nor a model’s recommendation can promote its own guidance.</p>
+<h2 id="safe-staged-ai-assisted-self-healing"><a class="header" href="#safe-staged-ai-assisted-self-healing">Safe, staged AI-assisted self-healing</a></h2>
+<p>Dubnium is exploring recovery that combines observed operational evidence, deterministic checks and optional AI-assisted diagnosis. Proposed configuration changes should be evaluated and tested in isolation before any separately authorized activation. Independent health verification, recoverability and the ability to stop remain central. A configuration rollback does not necessarily restore mutable application data.</p>
+<p>This is a research and engineering direction, not an available autonomous production repair service or a guarantee of recovery. Model participation is optional.</p>
+<p>See <a href="reproducibility.html">Reproducible Engineering</a> and <a href="research.html">Research foundations</a>.</p>
 <h2 id="training-has-separate-authorities"><a class="header" href="#training-has-separate-authorities">Training has separate authorities</a></h2>
 <p>Model training follows the same governed-effect model as other consequential automation. A backend-neutral training request can describe intent, but execution authority, resource enforcement, evaluation, promotion, catalog binding, and runtime activation remain separate responsibilities.</p>
 <p>A successful training operation yields a candidate artifact. It does not by itself prove evaluation success, authorize promotion, select a production model, or activate that model for inference. Models and specialists cannot authorize their own training or promotion merely because they generated the proposal or candidate.</p>
@@ -257,11 +264,11 @@
 
         <script src="elasticlunr-ef4e11c1.min.js"></script>
         <script src="mark-09e88c2c.min.js"></script>
-        <script src="searcher-09f2665d.js"></script>
+        <script src="searcher-c2a407aa.js"></script>
 
         <script src="clipboard-1626706a.min.js"></script>
         <script src="highlight-abc7f01d.js"></script>
-        <script src="book-609e4cb8.js"></script>
+        <script src="book-a0b12cfe.js"></script>
 
         <!-- Custom JS scripts -->
         <script src="mermaid-bf4a4f1d.min.js"></script>

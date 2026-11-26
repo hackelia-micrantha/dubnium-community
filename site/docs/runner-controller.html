@@ -15,8 +15,8 @@
         <link rel="icon" href="favicon-de23e50b.svg">
         <link rel="shortcut icon" href="favicon-8114d1fc.png">
         <link rel="stylesheet" href="css/variables-8adf115d.css">
-        <link rel="stylesheet" href="css/general-e96d0476.css">
-        <link rel="stylesheet" href="css/chrome-d279d366.css">
+        <link rel="stylesheet" href="css/general-2459343d.css">
+        <link rel="stylesheet" href="css/chrome-ae938929.css">
         <link rel="stylesheet" href="css/print-9e4910d8.css" media="print">
 
         <!-- Fonts -->
@@ -35,10 +35,10 @@
             const path_to_root = "";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "searchindex-b3b0eed8.js";
+            window.path_to_searchindex_js = "searchindex-a183ecbc.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="toc-dfaa8dec.js"></script>
+        <script src="toc-9cb4cd0a.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -257,6 +257,10 @@ dubctl runners status --json
 <p>Initial source-level signing and rejection tests have passed, while end-to-end worker adoption and representative performance measurements remain unfinished. No particular cache service or production rollout is promised by this overview.</p>
 <h2 id="governed-integration-tests"><a class="header" href="#governed-integration-tests">Governed integration tests</a></h2>
 <p>A related workstream explores running bounded integration tests through the platform’s existing capability boundary rather than giving CI jobs unrestricted host or container access. This remains under implementation and qualification, not a generally available CI feature.</p>
+<h2 id="supervisor-mediated-ad-hoc-runners"><a class="header" href="#supervisor-mediated-ad-hoc-runners">Supervisor-mediated ad hoc runners</a></h2>
+<p>A planned complementary execution mode would allow an operator or authorized assistant to request a bounded engineering workload through the Supervisor without requiring a Git commit or conventional CI assignment. The intended outcome is short-lived isolated execution, explicit admission and resource limits, attributable results, and cleanup. Model participation is optional; deterministic workloads are equally useful.</p>
+<p>Conventional CI and on-demand work should be able to coexist within bounded capacity. Each request needs its own identity and authority. An ad hoc result does not automatically satisfy protected CI checks. Additional CI provider integrations and recursive workflow composition are longer-term research directions, not current support commitments. Each requires separate qualification.</p>
+<p>See <a href="ai-and-automation.html">AI and Automation</a>.</p>
 <h2 id="trust-boundaries"><a class="header" href="#trust-boundaries">Trust boundaries</a></h2>
 <p>The runner design preserves several separations:</p>
 <div class="table-wrapper">
@@ -322,11 +326,11 @@ dubctl runners status --json
 
         <script src="elasticlunr-ef4e11c1.min.js"></script>
         <script src="mark-09e88c2c.min.js"></script>
-        <script src="searcher-09f2665d.js"></script>
+        <script src="searcher-c2a407aa.js"></script>
 
         <script src="clipboard-1626706a.min.js"></script>
         <script src="highlight-abc7f01d.js"></script>
-        <script src="book-609e4cb8.js"></script>
+        <script src="book-a0b12cfe.js"></script>
 
         <!-- Custom JS scripts -->
         <script src="mermaid-bf4a4f1d.min.js"></script>

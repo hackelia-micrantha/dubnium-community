@@ -44,6 +44,8 @@ These themes are architecture, not a claim that a production fleet service, ever
 
 ## Current engineering themes
 
+Additional planned or developing capability families include Supervisor-mediated on-demand execution, durable workflows, staged AI-assisted recovery, multi-user account separation, and mobile/web operator diagnostics. Each requires its own qualification; the research directions are not a release or delivery commitment.
+
 Recent work spans several related outcomes:
 
 - **Reproducible, self-hosted CI:** more predictable short-lived workers, smaller reusable runner foundations, and verified Nix output reuse. Cache adoption and performance qualification remain ongoing.
@@ -53,6 +55,8 @@ Recent work spans several related outcomes:
 - **Resource-aware AI:** bounded usage concepts and local inference evaluations are active areas of exploration, not promised performance or deployed model offerings.
 
 The strongest public artifacts are versioned contracts, synthetic examples, conformance tests, and reproducible demonstrations. Private infrastructure, operational incidents, implementation wiring, unpublished benchmark data, and policy internals are outside this book.
+
+See [Research foundations](research.md) for a ranked selection of relevant public literature.
 
 ## Public validation opportunities
 
