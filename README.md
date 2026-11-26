@@ -9,6 +9,7 @@ Dubnium explores how reproducible development environments, self-hosted infrastr
 ## Start here
 
 - [Project website](https://dubnium.micrantha.com/) — product direction, engineering progress and collaboration.
+- [Research foundations](https://dubnium.micrantha.com/docs/research.html) — ranked public literature and research themes.
 - [Technical Overview](https://dubnium.micrantha.com/docs/) — architecture, component responsibilities and design trade-offs.
 - [Download the experimental Capability Gateway alpha bundle](https://github.com/hackelia-micrantha/dubnium-community/releases/tag/contract-v0.1.0-alpha.1) — contracts, manifest, checksums and SBOM.
 - [Conformance](conformance/README.md) and [no-effect reference](reference/README.md) — evaluate the public contracts without private infrastructure or credentials.
@@ -37,7 +38,11 @@ Dubnium's architectural scope extends beyond a workstation and AI runtime:
 - [**Operator experience**](https://dubnium.micrantha.com/docs/operator-tooling.html) — composable CLI tools, experimental operator authentication, and mobile/web operator direction.
 - [**Intelligence and automation**](https://dubnium.micrantha.com/docs/ai-and-automation.html) — local-first inference, model selection, memory, scheduling and advisory classification/prediction; multi-GPU and token-efficiency work remains under evaluation.
 - [**Reproducible infrastructure and adaptive CI**](https://dubnium.micrantha.com/docs/runner-controller.html) — project-local Nix environments, trusted cache reuse, short-lived workers, resource-aware admission and developing dynamic CI planning.
-- [**Runtime and deployment**](https://dubnium.micrantha.com/docs/vision.html) — operating modes, layered isolation, VPN/private-service connectivity and experimental virtual-appliance direction.
+- [**Supervisor-mediated ad hoc execution**](https://dubnium.micrantha.com/docs/runner-controller.html#supervisor-mediated-ad-hoc-runners) — planned bounded on-demand workloads independent of conventional CI assignment.
+- [**Safe, staged AI-assisted self-healing**](https://dubnium.micrantha.com/docs/ai-and-automation.html#safe-staged-ai-assisted-self-healing) — research direction for isolated candidate validation, authorized recovery and independent verification.
+- [**System lifecycle and recovery**](https://dubnium.micrantha.com/docs/reproducibility.html#system-lifecycle-and-verified-recovery) — developing reviewed updates, encrypted backup and tested restoration.
+- [**Multi-user and external account direction**](https://dubnium.micrantha.com/docs/governance.html#multi-user-and-external-account-direction) — planned scoped user and workspace access.
+- [**Runtime and deployment**](https://dubnium.micrantha.com/docs/vision.html) — operating modes, layered isolation, authenticated private connectivity and experimental virtual-appliance direction.
 - [**Observability and data sovereignty**](https://dubnium.micrantha.com/docs/observability.html) — local-first operational evidence, purpose-limited telemetry, bounded remote access and operator-owned data.
 
 The [status and direction](https://dubnium.micrantha.com/docs/status.html) page distinguishes publicly published contracts, evolving implementation and unqualified deployment or integration goals. These are not commitments to a stable distribution or managed service.
