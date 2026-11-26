@@ -53,10 +53,6 @@ Dubnium's public architecture now describes a broader engineering-environment mo
 
 These are directional concepts. They do not imply a production fleet service, endpoint enrollment system, or publication of private implementation.
 
-## Research and capability direction
-
-The [ranked research foundations](https://dubnium.micrantha.com/docs/research.html) connect public literature to project themes without implying that the papers' mechanisms are adopted or qualified. Additional planned or developing work includes bounded Supervisor-mediated ad hoc execution, durable workflows, safe staged AI-assisted recovery, independent verification, multi-user account separation, operator diagnostics, portable event interoperability and verified restoration of mutable state. These directions do not change the current release acceptance gates.
-
 ## Now — complete release acceptance and publication gates
 
 - maintain the public-book source as an explicit reviewed file allowlist rather than relying on navigation alone;

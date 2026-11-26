@@ -656,7 +656,6 @@
       <nav class="nav-links" aria-label="Main navigation">
         <a href="#approach">Approach</a>
         <a href="#capabilities">Capabilities</a>
-        <a href="docs/research.html">Research</a>
         <a href="#status">Project status</a>
         <a href="#direction">Roadmap</a>
         <a href="#people">Who it’s for</a>
@@ -697,7 +696,7 @@
             <div class="model-branch" aria-hidden="true"><span></span></div>
             <div class="model-pair">
               <div class="model-node"><strong>Runtime</strong><span>Modes · isolation</span></div>
-              <div class="model-node"><strong>Infrastructure</strong><span>NixOS · CI · VM</span></div>
+              <div class="model-node"><strong>Infrastructure</strong><span>NixOS · CI · VM · VPN</span></div>
             </div>
             <div class="model-foundation">Observability · Data sovereignty</div>
           </div>
@@ -755,52 +754,52 @@
         </div>
         <div class="evidence-grid">
           <article class="evidence-card">
-            <span class="capability-label">01 / INFRASTRUCTURE</span>
-            <h3>Reproducible infrastructure and adaptive CI</h3>
-            <p>NixOS, project-local dependencies, short-lived self-hosted CI workers and trusted build reuse. Additional CI providers and adaptive job selection are under evaluation.</p>
-            <a href="docs/runner-controller.html">Engineering infrastructure</a>
+            <span class="capability-label">01 / AUTHORITY</span>
+            <h3>Governed capabilities</h3>
+            <p>Separate AI proposals, identity, policy and execution. Experimental capability contracts and conformance make authorization and effects inspectable; Keylix and Anthesis provide complementary identity and governance boundaries.</p>
+            <a href="docs/governance.html">Governance and security</a>
           </article>
           <article class="evidence-card">
-            <span class="capability-label">02 / INTELLIGENCE</span>
-            <h3>Local-first AI and intelligence</h3>
-            <p>Local inference, model routing and bounded remote escalation. Scoped memory and resource-aware model serving are developing directions; model training and promotion remain separately governed.</p>
-            <a href="docs/ai-and-automation.html">AI and automation</a>
-          </article>
-          <article class="evidence-card">
-            <span class="capability-label">03 / EXECUTION</span>
-            <h3>Supervisor and ad hoc runners</h3>
-            <p>Developing specialist coordination and durable workflows. Planned on-demand isolated runners through the Supervisor need no conventional CI assignment. AI assistance is optional.</p>
-            <a href="docs/runner-controller.html#supervisor-mediated-ad-hoc-runners">On-demand execution</a>
-          </article>
-          <article class="evidence-card">
-            <span class="capability-label">04 / GOVERNANCE</span>
-            <h3>Governance and security</h3>
-            <p>Experimental capability contracts separate identity, authorization and effects. Independent functional and security verification, layered isolation and scoped multi-user access are developing directions.</p>
-            <a href="docs/governance.html">Governance and safety</a>
-          </article>
-          <article class="evidence-card">
-            <span class="capability-label">05 / RESILIENCE</span>
-            <h3>Safe, staged AI-assisted self-healing</h3>
-            <p>Research and engineering direction: diagnose, validate candidate repairs in isolation, authorize activation separately and verify recovery. Reviewed updates, encrypted backup and tested restoration complement reproducibility.</p>
-            <a href="docs/ai-and-automation.html#safe-staged-ai-assisted-self-healing">System resilience</a>
-          </article>
-          <article class="evidence-card">
-            <span class="capability-label">06 / OPERATOR</span>
+            <span class="capability-label">02 / OPERATOR</span>
             <h3>Operator experience</h3>
-            <p>Composable CLI tools, runtime modes and configuration. Developing mobile/web consoles for CI diagnostics, Supervisor interaction and bounded operator requests.</p>
+            <p>Composable CLI tools for host workflows, runtime modes, configuration and capabilities. An experimental operator authentication contract supports the direction toward a bounded Operator API and mobile/web consoles, rather than arbitrary remote shell access.</p>
             <a href="docs/operator-tooling.html">Operator interfaces</a>
           </article>
           <article class="evidence-card">
-            <span class="capability-label">07 / SOVEREIGNTY</span>
-            <h3>Data sovereignty and observability</h3>
-            <p>Local-first data and operational evidence, scoped context, user-controlled data lifecycle goals, and explicit remote sharing. Authenticated private connectivity is a deployment choice.</p>
-            <a href="docs/observability.html">Observability and evidence</a>
+            <span class="capability-label">03 / INTELLIGENCE</span>
+            <h3>Local-first intelligence</h3>
+            <p>Local inference, model routing and bounded remote escalation. Multi-GPU serving, token-efficient routing, classification and predictive planning are active areas of development and evaluation, not guaranteed savings.</p>
+            <a href="docs/ai-and-automation.html">AI and automation</a>
           </article>
           <article class="evidence-card">
-            <span class="capability-label">08 / INTEROPERABILITY</span>
-            <h3>Integrations and open contracts</h3>
-            <p>NixOS and Home Manager underpin reproducible environments. Published experimental contracts and synthetic conformance support independent evaluation; MCP, OpenTelemetry and portable events are developing directions.</p>
-            <a href="docs/public-contracts.html">Contracts and conformance</a>
+            <span class="capability-label">04 / STATE</span>
+            <h3>Memory and scheduled automation</h3>
+            <p>Experimental Memory and Scheduler APIs make reusable context and deferred work explicit. Scope, provenance, state and execution authority remain separate from model reasoning.</p>
+            <a href="docs/components.html">Memory and scheduling</a>
+          </article>
+          <article class="evidence-card">
+            <span class="capability-label">05 / DELIVERY</span>
+            <h3>Adaptive CI/CD</h3>
+            <p>Short-lived self-hosted workers, reproducible builds and trusted cache reuse. Dynamic test selection and registry-free ordinary onboarding are directions under evaluation; admission remains governed and resource-aware.</p>
+            <a href="docs/runner-controller.html">Self-hosted CI</a>
+          </article>
+          <article class="evidence-card">
+            <span class="capability-label">06 / RUNTIME</span>
+            <h3>Runtime and isolation</h3>
+            <p>Desktop, media and compute modes adapt available resources to the workload. Layered VM, container and process isolation is chosen for the threat model rather than presented as one universal sandbox.</p>
+            <a href="docs/runtime-modes.html">Runtime modes</a>
+          </article>
+          <article class="evidence-card">
+            <span class="capability-label">07 / CONNECTIVITY</span>
+            <h3>Private connectivity and deployment</h3>
+            <p>Explore VPN-connected private services, optional edge exit-node integration and replaceable virtual appliances. Router qualification, portable QCOW2 images and cloud appliance delivery remain separate work.</p>
+            <a href="docs/vision.html">Deployment direction</a>
+          </article>
+          <article class="evidence-card">
+            <span class="capability-label">08 / EVIDENCE</span>
+            <h3>Observability and data sovereignty</h3>
+            <p>Local-first service health, metrics, logs and traceable outcomes support diagnosis without indiscriminate data export. OpenTelemetry interoperability is developing; remote data sharing is explicit.</p>
+            <a href="docs/observability.html">Observability and evidence</a>
           </article>
         </div>
       </div>
