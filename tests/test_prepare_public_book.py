@@ -35,6 +35,28 @@ class PreparePublicBookTests(unittest.TestCase):
             self.assertEqual([], MODULE.validate_source(root))
             self.assertEqual([], MODULE.validate_output(output))
 
+    def test_accepts_explicit_research_page_with_summary_entry(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root, _ = self.make_root(directory)
+            source = root / "docs" / "external"
+            (source / "research.md").write_text("# Research\n", encoding="utf-8")
+            summary = source / "SUMMARY.md"
+            summary.write_text(summary.read_text(encoding="utf-8") + "- [Research](research.md)\n", encoding="utf-8")
+            self.assertEqual([], MODULE.validate_source(root))
+
+    def test_rejects_unlinked_research_page(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root, _ = self.make_root(directory)
+            (root / "docs" / "external" / "research.md").write_text("# Research\n", encoding="utf-8")
+            self.assertTrue(any("missing required overview pages" in error for error in MODULE.validate_source(root)))
+
+    def test_rejects_research_summary_without_source(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root, _ = self.make_root(directory)
+            summary = root / "docs" / "external" / "SUMMARY.md"
+            summary.write_text(summary.read_text(encoding="utf-8") + "- [Research](research.md)\n", encoding="utf-8")
+            self.assertTrue(any("non-overview pages" in error for error in MODULE.validate_source(root)))
+
     def test_rejects_unlinked_source_page(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             root, _ = self.make_root(directory)
